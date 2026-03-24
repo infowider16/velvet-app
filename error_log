@@ -1,0 +1,1 @@
+[16-Mar-2026 19:00:30 Asia/Kolkata] PHP Fatal error:  Cannot redeclare App\Console\Commands\SyncStaticMessagesCommand::replaceStaticMessagesInExceptions() in /home1/webwiqpq/dev.velvet/app/Console/Commands/SyncStaticMessagesCommand.php on line 378

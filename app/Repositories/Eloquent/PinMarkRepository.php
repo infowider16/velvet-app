@@ -1,0 +1,103 @@
+<?php
+
+namespace App\Repositories\Eloquent;
+
+use App\Models\PinMark;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
+class PinMarkRepository
+{
+    protected $model;
+
+    public function __construct(PinMark $model)
+    {
+        $this->model = $model;
+    }
+
+    /**
+     * Create a new transaction.
+     *
+     * @param array $data
+     * @return PinMark
+     *
+     * @throws \Exception
+     */
+    public function create(array $data): PinMark
+        {
+        try {
+            return $this->model->create($data);
+        } catch (\Exception $e) {
+            Log::error('PinMark create failed', [
+                'data' => $data,
+                'error' => $e->getMessage(),
+            ]);
+            throw new \Exception('Failed to create transaction.');
+        }
+    }
+    
+    public function fetch(array $filters = [])
+    {
+        $swissTime = $filters['swiss_time'] ?? null;  // client sends Swiss time
+        $hours     = (int)($filters['hours'] ?? 48);
+        $query = $this->model->newQuery()->withinHoursSwiss($swissTime, $hours);
+        if (!empty($filters['user_id'])) {
+            $query->where('user_id', $filters['user_id']);
+        }
+    
+        if (!empty($filters['country_code'])) {
+            // Support: IN,AT,US
+            $countryCodes = array_map(
+                'trim',
+                explode(',', $filters['country_code'])
+            );
+    
+            $query->whereIn('country_code', $countryCodes);
+        }
+    
+        if (isset($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }else{ $query->where('status', 1); }
+    
+        $query->orderBy('commented_on', 'desc');
+    
+        if (!empty($filters['per_page'])) {
+            return $query->paginate((int) $filters['per_page']);
+        }
+    
+        return $query->get();
+    }
+    
+    
+    public function softDeleteById(int $id): bool
+        {
+        $mark = $this->model->find($id);
+    
+        if (!$mark) {
+            return false;
+        }
+    
+        return $mark->update([
+            'status' => 0
+        ]);
+    }
+    
+    public function getOneData(array $byWhere, array $withRelations = [])
+    {
+        try {
+            $query = $this->model->where($byWhere);
+
+            // If relationships are specified, eager load them
+            if (!empty($withRelations)) {
+                $query = $query->with($withRelations);
+            }
+
+            return $query->first();
+        } catch (\Exception $e) {
+            $this->logError(__FUNCTION__, $e);
+            return null;
+        }
+    }
+
+
+}
