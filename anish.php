@@ -1,1 +1,3 @@
-heloo datadasdasdasdas
+<?php
+
+echo "heloo data";
