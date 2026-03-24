@@ -42,7 +42,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
-          script_stop: true
           script: |
             set -e
             cd /home/velvetapp/admin.velvet-app.com
