@@ -16,9 +16,16 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: '8.3'
           extensions: mbstring, bcmath, pdo, pdo_mysql, tokenizer, xml, ctype, json, fileinfo
           coverage: none
+          tools: composer:v2
+
+      - name: Verify PHP Version
+        run: php -v
+
+      - name: Validate Composer Files
+        run: composer validate --no-check-publish
 
       - name: Install Composer Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
@@ -31,8 +38,21 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            cd /home/velvetapp/admin.velvet-app.com
+            cd /home/velvetapp/admin.velvet-app.com || exit 1
 
             git pull origin main
 
-            
+            composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+
+            php artisan migrate --force
+
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan route:clear
+            php artisan view:clear
+
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            php artisan optimize
