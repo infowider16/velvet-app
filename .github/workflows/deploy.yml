@@ -31,11 +31,9 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
-          source: "./"
+          source: "app,bootstrap,config,database,public,resources,routes,artisan,composer.json,composer.lock"
           target: "/home/velvetapp/admin.velvet-app.com"
-          rm: false
           overwrite: true
-          strip_components: 0
 
       - name: Run deployment commands on server
         uses: appleboy/ssh-action@v1
@@ -47,23 +45,19 @@ jobs:
           script_stop: true
           script: |
             set -e
-
             cd /home/velvetapp/admin.velvet-app.com
 
-            # keep server env file safe
             if [ ! -f .env ]; then
-              echo ".env file not found on server"
+              echo ".env file not found"
               exit 1
             fi
 
-            # create required directories
             mkdir -p storage/framework/cache
             mkdir -p storage/framework/sessions
             mkdir -p storage/framework/views
             mkdir -p storage/logs
             mkdir -p bootstrap/cache
 
-            # fix permissions
             chmod -R 775 storage bootstrap/cache || true
 
             composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
