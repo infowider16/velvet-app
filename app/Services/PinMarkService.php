@@ -146,53 +146,51 @@ class PinMarkService
     }
     
     
-   public function fetchPinMarks(array $filters = [])
-{
-    try {
-        $marks = $this->pinMarkRepo->fetch($filters);
-        $items = method_exists($marks, 'getCollection')
-            ? $marks->getCollection()
-            : collect($marks);
+    public function fetchPinMarks(array $filters = [])
+    {
+        try {
+            $marks = $this->pinMarkRepo->fetch($filters);
+            $items = method_exists($marks, 'getCollection')
+                ? $marks->getCollection()
+                : collect($marks);
+            $userSecondId = $filters['userSecond_id'] ?? null;
 
-        $userSecondId = $filters['userSecond_id'] ?? null;
+            $items->transform(function ($mark) use ($userSecondId) {
 
-        $items->transform(function ($mark) use ($userSecondId) {
+                $user = $this->userRepo->getOneData([
+                    'id' => $mark->user_id
+                ]);
 
-            $user = $this->userRepo->getOneData([
-                'id' => $mark->user_id
-            ]);
+                $alreadyLiked = false;
 
-            $alreadyLiked = false;
+                if ($userSecondId) {
+                    $alreadyLiked = $this->pinMarkLikeRepo
+                        ->exists($mark->id, $userSecondId);
+                }
 
-            if ($userSecondId) {
-                $alreadyLiked = $this->pinMarkLikeRepo
-                    ->exists($mark->id, $userSecondId);
-            }
+                $mark->pin_liked = $alreadyLiked;
 
-            $mark->pin_liked = $alreadyLiked;
+                if ($user) {
+                    $result = $this->userRegisterService->getUserDetail($user->id);
+                    $mark->user = $result['data']['user_info'] ?? null;
+                } else {
+                    $mark->user = null;
+                }
 
-            if ($user) {
-                $result = $this->userRegisterService->getUserDetail($user->id);
-                $mark->user = $result['data']['user_info'] ?? null;
-            } else {
-                $mark->user = null;
-            }
+                return $mark;
+            });
 
-            return $mark;
-        });
+            return $marks;
 
-        return $marks;
+        } catch (\Throwable $e) {
+            Log::error(
+                __CLASS__ . '::' . __FUNCTION__,
+                ['error' => $e->getMessage(), 'filters' => $filters]
+            );
 
-    } catch (\Throwable $e) {
-        dd($e);
-        Log::error(
-            __CLASS__ . '::' . __FUNCTION__,
-            ['error' => $e->getMessage(), 'filters' => $filters]
-        );
-
-        return [];
+            return [];
+        }
     }
-}
 
 
     public function deletePinMark(int $id): bool

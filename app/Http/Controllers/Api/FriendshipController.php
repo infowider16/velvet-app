@@ -125,15 +125,12 @@ class FriendshipController extends BaseController
     {
         try {
             $user = $this->getAuthenticatedUserOrError($request);
-
             if ($user instanceof JsonResponse) {
                 return $user;
             }
-
             $request->validate([
                 'blocked_user_id' => 'required|integer|exists:users,id'
             ]);
-
             $result = $this->friendshipService->blockUser($user->id, $request->blocked_user_id);
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {

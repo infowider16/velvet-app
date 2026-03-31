@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Models\PinMark;
+use App\Models\{PinMark,Block};
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -38,6 +38,7 @@ class PinMarkRepository
     
     public function fetch(array $filters = [])
     {
+        $blockedUserIds = Block::where('blocker_id', getUserId() ?? 0)->get()->pluck('blocked_id')->toArray();
         $swissTime = $filters['swiss_time'] ?? null;  // client sends Swiss time
         $hours     = (int)($filters['hours'] ?? 48);
         $query = $this->model->newQuery()->withinHoursSwiss($swissTime, $hours);
@@ -46,13 +47,15 @@ class PinMarkRepository
         }
     
         if (!empty($filters['country_code'])) {
-            // Support: IN,AT,US
             $countryCodes = array_map(
                 'trim',
                 explode(',', $filters['country_code'])
             );
-    
             $query->whereIn('country_code', $countryCodes);
+        }
+
+        if (count($blockedUserIds )>0) {
+            $query->whereNotIn('user_id', $blockedUserIds);
         }
     
         if (isset($filters['status'])) {
