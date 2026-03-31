@@ -118,7 +118,15 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
     // Search groups by keyword with pagination
     public function searchGroups($keyword = '', $perPage = 15, $page = 1)
     {
-        $query = $this->model->with(['members', 'creator']);
+        // $query = $this->model->with(['members', 'creator']);
+        $query = $this->model
+        ->with(['creator']) // keep only if needed
+        ->withCount([
+            'members' => function ($q) {
+                $q->where('status', '!=', 1)
+                ->where('is_delete', 0);
+            }
+        ]);
         if ($keyword !== '') {
             $query->where(function ($q) use ($keyword) {
                 $q->where('name', 'like', '%' . $keyword . '%')
@@ -148,9 +156,9 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
                 // For public groups, do NOT exclude
             }
         }
-        $query->with(['members' => function ($q) {
-            $q->where('status','!=', 1)->where('is_delete', 0);
-        }]);
+        // $query->with(['members' => function ($q) {
+        //     $q->where('status','!=', 1)->where('is_delete', 0);
+        // }]);
         return $query->orderBy('id', 'desc')->paginate($perPage, ['*'], 'page', $page);
     }
 

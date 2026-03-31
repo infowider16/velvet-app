@@ -795,7 +795,7 @@ class MessageService
                         $query->orWhereIn('id', $memberGroupIds);
                     }
                 })
-                ->with(['members', 'creator'])
+                ->with(['creator'])
                 ->orderBy('id', 'desc')
                 ->paginate($perPage, ['*'], 'page', $page);
 
@@ -909,7 +909,6 @@ class MessageService
                 'message' => __('message.groups_fetched_successfully')
             ];
         } catch (Exception $e) {
-            dd($e);
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
             throw new Exception(__('message.search_groups_failed'));
         }
