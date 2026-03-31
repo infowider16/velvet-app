@@ -901,7 +901,7 @@ class FriendshipService
     {
         try {
             $loginUser=getUser();
-            $blocked = $this->friendshipRepo->isBlocked($loginUser, $userId);
+            $blocked = $this->friendshipRepo->isBlocked($loginUser->id, $userId);
             return isset($blocked->id)?true:false;
         } catch (Exception $e) {
             throw new Exception(__('message.failed_to_fetch_blocked_status') . ': ' . $e->getMessage());
