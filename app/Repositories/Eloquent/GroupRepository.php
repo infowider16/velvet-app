@@ -120,13 +120,14 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
     {
         // $query = $this->model->with(['members', 'creator']);
         $query = $this->model
-        ->with(['creator']) // keep only if needed
-        ->withCount([
-            'members' => function ($q) {
-                $q->where('status', '!=', 1)
-                ->where('is_delete', 0);
-            }
-        ]);
+            ->with(['creator']) // keep only if needed
+            ->withCount([
+                'members' => function ($q) {
+                    $q->whereNotIn('status', [1, 2])
+                    ->where('is_delete', 0)
+                    ->where('role', 'member');
+                }
+            ]);
         if ($keyword !== '') {
             $query->where(function ($q) use ($keyword) {
                 $q->where('name', 'like', '%' . $keyword . '%')
