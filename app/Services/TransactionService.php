@@ -40,10 +40,9 @@ class TransactionService
             // Type specific validation & data preparation
             $plan = null;
             $swissNowFormatted = convertTimezone( Carbon::now(), null,  'Y-m-d H:i:s' );
-             $requestDatas['created_at'] = $swissNowFormatted;
+            $requestDatas['created_at'] = $swissNowFormatted;
             if ($type === 2) {
                 $startDateTime=$this->normalizeZurichDateTime($requestDatas['start_time'] ?? null);
-                
                 $requestDatas['start_time'] = $swissNowFormatted;
                 
                 $plan = $this->getGhostPlanOrFail((int) $requestDatas['plan_id']);
@@ -236,9 +235,8 @@ class TransactionService
     private function updateUserAfterTransaction($transaction): void
     {
         $type = (int) $transaction->type;
-
         $updateData = match ($type) {
-            2 => ['ghost' => $transaction->id,'gost_expire'=>$transaction->end_time],
+            2 => ['ghost' => $transaction->id,'gost_expire'=>$transaction->end_time,'last_seen_at'=>null],
             1 => ['boost' => $transaction->id, 'boost_count' => (int) $transaction->boost_count],
             0 => ['pin_transaction_id' => $transaction->id,'pin_count' => (int) $transaction->pin_count],
             default => [],
@@ -266,9 +264,9 @@ class TransactionService
         list($amount, $unit) = explode('_', $duration);
         $amount = (int) $amount;
 
-        if ($unit === 'hours') {
+        if ($unit === 'hours' || $unit == 'stunden') {
             return $startDate->addHours($amount)->toDateTimeString();
-        } elseif ($unit === 'days') {
+        } elseif ($unit === 'days' || $unit == 'tage') {
             return $startDate->addDays($amount)->toDateTimeString();
         }
 

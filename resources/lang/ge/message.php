@@ -5,7 +5,7 @@
 return [
 
     'validation_error' => 'Validierungsfehler',
-    'accepted_your_friend_request' => 'hat Ihre Freundschaftsanfrage akzeptiert.',
+    'accepted_your_friend_request' => 'hat deine Freundschaftsanfrage akzeptiert.',
 
     'account_blocked_contact_admin' => 'Ihr Konto wurde gesperrt. Bitte kontaktieren Sie den Administrator.',
 
@@ -29,7 +29,7 @@ return [
 
     'already_reported_pin' => 'Sie haben diesen Pin bereits gemeldet.',
 
-    'already_reported_user' => 'Sie haben diesen Benutzer bereits gemeldet.',
+    'already_reported_user' => 'Du hast diesen Nutzer bereits gemeldet.',
 
     'authentication_check_failed' => 'Authentifizierungsprüfung fehlgeschlagen.',
 
@@ -439,7 +439,7 @@ return [
 
     'otp_login_registration' => 'Ihr OTP für Login/Registrierung lautet :otp. Er ist 10 Minuten gültig. Teilen Sie diesen Code mit niemandem.',
 
-    'otp_sent_to_phone' => 'Der OTP-Code wurde an Ihre Telefonnummer gesendet.',
+    'otp_sent_to_phone' => 'Der OTP-Code wurde an deine Telefonnummer gesendet.',
 
     'password_reset_email_content' => 'Inhalt der E-Mail zum Zurücksetzen des Passworts.',
 

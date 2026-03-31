@@ -30,3 +30,4 @@ Homestead.json
 auth.json
 config/*.json
 config/velvet-app-3b075-service-account.json
+backup.zip

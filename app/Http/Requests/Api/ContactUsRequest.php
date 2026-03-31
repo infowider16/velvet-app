@@ -16,7 +16,7 @@ class ContactUsRequest extends BaseApiRequest
             'email'   => 'required|email|max:255',
             'message' => 'required|string|max:2000',
             'subject' => 'nullable|string|max:255',
-            'image'   => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image'   => 'nullable|string|max:255',
         ];
     }
 }
