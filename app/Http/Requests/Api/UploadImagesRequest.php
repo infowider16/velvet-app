@@ -16,7 +16,7 @@ class UploadImagesRequest extends BaseApiRequest
     {
         return [
             'images'   => 'required|array|min:1',
-            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
         ];
     }
 

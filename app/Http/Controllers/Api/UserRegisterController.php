@@ -139,21 +139,12 @@ class UserRegisterController extends BaseController
     }
 
     public function uploadImage(Request $request)
-
     {
-
         try {
-
-
             $result = $this->userRegisterService->uploadSingleImage($request->file('image'));
-
-
-
             return $this->sendResponse($result, __('message.image_uploaded_successfully'));
         } catch (Exception $e) {
-
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
-
             return $this->sendError($e->getMessage(), [], 500);
         }
     }
