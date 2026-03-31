@@ -124,8 +124,7 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
             ->withCount([
                 'members' => function ($q) {
                     $q->whereNotIn('status', [1, 2])
-                    ->where('is_delete', 0)
-                    ->where('role', 'member');
+                    ->where('is_delete', 0);
                 }
             ]);
         if ($keyword !== '') {
