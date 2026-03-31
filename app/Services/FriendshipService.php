@@ -155,109 +155,6 @@ class FriendshipService
             throw new Exception(__('message.failed_to_send_friend_request'));
         }
     }
-
-    // public function acceptFriendRequest($userId, $friendId)
-    // {
-    //     try {
-    //         // dd($userId,$friendId);
-
-    //         // Find the pending request
-    //         $friendship = $this->friendshipRepo->getOneData([
-    //             ['user_id', '=', $friendId],
-    //             ['friend_id', '=', $userId],
-    //             ['status', '=', 'pending']
-    //         ]);
-
-    //         if (!$friendship) {
-    //             throw new Exception(__('message.friend_request_not_found_or_already_processed'));
-    //         }
-
-    //         // Update status to accepted
-    //         $updated = $this->friendshipRepo->update(
-    //             ['id' => $friendship->id],
-    //             ['status' => 'accepted']
-    //         );
-
-    //         if (!$updated) {
-    //             throw new Exception(__('message.failed_to_accept_friend_request'));
-    //         }
-
-    //         $receiver = $this->userRepo->find($userId);
-    //         $sender = $this->userRepo->find($friendId);
-
-    //         $titleEn = __('message.friend_request_accepted', [], 'en');
-    //         $titleGe = __('message.friend_request_accepted', [], 'ge');
-
-    //         $bodyEn = $receiver
-    //             ? ($receiver->name . ' ' . __('message.accepted_your_friend_request', [], 'en'))
-    //             : __('message.your_friend_request_was_accepted', [], 'en');
-
-    //         $bodyGe = $receiver
-    //             ? ($receiver->name . ' ' . __('message.accepted_your_friend_request', [], 'ge'))
-    //             : __('message.your_friend_request_was_accepted', [], 'ge');
-
-    //         $title = $titleEn;
-    //         $body = $bodyEn;
-
-    //         $titleTranslation = [
-    //             'en' => $titleEn,
-    //             'ge' => $titleGe,
-    //         ];
-
-    //         $bodyTranslation = [
-    //             'en' => $bodyEn,
-    //             'ge' => $bodyGe,
-    //         ];
-
-    //         $other = [
-    //             'type' => 'friend_request_accepted',
-    //             'user_id' => $userId,
-    //             'screen_name' => 'user_profile'
-    //         ];
-
-    //         $this->messageRepository->getNotificationStatus($userId, $friendId);
-
-    //         // Send notification to $friendId (original sender)
-    //         try {
-    //             $this->userRepo->createMobileNotification(
-    //                 $userId,
-    //                 $friendId,
-    //                 $title,
-    //                 $body,
-    //                 $other,
-    //                 $titleTranslation,
-    //                 $bodyTranslation
-    //             );
-    //         } catch (\Throwable $e) {
-    //             \Log::error('Error in createMobileNotification (acceptFriendRequest): ' . $e->getMessage());
-    //         }
-    //         try {
-    //             if (function_exists('sendPushNotification') && $sender && !empty($sender->device_token)) {
-    //                 sendPushNotification([$sender->device_token], $title, $body, $other, [$receiver->id], 'friend_requests');
-    //             }
-    //         } catch (\Throwable $e) {
-    //             \Log::error('Error in sendPushNotification (acceptFriendRequest): ' . $e->getMessage());
-    //         }
-
-    //         // // Create reverse friendship for bidirectional relationship
-    //         // $this->friendshipRepo->create([
-    //         //     'user_id' => $userId,
-    //         //     'friend_id' => $friendId,
-    //         //     'status' => 'accepted'
-    //         // ]);
-
-    //         return [
-    //             'data' => [
-    //                 'friendship_id' => $friendship->id,
-    //                 'status' => 'accepted'
-    //             ],
-    //             'message' => __('message.friend_request_accepted_successfully')
-    //         ];
-    //     } catch (Exception $e) {
-    //         \Log::error(__('message.failed_to_accept_friend_request') . $e->getMessage());
-    //         throw new Exception(__('message.failed_to_accept_friend_request'));
-    //     }
-    // }
     
     public function acceptFriendRequest($userId, $friendId)
     {
@@ -998,6 +895,16 @@ class FriendshipService
             ];
         } catch (Exception $e) {
             throw new Exception(__('message.failed_to_fetch_notifications') . ': ' . $e->getMessage());
+        }
+    }
+    public function checkUserBlocked($userId)
+    {
+        try {
+            $loginUser=getUser();
+            $blocked = $this->friendshipRepo->isBlocked($loginUser, $userId);
+            return isset($blocked->id)?true:false;
+        } catch (Exception $e) {
+            throw new Exception(__('message.failed_to_fetch_blocked_status') . ': ' . $e->getMessage());
         }
     }
 }

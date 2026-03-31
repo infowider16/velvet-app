@@ -174,6 +174,16 @@ class FriendshipController extends BaseController
         }
     }
 
+    public function checkUserBlocked($id): JsonResponse
+    {
+        try {
+            $result = $this->friendshipService->checkUserBlocked($id);
+            return $this->sendResponse($result, "");
+        } catch (Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
     public function notification(Request $request): JsonResponse
     {
         try {

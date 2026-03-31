@@ -73,6 +73,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('block-user', [FriendshipController::class, 'blockUser']);
     Route::post('unblock-user', [FriendshipController::class, 'unblockUser']);
     Route::get('blocked-users', [FriendshipController::class, 'blockedUsersList']);
+    Route::get('block-status/{id}', [FriendshipController::class, 'checkUserBlocked']);
 
     Route::get('home', [HomeController::class, 'getHomeUsers']);
     // Map API with distance filtering
