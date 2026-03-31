@@ -1,0 +1,21 @@
+name: Auto Pull & Migrate
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Pull latest code
+        run: |
+          cd /home/velvetapp/public_html
+          git pull origin main
+
+      - name: Run migrations
+        run: |
+          cd /home/velvetapp/public_html
+          php artisan migrate --force
