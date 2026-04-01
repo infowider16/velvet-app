@@ -539,12 +539,12 @@ class FriendshipService
             }
 
             // --- Block in all groups where blockedUserId is a member (status != 2) ---
-            if (property_exists($this, 'groupRepo') && $this->groupRepo) {
-                $this->groupRepo->groupMemberModel
-                    ->where('user_id', $blockedUserId)
-                    ->where('status', '!=', 2) // not left
-                    ->update(['status' => 1]); // 1 = blocked
-            }
+            // if (property_exists($this, 'groupRepo') && $this->groupRepo) {
+            //     $this->groupRepo->groupMemberModel
+            //         ->where('user_id', $blockedUserId)
+            //         ->where('status', '!=', 2) // not left
+            //         ->update(['status' => 1]); // 1 = blocked
+            // }
             $this->messageRepository->deleteChat($userId, $blockedUserId);
             // --- END group block logic ---
 
