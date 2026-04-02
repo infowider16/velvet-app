@@ -495,7 +495,13 @@ class MessageService
                         $last_seen_at = $otherUser->last_seen_at;
                     }
                 }
-                $blockData=Block::where(['blocker_id'=>$userId,'blocked_id'=>$otherUser->id])->orWhere(['blocker_id'=>$otherUser->id,'blocked_id'=>$userId])->first();
+                $blockData = Block::where(function ($q) use ($userId, $otherUser) {
+                    $q->where('blocker_id', $userId)
+                      ->where('blocked_id', $otherUser->id);
+                })->orWhere(function ($q) use ($userId, $otherUser) {
+                    $q->where('blocker_id', $otherUser->id)
+                      ->where('blocked_id', $userId);
+                })->first();
                 if(isset($blockData->id)){
                     continue; // Skip this user if there is a block relationship
                 }
