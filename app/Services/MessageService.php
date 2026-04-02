@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Block;
 use App\Repositories\Eloquent\MessageRepository;
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\GroupRepository;
@@ -494,7 +495,10 @@ class MessageService
                         $last_seen_at = $otherUser->last_seen_at;
                     }
                 }
-
+                $blockData=Block::where(['blocker_id'=>$userId,'blocked_id'=>$otherUser->id])->orWhere(['blocker_id'=>$otherUser->id,'blocked_id'=>$userId])->first();
+                if(isset($blockData->id)){
+                    continue; // Skip this user if there is a block relationship
+                }
                 $usersWithDetails[] = [
                     'id' => $otherUser->id,
                     'name' => $otherUser->name,
