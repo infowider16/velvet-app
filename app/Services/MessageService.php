@@ -202,15 +202,34 @@ class MessageService
 
             // Fetch all messages in both directions (no pagination here)
             $allMessages1 = $this->messageRepo->getByWhere(
-                $where,
+                function ($query) use ($userId, $otherUserId) {
+                    $query->where('sender_id', $userId)
+                        ->where('receiver_id', $otherUserId)
+                        ->where(function ($q) {
+                            $q->whereNotNull('message_text')
+                                ->orWhereNotNull('media_url')
+                                ->orWhereNotNull('document_url')
+                                ->orWhereNotNull('link_url');
+                        });
+                },
                 ['created_at' => 'desc'],
                 ['*'],
                 ['sender', 'receiver'],
                 [],
                 'get'
             );
+            
             $allMessages2 = $this->messageRepo->getByWhere(
-                $whereReverse,
+                function ($query) use ($userId, $otherUserId) {
+                    $query->where('sender_id', $otherUserId)
+                        ->where('receiver_id', $userId)
+                        ->where(function ($q) {
+                            $q->whereNotNull('message_text')
+                                ->orWhereNotNull('media_url')
+                                ->orWhereNotNull('document_url')
+                                ->orWhereNotNull('link_url');
+                        });
+                },
                 ['created_at' => 'desc'],
                 ['*'],
                 ['sender', 'receiver'],
@@ -1417,6 +1436,7 @@ class MessageService
                 if($userObj->is_delete==1){
                     continue;
                 }
+               
                 $members[] = [
                     'id' => $userObj ? $userObj->id : null,
                     'name' => $userObj ? $userObj->name : null,
@@ -1425,6 +1445,7 @@ class MessageService
                     'status' => $member->status,
                     'group_status' => $member->group_status,
                     'is_member_permission' => $member->is_member_permission ?? true,
+                    'is_delete' => $userObj->is_delete ?? 0
                 ];
             }
 
@@ -1539,6 +1560,7 @@ class MessageService
                     'id' => $group->creator->id,
                     'name' => $group->creator->name,
                     'images' => getImagesArray($group->creator->images),
+                    'is_delete' => $group->creator->is_delete ?? 0
                 ] : null,
                 'members' => $members,
                 'request_user_list' => $request_user_list,
