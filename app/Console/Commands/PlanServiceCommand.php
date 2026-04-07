@@ -78,8 +78,10 @@ class PlanServiceCommand extends Command
         $expiredUserIds = BoostHistory::query()
             ->whereIn('transaction_id', $boostTransactionIds)
             ->where('end_date_time', '<', $nowSwiss)
+            ->orderByDesc('id') // ✅ apply before pluck
             ->pluck('user_id')
-            ->unique();
+            ->unique()
+            ->values();
         
         Log::info('Retrieved expired user IDs', [
             'count' => $expiredUserIds->count(),
