@@ -1004,28 +1004,11 @@ class UserRegisterService implements UserRegisterServiceInterface
 
             ], 4);
 
-
-
-
-
-
-
             return [
-
-
-
                 'user_id' => $user->id,
-
-
-
+                'is_delete' => $user->is_delete ?? 0,
                 'location_consent' => $user->location_consent,
-
-
-
                 'is_active' => $user->is_active
-
-
-
             ];
 
         } catch (Exception $e) {
@@ -1085,6 +1068,8 @@ class UserRegisterService implements UserRegisterServiceInterface
 
 
                 'user_id' => $user->id,
+
+                'is_delete' => $user->is_delete ?? 0,
 
 
 

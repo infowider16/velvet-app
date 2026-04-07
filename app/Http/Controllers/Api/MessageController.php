@@ -100,12 +100,13 @@ class MessageController extends BaseController
     public function sentMessageUsers(Request $request): JsonResponse
     {
         try {
+         
             $user = $this->getAuthenticatedUserOrError($request);
-
+ 
             if ($user instanceof JsonResponse) {
                 return $user;
             }
-
+          
             $result = $this->messageService->getSentMessageUsers($user->id, $request->all());
 
             return $this->sendResponse($result['data'], $result['message']);

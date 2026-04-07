@@ -240,6 +240,7 @@ class MessageService
                     'name' => $profile['name'],
                     'images' => $profile['images'],
                     'last_seen_at' => $profile['last_seen_at'] ?? null,
+                    'is_delete'=>$profile['is_delete'] ?? 0,
                 ];
             }
 
@@ -320,6 +321,7 @@ class MessageService
     // Refactored to accept $currentUserId and match FriendshipService
     private function processUserData($user, $currentUserId)
     {
+       
         $age = $user->date_of_birth ? \Carbon\Carbon::parse($user->date_of_birth)->age : null;
 
         $images = [];
@@ -343,13 +345,15 @@ class MessageService
             'lat' => (float) $user->lat,
             'lng' => (float) $user->lng,
             'gender' => $user->gender,
-            'last_seen_at' => $user->last_seen_at, // already formatted by accessor
+            'last_seen_at' => $user->last_seen_at, 
+            'is_delete'=>$user->is_delete ?? 0,
         ];
     }
 
     public function getSentMessageUsers($userId, $request)
     {
         try {
+            
             $perPage = $request['per_page'] ?? 20;
             $page = $request['page'] ?? 1;
 
