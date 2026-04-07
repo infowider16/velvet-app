@@ -79,7 +79,7 @@ class PlanServiceCommand extends Command
             ->whereIn('transaction_id', $boostTransactionIds)
             ->whereIn('id', function ($query) {
                 $query->selectRaw('MAX(id)')
-                    ->from('boost_histories')
+                    ->from('boost_history')
                     ->groupBy('transaction_id');
             })
             ->where('end_date_time', '<', $nowSwiss)
