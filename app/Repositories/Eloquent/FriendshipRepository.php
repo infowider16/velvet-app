@@ -44,7 +44,7 @@ class FriendshipRepository extends BaseRepository implements FriendshipRepositor
         try {
             return $this->blockmodel->where('blocker_id', $userId)
                 ->with(['blocked' => function($query) {
-                    $query->select('id', 'name', 'images', 'date_of_birth', 'gender', 'location', 'lat', 'lng');
+                    $query->select('id', 'name', 'images', 'date_of_birth', 'gender', 'location', 'lat', 'lng','is_delete');
                 }])
                 ->orderBy('id', 'desc')
                 ->paginate($perPage, ['*'], 'page', $page);

@@ -149,7 +149,9 @@ class PinMarkService
     public function fetchPinMarks(array $filters = [])
     {
         try {
+
             $marks = $this->pinMarkRepo->fetch($filters);
+           
             $items = method_exists($marks, 'getCollection')
                 ? $marks->getCollection()
                 : collect($marks);
