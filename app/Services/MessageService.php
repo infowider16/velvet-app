@@ -218,7 +218,7 @@ class MessageService
                 [],
                 'get'
             );
-            
+
             $allMessages2 = $this->messageRepo->getByWhere(
                 function ($query) use ($userId, $otherUserId) {
                     $query->where('sender_id', $otherUserId)
@@ -1361,6 +1361,7 @@ class MessageService
                 'role' => $member->role,
                 'status' => $member->status,
                 'is_member_permission' => $member->is_member_permission ?? true,
+                'is_delete' => $user->is_delete ?? 0
             ];
         }
         return $result;
@@ -1685,6 +1686,7 @@ class MessageService
                     'status' => $member->status,
                     'is_member_permission' => $member->is_member_permission ?? true,
                     'group_status' => $member->group_status ?? null,
+                    'is_delete' => $userObj->is_delete ?? 0
                 ];
             }
             $request_user_list_raw = $this->groupRepo->getRequestedGroupsByUser($groupId);
@@ -1700,6 +1702,7 @@ class MessageService
                         'status' => $member->status,
                         'group_status' => $member->group_status,
                         'is_member_permission' => $member->is_member_permission ?? true,
+                        'is_delete' => $user->is_delete ?? 0
                     ];
                 }
             }
@@ -1717,6 +1720,7 @@ class MessageService
                     'id' => $group->creator->id,
                     'name' => $group->creator->name,
                     'images' => getImagesArray($group->creator->images),
+                    'is_delete' => $group->creator->is_delete ?? 0
                 ] : null,
                 'members' => $members,
                 'request_user_list' => $request_user_list,
