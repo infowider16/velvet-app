@@ -20,14 +20,24 @@ class FriendshipRepository extends BaseRepository implements FriendshipRepositor
     public function isBlocked($blockerId, $blockedId)
     {
         try {
-            return $this->blockmodel->where('blocker_id', $blockerId)
-                ->where('blocked_id', $blockedId)
-                ->first();
+           
+            return $this->blockmodel
+            ->where(function ($q) use ($blockerId, $blockedId) {
+                $q->where('blocker_id', $blockerId)
+                ->where('blocked_id', $blockedId);
+            })
+            ->orWhere(function ($q) use ($blockerId, $blockedId) {
+                $q->where('blocker_id', $blockedId)
+                ->where('blocked_id', $blockerId);
+            })
+            ->first();
+            
         } catch (\Exception $e) {
             $this->logError(__FUNCTION__, $e);
             return null;
         }
     }
+
 
     public function createBlock(array $data)
     {
