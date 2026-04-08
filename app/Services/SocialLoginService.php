@@ -93,6 +93,8 @@ class SocialLoginService implements SocialLoginServiceInterface
 
             $user->is_profile_completed = ((int)$user->is_active >= 7);
 
+            $user->booster_expire_time = checkBoosterActive($user->id)['booster_expire_time'];
+
             return [
 
                 'token' => $token,
