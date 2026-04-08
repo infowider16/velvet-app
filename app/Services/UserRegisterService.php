@@ -448,6 +448,8 @@ class UserRegisterService implements UserRegisterServiceInterface
 
                     'user_id' => $user->id,
 
+                    'booster_expire_time' => checkBoosterActive($user->id)['booster_expire_time'],
+
                     'is_active' => $user->is_active,
 
                     'expired_at' => $expiredAt,
@@ -675,9 +677,6 @@ class UserRegisterService implements UserRegisterServiceInterface
             $userInfo['transactions'] = $user->transactions ?? null;
 
             $userInfo['booster_expire_time'] = checkBoosterActive($user->id)['booster_expire_time'];
-
-
-
 
 
             return [
