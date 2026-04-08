@@ -80,7 +80,7 @@ class SocialLoginService implements SocialLoginServiceInterface
 
 
             // Check if user is blocked by admin
-
+            
             if ($user->is_approve == 1) {
 
                 throw new \Exception(__('message.account_blocked_contact_admin'));

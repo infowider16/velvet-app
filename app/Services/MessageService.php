@@ -218,7 +218,7 @@ class MessageService
                 [],
                 'get'
             );
-            
+
             $allMessages2 = $this->messageRepo->getByWhere(
                 function ($query) use ($userId, $otherUserId) {
                     $query->where('sender_id', $otherUserId)
@@ -389,6 +389,7 @@ class MessageService
                 'get'
             );
 
+ 
             // Fetch messages where user is receiver
             $receivedMessages = $this->messageRepo->getByWhere(
                 [
@@ -402,6 +403,7 @@ class MessageService
                 'get'
             );
 
+          
             // Collect unique users from both sent and received messages
             $uniqueUsers = [];
             $latestMessageTimes = [];
@@ -432,6 +434,7 @@ class MessageService
                 return strtotime($latestMessageTimes[$b->id]) <=> strtotime($latestMessageTimes[$a->id]);
             });
             $uniqueUsers = array_values($uniqueUsers);
+         
 
             // Pagination for unique users
             $total = count($uniqueUsers);
@@ -445,11 +448,17 @@ class MessageService
                 
                 // Unread message count (messages sent by this user to current user, unread)
                 $unreadCount = $this->messageRepo->getByWhere(
-                    [
-                        ['sender_id', '=', $otherUser->id],
-                        ['receiver_id', '=', $userId],
-                        ['read_at', '=', null]
-                    ],
+                    function ($query) use ($otherUser, $userId) {
+                        $query->where('sender_id', $otherUser->id)
+                            ->where('receiver_id', $userId)
+                            ->whereNull('read_at')
+                            ->where(function ($q) {
+                                $q->whereNotNull('message_text')
+                                ->orWhereNotNull('media_url')
+                                ->orWhereNotNull('document_url')
+                                ->orWhereNotNull('link_url');
+                            });
+                    },
                     [],
                     ['*'],
                     [],
@@ -1361,6 +1370,7 @@ class MessageService
                 'role' => $member->role,
                 'status' => $member->status,
                 'is_member_permission' => $member->is_member_permission ?? true,
+                'is_delete' => $user->is_delete ?? 0
             ];
         }
         return $result;
@@ -1685,6 +1695,7 @@ class MessageService
                     'status' => $member->status,
                     'is_member_permission' => $member->is_member_permission ?? true,
                     'group_status' => $member->group_status ?? null,
+                    'is_delete' => $userObj->is_delete ?? 0
                 ];
             }
             $request_user_list_raw = $this->groupRepo->getRequestedGroupsByUser($groupId);
@@ -1700,6 +1711,7 @@ class MessageService
                         'status' => $member->status,
                         'group_status' => $member->group_status,
                         'is_member_permission' => $member->is_member_permission ?? true,
+                        'is_delete' => $user->is_delete ?? 0
                     ];
                 }
             }
@@ -1717,6 +1729,7 @@ class MessageService
                     'id' => $group->creator->id,
                     'name' => $group->creator->name,
                     'images' => getImagesArray($group->creator->images),
+                    'is_delete' => $group->creator->is_delete ?? 0
                 ] : null,
                 'members' => $members,
                 'request_user_list' => $request_user_list,
@@ -1869,6 +1882,7 @@ class MessageService
                     'id' => $userObj ? $userObj->id : null,
                     'name' => $userObj ? $userObj->name : null,
                     'images' => $userObj ? getImagesArray($userObj->images) : [],
+                    'is_delete' => $userObj->is_delete ?? 0,
                     'role' => $member->role,
                     'status' => $member->status,
                     'is_member_permission' => $member->is_member_permission ?? true,
@@ -1905,6 +1919,7 @@ class MessageService
                     'id' => $group->creator->id,
                     'name' => $group->creator->name,
                     'images' => getImagesArray($group->creator->images),
+                    'is_delete' => $group->creator->is_delete ?? 0
                 ] : null,
 
                 'members' => $members,
@@ -2071,6 +2086,7 @@ class MessageService
                 ];
             }
             $checkExistingReport=$this->groupRepo->whereData(['user_id'=>$toUserId,'reported_by'=>$userId])->exists();
+         
             // Use repository to check for duplicate report
             if ($checkExistingReport) {
                 return [
