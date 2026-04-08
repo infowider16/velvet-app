@@ -943,7 +943,7 @@ class FriendshipService
             $loginUser=getUser();
             $userId= intval($userId);
 
-            $blocked = $this->friendshipRepo->isBlocked($loginUser->id, $userId);
+            $blocked = $this->friendshipRepo->checkBlockedEachOther($loginUser->id, $userId);
 
             return isset($blocked->id)?true:false;
         } catch (Exception $e) {

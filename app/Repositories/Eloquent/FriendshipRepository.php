@@ -17,7 +17,19 @@ class FriendshipRepository extends BaseRepository implements FriendshipRepositor
         parent::__construct($model);
     }
 
-    public function isBlocked($blockerId, $blockedId)
+        public function isBlocked($blockerId, $blockedId)
+    {
+        try {
+            return $this->blockmodel->where('blocker_id', $blockerId)
+                ->where('blocked_id', $blockedId)
+                ->first();
+        } catch (\Exception $e) {
+            $this->logError(__FUNCTION__, $e);
+            return null;
+        }
+    }
+
+        public function checkBlockedEachOther($blockerId, $blockedId)
     {
         try {
            
