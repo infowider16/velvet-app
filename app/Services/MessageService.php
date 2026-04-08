@@ -389,6 +389,7 @@ class MessageService
                 'get'
             );
 
+ 
             // Fetch messages where user is receiver
             $receivedMessages = $this->messageRepo->getByWhere(
                 [
@@ -402,6 +403,7 @@ class MessageService
                 'get'
             );
 
+          
             // Collect unique users from both sent and received messages
             $uniqueUsers = [];
             $latestMessageTimes = [];
@@ -432,6 +434,7 @@ class MessageService
                 return strtotime($latestMessageTimes[$b->id]) <=> strtotime($latestMessageTimes[$a->id]);
             });
             $uniqueUsers = array_values($uniqueUsers);
+         
 
             // Pagination for unique users
             $total = count($uniqueUsers);
@@ -445,11 +448,17 @@ class MessageService
                 
                 // Unread message count (messages sent by this user to current user, unread)
                 $unreadCount = $this->messageRepo->getByWhere(
-                    [
-                        ['sender_id', '=', $otherUser->id],
-                        ['receiver_id', '=', $userId],
-                        ['read_at', '=', null]
-                    ],
+                    function ($query) use ($otherUser, $userId) {
+                        $query->where('sender_id', $otherUser->id)
+                            ->where('receiver_id', $userId)
+                            ->whereNull('read_at')
+                            ->where(function ($q) {
+                                $q->whereNotNull('message_text')
+                                ->orWhereNotNull('media_url')
+                                ->orWhereNotNull('document_url')
+                                ->orWhereNotNull('link_url');
+                            });
+                    },
                     [],
                     ['*'],
                     [],
@@ -1873,6 +1882,7 @@ class MessageService
                     'id' => $userObj ? $userObj->id : null,
                     'name' => $userObj ? $userObj->name : null,
                     'images' => $userObj ? getImagesArray($userObj->images) : [],
+                    'is_delete' => $userObj->is_delete ?? 0,
                     'role' => $member->role,
                     'status' => $member->status,
                     'is_member_permission' => $member->is_member_permission ?? true,
@@ -1909,6 +1919,7 @@ class MessageService
                     'id' => $group->creator->id,
                     'name' => $group->creator->name,
                     'images' => getImagesArray($group->creator->images),
+                    'is_delete' => $group->creator->is_delete ?? 0
                 ] : null,
 
                 'members' => $members,
@@ -2075,6 +2086,7 @@ class MessageService
                 ];
             }
             $checkExistingReport=$this->groupRepo->whereData(['user_id'=>$toUserId,'reported_by'=>$userId])->exists();
+         
             // Use repository to check for duplicate report
             if ($checkExistingReport) {
                 return [

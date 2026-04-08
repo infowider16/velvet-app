@@ -135,7 +135,8 @@ class BoosterService
             $nowSwiss = $this->nowSwiss();
 
             $activeHistory = $this->boostRepository->findActiveBoostHistory($userId, $nowSwiss);
-
+            $user = $this->userRepo->find($userId);
+          
             $remainingTime = null;
 
             if ($activeHistory && !empty($activeHistory->end_date_time)) {
@@ -150,11 +151,12 @@ class BoosterService
             }
 
             return [
-                'user_id'   => $userId,
+                'user_id'   => $user->id,
                 'timezone'  => 'Europe/Zurich',
                 'now'       => $nowSwiss->toDateTimeString(),
                 'is_active' => (bool) $activeHistory,
-                'remaining' => $remainingTime, // mm:ss
+                'is_delete' => $user->is_delete ?? 0,
+                'remaining' => $remainingTime,
                 'data'      => $activeHistory ? [
                     'id'              => $activeHistory->id,
                     'transaction_id'  => $activeHistory->transaction_id,
