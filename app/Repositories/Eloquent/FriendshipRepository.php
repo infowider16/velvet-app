@@ -17,7 +17,7 @@ class FriendshipRepository extends BaseRepository implements FriendshipRepositor
         parent::__construct($model);
     }
 
-    public function isBlocked($blockerId, $blockedId)
+        public function isBlocked($blockerId, $blockedId)
     {
         try {
             return $this->blockmodel->where('blocker_id', $blockerId)
@@ -28,6 +28,28 @@ class FriendshipRepository extends BaseRepository implements FriendshipRepositor
             return null;
         }
     }
+
+        public function checkBlockedEachOther($blockerId, $blockedId)
+    {
+        try {
+           
+            return $this->blockmodel
+            ->where(function ($q) use ($blockerId, $blockedId) {
+                $q->where('blocker_id', $blockerId)
+                ->where('blocked_id', $blockedId);
+            })
+            ->orWhere(function ($q) use ($blockerId, $blockedId) {
+                $q->where('blocker_id', $blockedId)
+                ->where('blocked_id', $blockerId);
+            })
+            ->first();
+            
+        } catch (\Exception $e) {
+            $this->logError(__FUNCTION__, $e);
+            return null;
+        }
+    }
+
 
     public function createBlock(array $data)
     {

@@ -185,6 +185,7 @@ class MessageService
     public function getMessages($userId, $otherUserId, $request)
     {
         try {
+
             $perPage = (int) ($request['per_page'] ?? 20);
             $page = (int) ($request['page'] ?? 1);
 
