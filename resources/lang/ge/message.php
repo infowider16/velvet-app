@@ -7,15 +7,15 @@ return [
     'validation_error' => 'Validierungsfehler',
     'accepted_your_friend_request' => 'hat deine Freundschaftsanfrage akzeptiert.',
 
-    'account_blocked_contact_admin' => 'Ihr Konto wurde gesperrt. Bitte kontaktieren Sie den Administrator.',
+    'account_blocked_contact_admin' => 'Ihr Konto wurde gesperrt. Bitte kontaktieren du den Administrator.',
 
-    'account_rejected_message' => 'Wir bedauern, Ihnen mitteilen zu müssen, dass Ihr Konto abgelehnt wurde. Bitte kontaktieren Sie den Support für weitere Informationen.',
+    'account_rejected_message' => 'Wir bedauern, dir mitteilen zu müssen, dass Ihr Konto abgelehnt wurde. Bitte kontaktieren du den Support für weitere Informationen.',
 
     'add_member_failed' => 'Mitglied konnte nicht zur Gruppe hinzugefügt werden.',
 
     'admin_cannot_block_self' => 'Der Administrator kann sich nicht selbst blockieren oder entsperren.',
 
-    'admin_cannot_leave_group' => 'Der Administrator kann die Gruppe nicht verlassen. Bitte weisen Sie vorher einen anderen Administrator zu.',
+    'admin_cannot_leave_group' => 'Der Administrator kann die Gruppe nicht verlassen. Bitte weisen du vorher einen anderen Administrator zu.',
 
     'admin_cannot_remove_self' => 'Der Administrator kann sich nicht selbst aus der Gruppe entfernen.',
 
@@ -27,7 +27,7 @@ return [
 
     'already_reported_group' => 'Du hast diese Gruppe bereits gemeldet.',
 
-    'already_reported_pin' => 'Sie haben diesen Pin bereits gemeldet.',
+    'already_reported_pin' => 'du haben diesen Pin bereits gemeldet.',
 
     'already_reported_user' => 'Du hast diesen Nutzer bereits gemeldet.',
 
@@ -49,7 +49,7 @@ return [
 
     'booster_deactivated_successfully' => 'Booster erfolgreich deaktiviert.',
 
-    'cannot_rejoin_private_group' => 'Sie können dieser privaten Gruppe nicht erneut beitreten. Nur ein Administrator kann Sie erneut einladen.',
+    'cannot_rejoin_private_group' => 'du können dieser privaten Gruppe nicht erneut beitreten. Nur ein Administrator kann du erneut einladen.',
 
     'chat_history_failed' => 'Chatverlauf konnte nicht abgerufen werden.',
 
@@ -71,7 +71,7 @@ return [
 
     'data' => 'Daten',
 
-    'database_error_updating_group' => 'Beim Aktualisieren der Gruppe ist ein Datenbankfehler aufgetreten.',
+    'database_error_updating_group' => 'Beim Aktualiduren der Gruppe ist ein Datenbankfehler aufgetreten.',
 
     'delete_all_admin_group_messages_failed' => 'Alle Gruppennachrichten konnten nicht gelöscht werden.',
 
@@ -83,7 +83,7 @@ return [
 
     'delete_message_failed' => 'Nachricht konnte nicht gelöscht werden.',
 
-    'delete_only_own_message' => 'Sie können nur Ihre eigenen Nachrichten löschen.',
+    'delete_only_own_message' => 'du können nur deine eigenen Nachrichten löschen.',
 
     'device_token_stored_successfully' => 'Geräte-Token erfolgreich gespeichert.',
 
@@ -189,7 +189,7 @@ return [
 
     'failed_to_send_message' => 'Nachricht konnte nicht gesendet werden.',
 
-    'failed_to_send_otp' => 'OTP konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.',
+    'failed_to_send_otp' => 'OTP konnte nicht gesendet werden. Bitte versuchen du es später erneut.',
 
     'failed_to_submit_contact_message' => 'Kontaktnachricht konnte nicht übermittelt werden.',
 
@@ -197,15 +197,15 @@ return [
 
     'failed_to_unblock_user' => 'Benutzer konnte nicht entsperrt werden.',
 
-    'failed_to_update_group' => 'Gruppe konnte nicht aktualisiert werden.',
+    'failed_to_update_group' => 'Gruppe konnte nicht aktualidurt werden.',
 
-    'failed_to_update_group_member_status' => 'Status des Gruppenmitglieds konnte nicht aktualisiert werden.',
+    'failed_to_update_group_member_status' => 'Status des Gruppenmitglieds konnte nicht aktualidurt werden.',
 
-    'failed_to_update_member_permission' => 'Berechtigung für Mitglied konnte nicht aktualisiert werden.',
+    'failed_to_update_member_permission' => 'Berechtigung für Mitglied konnte nicht aktualidurt werden.',
 
-    'failed_to_update_permissions_for_all' => 'Berechtigungen für alle Mitglieder konnten nicht aktualisiert werden.',
+    'failed_to_update_permissions_for_all' => 'Berechtigungen für alle Mitglieder konnten nicht aktualidurt werden.',
 
-    'failed_to_update_user_data' => 'Benutzerdaten konnten nicht aktualisiert werden.',
+    'failed_to_update_user_data' => 'Benutzerdaten konnten nicht aktualidurt werden.',
 
     'fetch_group_conversations_failed' => 'Gruppenkonversationen konnten nicht abgerufen werden.',
 
@@ -215,7 +215,7 @@ return [
 
     'fetch_notification_status_failed' => 'Benachrichtigungsstatus konnte nicht abgerufen werden.',
 
-    'forgot_password_message' => 'Sie haben den Prozess zum Zurücksetzen des Passworts gestartet.',
+    'forgot_password_message' => 'du haben den Prozess zum Zurücksetzen des Passworts gestartet.',
 
     'forgot_password_subject' => 'Passwort vergessen',
 
@@ -281,13 +281,13 @@ return [
 
     'group_not_found' => 'Gruppe nicht gefunden.',
 
-    'group_permissions_updated' => 'Berechtigungen für alle Gruppenmitglieder erfolgreich aktualisiert.',
+    'group_permissions_updated' => 'Berechtigungen für alle Gruppenmitglieder erfolgreich aktualidurt.',
 
     'group_reason_report_type_required' => 'Gruppen-ID, Grund und Meldungstyp sind erforderlich.',
 
     'group_reported_successfully' => 'Gruppe erfolgreich gemeldet.',
 
-    'group_updated_successfully' => 'Gruppe erfolgreich aktualisiert.',
+    'group_updated_successfully' => 'Gruppe erfolgreich aktualidurt.',
 
     'group_user_action_required' => 'Gruppen-ID, Benutzer-ID und Aktion sind erforderlich.',
 
@@ -323,7 +323,7 @@ return [
 
     'invalid_otp_or_user_not_found' => 'Ungültiges OTP oder Benutzer nicht gefunden.',
 
-    'invalid_phone_number' => 'Ungültige Telefonnummer. Bitte geben Sie eine gültige Mobilnummer mit Ländervorwahl ein.',
+    'invalid_phone_number' => 'Ungültige Telefonnummer. Bitte geben du eine gültige Mobilnummer mit Ländervorwahl ein.',
 
     'invalid_type_parameter' => 'Ungültiger Typ-Parameter.',
 
@@ -355,9 +355,9 @@ return [
 
     'link_list_fetched' => 'Linkliste erfolgreich abgerufen.',
 
-    'location_consent_updated_successfully' => 'Standort-Einwilligung erfolgreich aktualisiert.',
+    'location_consent_updated_successfully' => 'Standort-Einwilligung erfolgreich aktualidurt.',
 
-    'location_updated_successfully' => 'Standort erfolgreich aktualisiert.',
+    'location_updated_successfully' => 'Standort erfolgreich aktualidurt.',
 
     'login_admin_panel' => 'Im Admin-Panel anmelden',
 
@@ -369,7 +369,7 @@ return [
 
     'member_permission_fetched' => 'Berechtigung für Gruppenmitglied erfolgreich abgerufen.',
 
-    'member_permission_updated' => 'Berechtigung für Gruppenmitglied erfolgreich aktualisiert.',
+    'member_permission_updated' => 'Berechtigung für Gruppenmitglied erfolgreich aktualidurt.',
 
     'member_removed_successfully' => 'Mitglied erfolgreich aus der Gruppe entfernt.',
 
@@ -395,9 +395,9 @@ return [
 
     'new_message_title' => 'Neue Nachricht',
 
-    'no_access_private_group' => 'Sie haben keinen Zugriff auf diese private Gruppe.',
+    'no_access_private_group' => 'du haben keinen Zugriff auf diese private Gruppe.',
 
-    'no_chat_found_for_notification' => 'Kein Chat zum Aktualisieren des Benachrichtigungsstatus gefunden.',
+    'no_chat_found_for_notification' => 'Kein Chat zum Aktualiduren des Benachrichtigungsstatus gefunden.',
 
     'no_new_members_added' => 'Keine neuen Mitglieder wurden hinzugefügt. Alle Benutzer sind bereits Mitglieder.',
 
@@ -405,13 +405,13 @@ return [
 
     'no_subinterests_available_for_the_selected_interest' => 'Keine Unterinteressen für das ausgewählte Interesse verfügbar.',
 
-    'no_valid_fields_for_update' => 'Keine gültigen Felder zur Aktualisierung angegeben.',
+    'no_valid_fields_for_update' => 'Keine gültigen Felder zur Aktualidurung angegeben.',
 
     'notification_settings_saved' => 'Benachrichtigungseinstellungen gespeichert.',
 
     'notification_status_fetched' => 'Benachrichtigungsstatus erfolgreich abgerufen.',
 
-    'notification_status_updated' => 'Benachrichtigungsstatus erfolgreich aktualisiert.',
+    'notification_status_updated' => 'Benachrichtigungsstatus erfolgreich aktualidurt.',
 
     'notifications_deleted_successfully' => 'Benachrichtigungen erfolgreich gelöscht.',
 
@@ -431,19 +431,19 @@ return [
 
     'only_admin_remove_members' => 'Nur der Gruppenadministrator kann Mitglieder entfernen.',
 
-    'only_admin_update_permissions' => 'Nur der Gruppenadministrator kann Berechtigungen aktualisieren.',
+    'only_admin_update_permissions' => 'Nur der Gruppenadministrator kann Berechtigungen aktualiduren.',
 
     'only_admin_view_permissions' => 'Nur der Gruppenadministrator kann Berechtigungen anzeigen.',
 
-    'otp_expired_request_new' => 'Der OTP-Code ist abgelaufen. Bitte fordern Sie einen neuen OTP an.',
+    'otp_expired_request_new' => 'Der OTP-Code ist abgelaufen. Bitte fordern du einen neuen OTP an.',
 
-    'otp_login_registration' => 'Ihr OTP für Login/Registrierung lautet :otp. Er ist 10 Minuten gültig. Teilen Sie diesen Code mit niemandem.',
+    'otp_login_registration' => 'Ihr OTP für Login/Registrierung lautet :otp. Er ist 10 Minuten gültig. Teilen du diesen Code mit niemandem.',
 
     'otp_sent_to_phone' => 'Der OTP-Code wurde an deine Telefonnummer gesendet.',
 
     'password_reset_email_content' => 'Inhalt der E-Mail zum Zurücksetzen des Passworts.',
 
-    'password_reset_not_requested' => 'Wenn Sie diese Passwortzurücksetzung nicht angefordert haben, kontaktieren Sie bitte sofort den Support.',
+    'password_reset_not_requested' => 'Wenn du diese Passwortzurücksetzung nicht angefordert haben, kontaktieren du bitte sofort den Support.',
 
     'password_reset_request' => 'Anfrage zum Zurücksetzen des Passworts',
 
@@ -455,7 +455,7 @@ return [
 
     'pin_id_required' => 'Pin-ID und Meldungstyp sind erforderlich.',
 
-    'pin_like_updated_successfully' => 'Pin-Like erfolgreich aktualisiert.',
+    'pin_like_updated_successfully' => 'Pin-Like erfolgreich aktualidurt.',
 
     'pin_mark_comment_deleted_successfully' => 'Pin-Markierungskommentar erfolgreich gelöscht.',
 
@@ -477,17 +477,17 @@ return [
 
     'pin_reported_successfully' => 'Pin erfolgreich gemeldet.',
 
-    'plans_updated_successfully' => 'Pläne erfolgreich aktualisiert.',
+    'plans_updated_successfully' => 'Pläne erfolgreich aktualidurt.',
 
     'profile_completed_successfully' => 'Profil erfolgreich vervollständigt.',
 
     'profile_completion_failed' => 'Profilvervollständigung fehlgeschlagen.',
 
-    'profile_updated_successfully' => 'Profil erfolgreich aktualisiert.',
+    'profile_updated_successfully' => 'Profil erfolgreich aktualidurt.',
 
     'receiver_user_does_not_exist' => 'Der Empfänger existiert nicht.',
 
-    'registration_failed_try_later' => 'Registrierung fehlgeschlagen. Bitte versuchen Sie es später erneut.',
+    'registration_failed_try_later' => 'Registrierung fehlgeschlagen. Bitte versuchen du es später erneut.',
 
     'remove_member_failed' => 'Mitglied konnte nicht aus der Gruppe entfernt werden.',
 
@@ -503,7 +503,7 @@ return [
 
     'sent_requests_fetched_successfully' => 'Gesendete Anfragen wurden erfolgreich abgerufen.',
 
-    'sent_you_a_friend_request' => 'hat Ihnen eine Freundschaftsanfrage gesendet.',
+    'sent_you_a_friend_request' => 'hat dir eine Freundschaftsanfrage gesendet.',
 
     'single_image_upload_failed' => 'Upload des Einzelbildes fehlgeschlagen.',
 
@@ -517,27 +517,27 @@ return [
 
     'temporary_password_label' => 'Ihr neues temporäres Passwort:',
 
-    'temporary_password_message' => 'Dies ist Ihr neues temporäres Passwort <span style="font-size: 16px;color: #000;padding: 5px;">:password</span>. Bitte melden Sie sich an und ändern Sie das Passwort umgehend.',
+    'temporary_password_message' => 'Dies ist Ihr neues temporäres Passwort <span style="font-size: 16px;color: #000;padding: 5px;">:password</span>. Bitte melden du sich an und ändern du das Passwort umgehend.',
 
-    'temporary_password_note' => 'Wichtig: Bitte ändern Sie dieses temporäre Passwort nach dem Login.',
+    'temporary_password_note' => 'Wichtig: Bitte ändern du dieses temporäre Passwort nach dem Login.',
 
     'the_field_field_cannot_be_null_or_empty' => 'Das Feld :field darf nicht leer sein.',
 
     'the_userid_field_is_required' => 'Das Feld user_id ist erforderlich.',
 
-    'this_user_has_already_sent_you_a_friend_request' => 'Dieser Benutzer hat Ihnen bereits eine Freundschaftsanfrage gesendet. Bitte akzeptieren Sie diese.',
+    'this_user_has_already_sent_you_a_friend_request' => 'Dieser Benutzer hat dir bereits eine Freundschaftsanfrage gesendet. Bitte akzeptieren du diese.',
 
     'transaction_fetched_successfully' => 'Transaktion erfolgreich abgerufen.',
 
     'unblock_member_failed' => 'Gruppenmitglied konnte nicht entsperrt werden.',
 
-    'update_group_failed' => 'Gruppe konnte nicht aktualisiert werden.',
+    'update_group_failed' => 'Gruppe konnte nicht aktualidurt werden.',
 
-    'update_notification_status_failed' => 'Benachrichtigungsstatus konnte nicht aktualisiert werden.',
+    'update_notification_status_failed' => 'Benachrichtigungsstatus konnte nicht aktualidurt werden.',
 
-    'update_permission_all_failed' => 'Gruppenberechtigung für alle konnte nicht aktualisiert werden.',
+    'update_permission_all_failed' => 'Gruppenberechtigung für alle konnte nicht aktualidurt werden.',
 
-    'update_permission_member_failed' => 'Gruppenberechtigung für das Mitglied konnte nicht aktualisiert werden.',
+    'update_permission_member_failed' => 'Gruppenberechtigung für das Mitglied konnte nicht aktualidurt werden.',
 
     'user_blocked_successfully' => 'Benutzer erfolgreich blockiert.',
 
@@ -569,14 +569,14 @@ return [
 
     'you_are_already_friends' => 'Ihr seid bereits befreundet.',
 
-    'you_are_not_member_of_group' => 'Sie sind kein Mitglied dieser Gruppe.',
+    'you_are_not_member_of_group' => 'du sind kein Mitglied dieser Gruppe.',
 
-    'you_cannot_block_yourself' => 'Sie können sich nicht selbst blockieren.',
+    'you_cannot_block_yourself' => 'du können sich nicht selbst blockieren.',
 
     'you_cannot_send_a_friend_request_to_yourself' => 'Du kannst dir selbst keine Freundschaftsanfrage senden.',
 
     'you_have_a_new_friend_request' => 'Du hast eine neue Freundschaftsanfrage.',
 
-    'your_friend_request_was_accepted' => 'Ihre Freundschaftsanfrage wurde akzeptiert.',
+    'your_friend_request_was_accepted' => 'deine Freundschaftsanfrage wurde akzeptiert.',
 
 ];
