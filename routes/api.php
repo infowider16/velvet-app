@@ -149,7 +149,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('pin-mark/fetch', [PinMarkController::class, 'pinMarkFetch']);
     Route::delete('pin-mark/{id}', [PinMarkController::class, 'deletePinMark']);
     
-     Route::post('pin-mark-comment', [PinMarkCommentController::class, 'pinMarkComment']);
+    Route::post('pin-mark-comment', [PinMarkCommentController::class, 'pinMarkComment']);
     Route::get('pin-mark-comment/fetch', [PinMarkCommentController::class, 'pinMarkCommentFetch']);
     Route::delete('pin-mark-comment/{id}', [PinMarkCommentController::class, 'deletePinMarkComment']);
     Route::post('pin-mark/like', [PinMarkLikeController::class, 'toggleLike']);

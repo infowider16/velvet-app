@@ -80,7 +80,7 @@ class SocialLoginService implements SocialLoginServiceInterface
 
 
             // Check if user is blocked by admin
-
+            
             if ($user->is_approve == 1) {
 
                 throw new \Exception(__('message.account_blocked_contact_admin'));
@@ -92,6 +92,8 @@ class SocialLoginService implements SocialLoginServiceInterface
             $token = $user->createToken('API Token')->accessToken;
 
             $user->is_profile_completed = ((int)$user->is_active >= 7);
+
+            $user->booster_expire_time = checkBoosterActive($user->id)['booster_expire_time'];
 
             return [
 

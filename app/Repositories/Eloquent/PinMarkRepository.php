@@ -38,14 +38,31 @@ class PinMarkRepository
     
     public function fetch(array $filters = [])
     {
-        $blockedUserIds = Block::where('blocker_id', getUserId() ?? 0)->get()->pluck('blocked_id')->toArray();
+        $userId = getUserId() ?? 0;
+
+        // Users blocked by current user
+        $blockedUserIds = Block::where('blocker_id', $userId)
+            ->pluck('blocked_id')
+            ->toArray();
+
+
+        // Users who blocked current user
+        $blockedByOthers = Block::where('blocked_id', $userId)
+            ->pluck('blocker_id')
+            ->toArray();
+
+        // Merge both so neither side can see each other
+        $hiddenUserIds = array_unique(array_merge($blockedUserIds, $blockedByOthers));
+
         $swissTime = $filters['swiss_time'] ?? null;  // client sends Swiss time
         $hours     = (int)($filters['hours'] ?? 48);
+
         $query = $this->model->newQuery()->withinHoursSwiss($swissTime, $hours);
+
         if (!empty($filters['user_id'])) {
             $query->where('user_id', $filters['user_id']);
         }
-    
+
         if (!empty($filters['country_code'])) {
             $countryCodes = array_map(
                 'trim',
@@ -54,23 +71,24 @@ class PinMarkRepository
             $query->whereIn('country_code', $countryCodes);
         }
 
-        if (count($blockedUserIds )>0) {
-            $query->whereNotIn('user_id', $blockedUserIds);
+        if (count($hiddenUserIds) > 0) {
+            $query->whereNotIn('user_id', $hiddenUserIds);
         }
-    
+
         if (isset($filters['status'])) {
             $query->where('status', $filters['status']);
-        }else{ $query->where('status', 1); }
-    
+        } else {
+            $query->where('status', 1);
+        }
+
         $query->orderBy('commented_on', 'desc');
-    
+
         if (!empty($filters['per_page'])) {
             return $query->paginate((int) $filters['per_page']);
         }
-    
+
         return $query->get();
     }
-    
     
     public function softDeleteById(int $id): bool
         {

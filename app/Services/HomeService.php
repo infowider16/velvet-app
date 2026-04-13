@@ -75,7 +75,7 @@ class HomeService
             $orderBy = $this->buildOrderBy($filters['sort_by'], $filters['random'] ?? 1);
             
             // Select columns
-            $columns = ['id', 'name', 'date_of_birth','last_seen_at', 'country_code', 'gender', 'images', 'lat', 'lng', 'created_at','booster_ranking','gost_expire','boost'];
+            $columns = ['id', 'name', 'date_of_birth','last_seen_at', 'country_code', 'gender', 'images', 'lat', 'lng', 'created_at','booster_ranking','gost_expire','boost','is_delete'];
 
             // Check if pagination is requested
             // if (isset($filters['per_page']) && $filters['per_page'] > 0) {
@@ -99,6 +99,7 @@ class HomeService
                     $perPage,
                     $filters['page']
                 );
+
                 // [
                     //     ['nonFriends', $currentUserId] // 👈 APPLY SCOPE
                     // ]
@@ -170,7 +171,6 @@ class HomeService
      */
     private function processUserData($user, $currentUserId)
     {
-
       
         // Calculate age from date of birth
         $age = $user->date_of_birth ? Carbon::parse($user->date_of_birth)->age : null;
@@ -230,7 +230,8 @@ class HomeService
             'booster_ranking' => $user->booster_ranking,
             'booster_expire' => $user->lastShipping && $user->lastShipping->end_date_time
                 ? Carbon::parse($user->lastShipping->end_date_time)->toDateTimeString()
-                : null
+                : null,
+            'is_delete'=>$user->is_delete ?? 0
         ];
     }
 
@@ -297,7 +298,7 @@ class HomeService
                 $whereConditions[] = ['date_of_birth', '>=', $minBirthDate];
             }
             // Select columns
-            $columns = ['id', 'name', 'date_of_birth', 'country_code', 'gender', 'images', 'lat', 'lng', 'created_at','booster_ranking','gost_expire','boost'];
+            $columns = ['id', 'name', 'date_of_birth', 'country_code', 'gender', 'images', 'lat', 'lng', 'created_at','booster_ranking','gost_expire','boost','is_delete'];
             // Use getDataWithPagination to get larger dataset for distance filtering
             $perPage = 100; // Get more records to filter by distance
             $users = $this->userRepo->getDataWithPagination(
@@ -385,6 +386,7 @@ class HomeService
      */
     private function processMapUserData($user, $filters, $currentUserId)
     {
+        
         // Calculate age from date of birth
         $age = $user->date_of_birth ? Carbon::parse($user->date_of_birth)->age : null;
 
@@ -451,7 +453,8 @@ class HomeService
             'booster_ranking' => $user->booster_ranking,
             'booster_expire' => $user->lastShipping && $user->lastShipping->end_date_time
                 ? Carbon::parse($user->lastShipping->end_date_time)->toDateTimeString()
-                : null
+                : null,
+            'is_delete'=>$user->is_delete ?? 0
         ];
     }
 

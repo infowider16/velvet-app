@@ -241,6 +241,8 @@ class FriendshipService
                 Log::error('Error in sendPushNotification (acceptFriendRequest): ' . $e->getMessage());
             }
     
+            //also add user to message table for both users so that chat will be available immediately after accepting friend request
+            $this->addUserToMessageTable($userId, $friendId);
             return [
                 'data' => [
                     'friendship_id' => $friendship->id,
@@ -255,6 +257,41 @@ class FriendshipService
             ]);
     
             throw new Exception(__('message.failed_to_accept_friend_request'));
+        }
+    }
+
+    private function addUserToMessageTable($userId, $friendId)
+    {
+        // Create empty chat entry so users appear in message list
+        try {
+            $existingChat = $this->messageRepository->getOneData([
+                ['sender_id', '=', $userId],
+                ['receiver_id', '=', $friendId],
+            ]);
+
+            if (!$existingChat) {
+                $existingChat = $this->messageRepository->getOneData([
+                    ['sender_id', '=', $friendId],
+                    ['receiver_id', '=', $userId],
+                ]);
+            }
+
+            if (!$existingChat) {
+                $this->messageRepository->create([
+                    'sender_id' => $userId,       
+                    'receiver_id' => $friendId,   
+                    'group_id' => null,
+                    'message_text' => null,
+                    'media_type' => null,
+                    'status' => 'sent',
+                ]);
+            }
+            return true;
+        } catch (\Throwable $e) {
+            Log::error('Error creating empty chat entry (acceptFriendRequest): ' . $e->getMessage(), [
+                'user_id' => $userId,
+                'friend_id' => $friendId,
+            ]);
         }
     }
 
@@ -643,12 +680,13 @@ class FriendshipService
             $page = $request->get('page', 1);
 
             $blockedUsers = $this->friendshipRepo->getBlockedUsersList($userId, $perPage, $page);
-
+         
             $processedUsers = $blockedUsers->getCollection()->map(function ($user) use ($userId) {
                 return $this->processBlockedUserData($user->blocked, $userId);
             });
 
             $blockedUsers->setCollection($processedUsers);
+           
 
             return [
                 'data' => [
@@ -703,6 +741,7 @@ class FriendshipService
             'lat' => (float) $user->lat,
             'lng' => (float) $user->lng,
             'gender' => $user->gender,
+            'is_delete' => $user->is_delete ?? 0,
             // 'friend_status' => $friendStatus,
             // 'block_status' => $blockStatus
         ];
@@ -812,7 +851,8 @@ class FriendshipService
             'lng' => (float) $user->lng,
             'gender' => $user->gender,
             'friend_status' => $friendStatus,
-            'block_status' => $blockStatus
+            'block_status' => $blockStatus,
+            'is_delete' => $user->is_delete ?? 0,
         ];
     }
 
@@ -901,7 +941,10 @@ class FriendshipService
     {
         try {
             $loginUser=getUser();
-            $blocked = $this->friendshipRepo->isBlocked($loginUser->id, $userId);
+            $userId= intval($userId);
+
+            $blocked = $this->friendshipRepo->checkBlockedEachOther($loginUser->id, $userId);
+
             return isset($blocked->id)?true:false;
         } catch (Exception $e) {
             throw new Exception(__('message.failed_to_fetch_blocked_status') . ': ' . $e->getMessage());
