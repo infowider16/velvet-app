@@ -3,6 +3,10 @@
 
 
 return [
+    
+    //new added text start 
+    'group_requests_fetched_successfully' => 'Gruppenbeitrittsanfragen erfolgreich abgerufen.',
+    //new added text end
 
     'validation_error' => 'Validierungsfehler',
     'accepted_your_friend_request' => 'hat deine Freundschaftsanfrage akzeptiert.',

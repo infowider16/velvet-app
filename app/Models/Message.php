@@ -16,6 +16,7 @@ class Message extends Model
     {
         return $this->belongsTo(User::class, 'sender_id');
     }
+
     public function receiver()
     {
         return $this->belongsTo(User::class, 'receiver_id');
@@ -24,7 +25,6 @@ class Message extends Model
     {
         return $this->media_type === null && !empty($this->message_text);
     }
-
     // Check if message is media (image/video/audio/file)
     public function getIsMediaAttribute()
     {
@@ -47,4 +47,5 @@ class Message extends Model
     {
         return $this->belongsTo(Group::class, 'group_id');
     }
+   
 }

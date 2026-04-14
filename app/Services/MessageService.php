@@ -1781,10 +1781,11 @@ class MessageService
     /**
      * Edit group info (only provided fields, admin only).
      */
-    public function editGroup($userId, $data)
+   public function editGroup($userId, $data)
     {
         try {
             $groupId = $data['group_id'] ?? null;
+
             if (!$groupId) {
                 return [
                     'error' => true,
@@ -1792,7 +1793,9 @@ class MessageService
                     'code' => 400,
                 ];
             }
+
             $group = $this->groupRepo->model->find($groupId);
+
             if (!$group) {
                 return [
                     'error' => true,
@@ -1800,6 +1803,7 @@ class MessageService
                     'code' => 404,
                 ];
             }
+
             // Only admin can edit
             if (!$this->groupRepo->isAdmin($groupId, $userId)) {
                 return [
@@ -1818,6 +1822,7 @@ class MessageService
                 'is_member_permission',
                 'notification_status',
             ];
+
             $updateData = [];
             foreach ($updatable as $field) {
                 if (array_key_exists($field, $data)) {
@@ -1836,7 +1841,10 @@ class MessageService
             // Validate non-nullable fields before update
             $nonNullable = ['group_type'];
             foreach ($nonNullable as $field) {
-                if (array_key_exists($field, $updateData) && (is_null($updateData[$field]) || $updateData[$field] === '')) {
+                if (
+                    array_key_exists($field, $updateData) &&
+                    (is_null($updateData[$field]) || $updateData[$field] === '')
+                ) {
                     return [
                         'error' => true,
                         'message' => __('message.the_field_field_cannot_be_null_or_empty'),
@@ -1856,7 +1864,9 @@ class MessageService
                         'code' => 422,
                     ];
                 }
+
                 \Log::error('Error in editGroup (DB): ' . $e->getMessage());
+
                 return [
                     'error' => true,
                     'message' => __('message.database_error_updating_group'),
@@ -1875,72 +1885,59 @@ class MessageService
                 $group->creator->images = getImagesArray($group->creator->images);
             }
 
+            $subscriberCount = $this->groupRepo->groupMemberModel
+                ->where('group_id', $groupId)
+                ->where('group_status', 'accept')
+                ->where('status', 0)
+                ->count();
 
-            $members = [];
-            foreach ($group->members as $member) {
-                $userObj = $member->user;
-                $members[] = [
-                    'id' => $userObj ? $userObj->id : null,
-                    'name' => $userObj ? $userObj->name : null,
-                    'images' => $userObj ? getImagesArray($userObj->images) : [],
-                    'is_delete' => $userObj->is_delete ?? 0,
-                    'role' => $member->role,
-                    'status' => $member->status,
-                    'is_member_permission' => $member->is_member_permission ?? true,
-                    'group_status' => $member->group_status ?? null,
-                ];
-            }
-            $request_user_list_raw = $this->groupRepo->getRequestedGroupsByUser($groupId);
-            $request_user_list = [];
-            foreach ($request_user_list_raw as $member) {
-                $user = $member->user;
-                if ($user) {
-                    $request_user_list[] = [
-                        'id' => $user->id,
-                        'name' => $user->name,
-                        'images' => getImagesArray($user->images),
-                        'role' => $member->role,
-                        'status' => $member->status,
-                        'group_status' => $member->group_status,
-                        'is_member_permission' => $member->is_member_permission ?? true,
-                    ];
-                }
-            }
+            $requestCount = $this->groupRepo->groupMemberModel
+                ->where('group_id', $groupId)
+                ->where('group_status', 'pending')
+                ->count();
+
+            $userMember = $this->groupRepo->groupMemberModel
+                ->with('user')
+                ->where('group_id', $groupId)
+                ->where('user_id', $userId)
+                ->first();
+
             // Format group info
             $groupInfo = [
                 'group_id' => $group->id,
                 'name' => $group->name,
                 'description' => $group->description,
                 'image' => getImageUrl($group->image),
-                'group_type' => $group->group_type,
-                'is_member_permission' => $group->is_member_permission,
+                'group_type' => (int) $group->group_type,
+                'is_member_permission' => (int) ($group->is_member_permission ?? 1),
                 'created_by' => $group->created_by,
-                'notification_status' => $group->notification_status,
-                'creator' => $group->creator ? [
-                    'id' => $group->creator->id,
-                    'name' => $group->creator->name,
-                    'images' => getImagesArray($group->creator->images),
-                    'is_delete' => $group->creator->is_delete ?? 0
+                'subscriber_user_count' => $subscriberCount,
+                'user_request_count' => $requestCount,
+                'notification_status' => (int) ($group->notification_status ?? 0),
+                'user_detail' => ($userMember && $userMember->user) ? [
+                    'id' => $userMember->user->id,
+                    'name' => $userMember->user->name,
+                    'images' => getImagesArray($userMember->user->images),
+                    'role' => $userMember->role,
+                    'status' => $userMember->status,
+                    'group_status' => $userMember->group_status,
+                    'is_member_permission' => (int) ($userMember->is_member_permission ?? 1),
+                    'is_delete' => $userMember->user->is_delete ?? 0,
                 ] : null,
-
-                'members' => $members,
-                'request_user_list' => $request_user_list,
             ];
 
-        
             $result = [
-               
                 'group' => $groupInfo,
-               
             ];
 
             return [
                 'error' => false,
                 'data' => $result,
-                'message' => __('message.group_updated_successfully')
+                'message' => __('message.group_updated_successfully'),
             ];
         } catch (\Exception $e) {
             \Log::error('Error in editGroup: ' . $e->getMessage());
+
             return [
                 'error' => true,
                 'message' => __('message.failed_to_update_group'),

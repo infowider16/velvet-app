@@ -1,6 +1,20 @@
 <?php
 
 return [
+    //new added text start 
+    'group_requests_fetched_successfully' => 'Group join requests fetched successfully.',
+    'failed_to_fetch_group_requests' => 'Failed to fetch group join requests.',
+    'group_details_fetched_successfully' => 'Group details fetched successfully.',
+    'group_members_fetched_successfully' => 'Group members fetched successfully.',
+    'fetch_group_members_failed' => 'Failed to fetch group members.',
+    'group_messages_fetched_successfully' => 'Group messages fetched successfully.',
+    'fetch_group_messages_failed' => 'Failed to fetch group messages.',
+    'failed_to_fetch_blocked_users' => 'Failed to fetch blocked users.',
+    'no_access_to_private_group' => 'You do not have access to this private group.',
+    'not_a_member_of_group' => 'You are not a member of this group.',
+    'failed_to_validate_group_access' => 'Failed to validate group access.',
+
+    //new added text end
     'validation_error' => 'validation error',
     'Resend' => 'Resend',
     'Sending' => 'Sending',
@@ -130,6 +144,7 @@ return [
     'failed_to_delete_user_details_eget_message0_e_private_function_update_plan_expir' => 'Failed to delete user details: \' . $e->getMessage(), 0, $e);
         }
     }
+        
 
     private function updatePlanExpiryStatuses()
     {
