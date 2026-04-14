@@ -4,9 +4,19 @@
 
 return [
     
-    //new added text start 
-    'group_requests_fetched_successfully' => 'Gruppenbeitrittsanfragen erfolgreich abgerufen.',
-    //new added text end
+    // new added text start 
+    'group_requests_fetched_successfully' => 'Beitrittsanfragen zur Gruppe wurden erfolgreich abgerufen.',
+    'failed_to_fetch_group_requests' => 'Beitrittsanfragen zur Gruppe konnten nicht abgerufen werden.',
+    'group_details_fetched_successfully' => 'Gruppendetails wurden erfolgreich abgerufen.',
+    'group_members_fetched_successfully' => 'Gruppenmitglieder wurden erfolgreich abgerufen.',
+    'fetch_group_members_failed' => 'Gruppenmitglieder konnten nicht abgerufen werden.',
+    'group_messages_fetched_successfully' => 'Gruppennachrichten wurden erfolgreich abgerufen.',
+    'fetch_group_messages_failed' => 'Gruppennachrichten konnten nicht abgerufen werden.',
+    'failed_to_fetch_blocked_users' => 'Gesperrte Benutzer konnten nicht abgerufen werden.',
+    'no_access_to_private_group' => 'Sie haben keinen Zugriff auf diese private Gruppe.',
+    'not_a_member_of_group' => 'Sie sind kein Mitglied dieser Gruppe.',
+    'failed_to_validate_group_access' => 'Zugriff auf die Gruppe konnte nicht überprüft werden.',
+    // new added text end
 
     'validation_error' => 'Validierungsfehler',
     'accepted_your_friend_request' => 'hat deine Freundschaftsanfrage akzeptiert.',
