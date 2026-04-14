@@ -21,7 +21,7 @@ use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\BoosterController;
 
-use App\Http\Controllers\Api\{FriendshipController, MessageController, PinMarkController, PinMarkCommentController, PinMarkLikeController};
+use App\Http\Controllers\Api\{FriendshipController,GroupController, MessageController, PinMarkController, PinMarkCommentController, PinMarkLikeController};
 
 
 Route::middleware(['setlang'])->group(function () {
@@ -162,7 +162,16 @@ Route::middleware('auth:api')->group(function () {
     Route::get('running-booster', [BoosterController::class, 'runningBooster']);
     Route::get('inactive-booster', [BoosterController::class, 'inactiveBooster']);
         
-Route::post('update-user-plan', [HomeController::class, 'updateUserPlan']);
+    Route::post('update-user-plan', [HomeController::class, 'updateUserPlan']);
+
+    // New Group Message APIs
+    Route::prefix('get/group/')->group(function () {
+        Route::get('details', [GroupController::class, 'groupDetails']);
+        Route::get('members', [GroupController::class, 'groupMembers']);
+        Route::get('requests', [GroupController::class, 'groupRequests']);
+        Route::get('messages', [GroupController::class, 'groupMessages']);
+        Route::get('block-user', [GroupController::class, 'blockUser']);
+    });
 });
 
 Route::post('social-login', [SocialLoginController::class, 'socialLogin']);
