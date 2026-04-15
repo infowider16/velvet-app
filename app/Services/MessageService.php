@@ -165,7 +165,7 @@ class MessageService
             $messages = $this->messageRepo->getDataWithPagination(
                 ['group_id' => $groupId],
                 ['group', 'sender', 'receiver'],
-                ['created_at', 'desc'],
+                ['created_at'],
                 [],
                 [],
                 $perPage,
@@ -638,7 +638,9 @@ class MessageService
             }
 
             return [
-                'data' => $group,
+                'data' => [
+                    'group' => $this->formatGroupInfo($group, $userId),
+                ],
                 'message' => __('message.group_created_successfully')
             ];
         } catch (Exception $e) {
@@ -650,7 +652,7 @@ class MessageService
     public function joinGroup($userId, $data)
     {
         try {
-            // dd($userId);
+          
             if (empty($data['group_id'])) {
                 return [
                     'data' => null,
@@ -668,7 +670,9 @@ class MessageService
             // Check if already a member
             if ($this->groupRepo->isMember($group->id, $userId)) {
                 return [
-                    'data' => null,
+                    'data' => [
+                        'group' => $this->formatGroupInfo($group, $userId),
+                    ],
                     'message' => __('message.already_member_group')
                 ];
             }
@@ -695,14 +699,18 @@ class MessageService
                     'role' => 'member'
                 ]);
                 return [
-                    'data' => null,
+                    'data' => [
+                        'group' => $this->formatGroupInfo($group, $userId),
+                    ],
                     'message' => __('message.joined_group_successfully')
                 ];
             } else {
                 // Private group: create join request (if not removed)
                 $this->groupRepo->createJoinRequest($group->id, $userId);
                 return [
-                    'data' => null,
+                    'data' => [
+                        'group' => $this->formatGroupInfo($group, $userId),
+                    ],
                     'message' => __('message.join_request_sent')
                 ];
             }
@@ -847,6 +855,7 @@ class MessageService
                 if ($group->creator) {
                     $group->creator->images = getImagesArray($group->creator->images);
                 }
+               $group->is_member_permission = (int) ($group->is_member_permission ?? 1) === 1 ? true : false;
                 
 
                 // Last message in group
@@ -895,8 +904,10 @@ class MessageService
     public function searchGroups($keyword = '', $perPage = 15, $page = 1)
     {
         try {
+
             $userId = auth()->id(); // get logged-in user id for unread count
             $groups = $this->groupRepo->searchGroups($keyword, $perPage, $page);
+          
             // Filter: For removed users (status=2), allow public groups, exclude private groups
             if ($userId) {
                 $removedGroupIds = $this->groupRepo->groupMemberModel
@@ -921,12 +932,13 @@ class MessageService
                         : collect($groups)->values();
                 }
             }
-
+          
             foreach ($groups as $group) {
                 $group->image = getImageUrl($group->image);
                 if ($group->creator) {
                     $group->creator->images = getImagesArray($group->creator->images);
                 }
+                $group->is_member_permission = (int) ($group->is_member_permission ?? 1) === 1 ? true : false;
 
                 // Last message in group
                 $lastMessage = $this->messageRepo->model
@@ -947,6 +959,7 @@ class MessageService
                     ->count()
                     : 0;
             }
+
             return [
                 'data' => $groups,
                 'message' => __('message.groups_fetched_successfully')
@@ -1330,10 +1343,11 @@ class MessageService
             }
 
             $permission = $this->groupRepo->getMemberPermission($groupId, $userId);
+         
 
             return [
                 'error' => false,
-                'data' => ['group_id' => $groupId, 'user_id' => $userId, 'is_member_permission' => $permission],
+                'data' => ['group_id' => $groupId, 'user_id' => $userId, 'is_member_permission' => $permission == 1 ? true : false],
                 'message' => __('message.member_permission_fetched')
             ];
         } catch (\Exception $e) {
@@ -1370,7 +1384,7 @@ class MessageService
                 'images' => $user ? getImagesArray($user->images) : [],
                 'role' => $member->role,
                 'status' => $member->status,
-                'is_member_permission' => $member->is_member_permission ?? true,
+                'is_member_permission' => $member->is_member_permission  == 1 ? true : false,
                 'is_delete' => $user->is_delete ?? 0
             ];
         }
@@ -1455,7 +1469,7 @@ class MessageService
                     'role' => $member->role,
                     'status' => $member->status,
                     'group_status' => $member->group_status,
-                    'is_member_permission' => $member->is_member_permission ?? true,
+                    'is_member_permission' => $member->is_member_permission  == 1 ? true : false,
                     'is_delete' => $userObj->is_delete ?? 0
                 ];
             }
@@ -1507,7 +1521,7 @@ class MessageService
                         'role' => $member->role,
                         'status' => $member->status,
                         'group_status' => $member->group_status,
-                        'is_member_permission' => $member->is_member_permission ?? true,
+                        'is_member_permission' => $member->is_member_permission  == 1 ? true : false,
                     ];
                 }
             }
@@ -1564,7 +1578,7 @@ class MessageService
                 'description' => $group->description,
                 'image' => getImageUrl($group->image),
                 'group_type' => $group->group_type,
-                'is_member_permission' => $group->is_member_permission,
+                'is_member_permission' => $group->is_member_permission  == 1 ? true : false,
                 'created_by' => $group->created_by,
                 'notification_status' => $group->notification_status,
                 'creator' => $group->creator ? [
@@ -1694,7 +1708,7 @@ class MessageService
                     'images' => $userObj ? getImagesArray($userObj->images) : [],
                     'role' => $member->role,
                     'status' => $member->status,
-                    'is_member_permission' => $member->is_member_permission ?? true,
+                    'is_member_permission' => $member->is_member_permission  == 1 ? true : false,
                     'group_status' => $member->group_status ?? null,
                     'is_delete' => $userObj->is_delete ?? 0
                 ];
@@ -1711,7 +1725,7 @@ class MessageService
                         'role' => $member->role,
                         'status' => $member->status,
                         'group_status' => $member->group_status,
-                        'is_member_permission' => $member->is_member_permission ?? true,
+                        'is_member_permission' => $member->is_member_permission  == 1 ? true : false,
                         'is_delete' => $user->is_delete ?? 0
                     ];
                 }
@@ -1723,7 +1737,7 @@ class MessageService
                 'description' => $group->description,
                 'image' => getImageUrl($group->image),
                 'group_type' => $group->group_type,
-                'is_member_permission' => $group->is_member_permission,
+                'is_member_permission' => $group->is_member_permission  == 1 ? true : false,
                 'created_by' => $group->created_by,
                 'notification_status' => $group->notification_status,
                 'creator' => $group->creator ? [
@@ -1751,7 +1765,7 @@ class MessageService
                     'images' => $user ? getImagesArray($user->images) : [],
                     'role' => $member->role,
                     'status' => $member->status,
-                    'is_member_permission' => $member->is_member_permission ?? true,
+                    'is_member_permission' => $member->is_member_permission  == 1 ? true : false,
                 ];
             }
 
@@ -1781,7 +1795,7 @@ class MessageService
     /**
      * Edit group info (only provided fields, admin only).
      */
-   public function editGroup($userId, $data)
+    public function editGroup($userId, $data)
     {
         try {
             $groupId = $data['group_id'] ?? null;
@@ -1813,7 +1827,6 @@ class MessageService
                 ];
             }
 
-            // Only update allowed fields and only those provided
             $updatable = [
                 'name',
                 'description',
@@ -1838,7 +1851,6 @@ class MessageService
                 ];
             }
 
-            // Validate non-nullable fields before update
             $nonNullable = ['group_type'];
             foreach ($nonNullable as $field) {
                 if (
@@ -1856,7 +1868,6 @@ class MessageService
             try {
                 $group->update($updateData);
             } catch (\Illuminate\Database\QueryException $e) {
-                // Handle SQL errors, especially integrity constraint violations
                 if ($e->getCode() == 23000) {
                     return [
                         'error' => true,
@@ -1874,65 +1885,15 @@ class MessageService
                 ];
             }
 
-            // Reload group with members and creator
             $group = $this->groupRepo->model
                 ->with(['members.user', 'creator'])
                 ->find($groupId);
 
-            // Format images for group and creator
-            $group->image = getImageUrl($group->image);
-            if ($group->creator) {
-                $group->creator->images = getImagesArray($group->creator->images);
-            }
-
-            $subscriberCount = $this->groupRepo->groupMemberModel
-                ->where('group_id', $groupId)
-                ->where('group_status', 'accept')
-                ->where('status', 0)
-                ->count();
-
-            $requestCount = $this->groupRepo->groupMemberModel
-                ->where('group_id', $groupId)
-                ->where('group_status', 'pending')
-                ->count();
-
-            $userMember = $this->groupRepo->groupMemberModel
-                ->with('user')
-                ->where('group_id', $groupId)
-                ->where('user_id', $userId)
-                ->first();
-
-            // Format group info
-            $groupInfo = [
-                'group_id' => $group->id,
-                'name' => $group->name,
-                'description' => $group->description,
-                'image' => getImageUrl($group->image),
-                'group_type' => (int) $group->group_type,
-                'is_member_permission' => (int) ($group->is_member_permission ?? 1),
-                'created_by' => $group->created_by,
-                'subscriber_user_count' => $subscriberCount,
-                'user_request_count' => $requestCount,
-                'notification_status' => (int) ($group->notification_status ?? 0),
-                'user_detail' => ($userMember && $userMember->user) ? [
-                    'id' => $userMember->user->id,
-                    'name' => $userMember->user->name,
-                    'images' => getImagesArray($userMember->user->images),
-                    'role' => $userMember->role,
-                    'status' => $userMember->status,
-                    'group_status' => $userMember->group_status,
-                    'is_member_permission' => (int) ($userMember->is_member_permission ?? 1),
-                    'is_delete' => $userMember->user->is_delete ?? 0,
-                ] : null,
-            ];
-
-            $result = [
-                'group' => $groupInfo,
-            ];
-
             return [
                 'error' => false,
-                'data' => $result,
+                'data' => [
+                    'group' => $this->formatGroupInfo($group, $userId),
+                ],
                 'message' => __('message.group_updated_successfully'),
             ];
         } catch (\Exception $e) {
@@ -1944,6 +1905,52 @@ class MessageService
                 'code' => 500,
             ];
         }
+    }
+
+    /**
+     * Common function to format group info
+     */
+    private function formatGroupInfo($group, $userId)
+    {
+        $subscriberCount = $this->groupRepo->groupMemberModel
+            ->where('group_id', $group->id)
+            ->whereNotIn('status', [1, 2])
+            ->where('is_delete', 0)
+            ->count();
+
+        $requestCount = $this->groupRepo->groupMemberModel
+            ->where('group_id', $group->id)
+            ->where('group_status', 'pending')
+            ->count();
+
+        $userMember = $this->groupRepo->groupMemberModel
+            ->with('user')
+            ->where('group_id', $group->id)
+            ->where('user_id', $userId)
+            ->first();
+
+        return [
+            'group_id' => $group->id,
+            'name' => $group->name,
+            'description' => $group->description,
+            'image' => getImageUrl($group->image),
+            'group_type' => (int) $group->group_type,
+            'is_member_permission' => (int) $group->is_member_permission  == 1 ? true : false,
+            'created_by' => $group->created_by,
+            'subscriber_user_count' => $subscriberCount,
+            'user_request_count' => $requestCount,
+            'notification_status' => (int) ($group->notification_status ?? 0),
+            'user_detail' => ($userMember && $userMember->user) ? [
+                'id' => $userMember->user->id,
+                'name' => $userMember->user->name,
+                'images' => getImagesArray($userMember->user->images),
+                'role' => $userMember->role,
+                'status' => $userMember->status,
+                'group_status' => $userMember->group_status,
+                'is_member_permission' => (int) $userMember->is_member_permission === 1 ? true : false,
+                'is_delete' => $userMember->user->is_delete ?? 0,
+            ] : null,
+        ];
     }
 
     /**

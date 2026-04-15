@@ -73,10 +73,10 @@ class GroupService
             }
 
             $subscriberCount = $this->groupRepo->groupMemberModel
-                ->where('group_id', $groupId)
-                ->where('group_status', 'accept')
-                ->where('status', 0)
-                ->count();
+            ->where('group_id', $groupId)
+            ->whereNotIn('status', [1, 2])   
+            ->where('is_delete', 0)
+            ->count();
 
             $requestCount = $this->groupRepo->groupMemberModel
                 ->where('group_id', $groupId)
@@ -96,7 +96,7 @@ class GroupService
                     'description' => $group->description,
                     'image' => getImageUrl($group->image),
                     'group_type' => (int) $group->group_type,
-                    'is_member_permission' => (int) ($group->is_member_permission ?? 1),
+                    'is_member_permission' => (int) $group->is_member_permission  == 1 ? true : false,
                     'created_by' => $group->created_by,
                     'subscriber_user_count' => $subscriberCount,
                     'user_request_count' => $requestCount,
@@ -406,7 +406,7 @@ class GroupService
             'role' => $member->role,
             'status' => $member->status,
             'group_status' => $member->group_status,
-            'is_member_permission' => (int)($member->is_member_permission ?? 1),
+            'is_member_permission' => (int) $member->is_member_permission === 1 ? true : false,
             'is_delete' => $user->is_delete ?? 0,
         ];
     }
@@ -461,6 +461,7 @@ class GroupService
                 'name' => $sender->name ?? null,
                 'image' => $sender ? $this->getFirstImage($sender->images) : null,
                 'status' => $senderGroupMember->status ?? 0,
+                'is_member_permission' => (int) ($senderGroupMember->is_member_permission ?? 1) === 1 ? true : false,
                 'is_delete' => $sender->is_delete ?? 0,
             ],
         ];
