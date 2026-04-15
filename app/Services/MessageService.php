@@ -849,7 +849,7 @@ class MessageService
                 ->with(['creator'])
                 ->orderBy('id', 'desc')
                 ->paginate($perPage, ['*'], 'page', $page);
-
+         
             foreach ($groups as $group) {
                 $group->image = getImageUrl($group->image);
                 if ($group->creator) {
@@ -877,8 +877,19 @@ class MessageService
                     ->count();
             }
 
+            $data = [
+                'groups' => $groups->items(),
+                'pagination' => [
+                    'current_page' => $groups->currentPage(),
+                    'per_page' => $groups->perPage(),
+                    'total' => $groups->total(),
+                    'last_page' => $groups->lastPage(),
+                    'has_more' => $groups->hasMorePages(),
+                ],
+            ];
+
             return [
-                'data' => $groups,
+                'data' => $data,
                 'message' => __('message.groups_retrieved_successfully')
             ];
         } catch (Exception $e) {
@@ -932,7 +943,7 @@ class MessageService
                         : collect($groups)->values();
                 }
             }
-          
+           
             foreach ($groups as $group) {
                 $group->image = getImageUrl($group->image);
                 if ($group->creator) {
@@ -959,9 +970,20 @@ class MessageService
                     ->count()
                     : 0;
             }
+            
+            $data = [
+                'groups' => $groups->items(),
+                'pagination' => [
+                    'current_page' => $groups->currentPage(),
+                    'per_page' => $groups->perPage(),
+                    'total' => $groups->total(),
+                    'last_page' => $groups->lastPage(),
+                    'has_more' => $groups->hasMorePages(),
+                ],
+            ];
 
             return [
-                'data' => $groups,
+                'data' => $data,
                 'message' => __('message.groups_fetched_successfully')
             ];
         } catch (Exception $e) {
