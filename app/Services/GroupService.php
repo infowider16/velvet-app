@@ -67,9 +67,8 @@ class GroupService
                 ['creator', 'members.user']
             );
 
-            $accessCheck = $this->validateGroupAccess($group, $groupId, $userId);
-            if (!empty($accessCheck['error'])) {
-                return $accessCheck;
+            if (!$group) {
+                return $this->errorResponse(__('message.group_not_found'), 404);
             }
 
             $subscriberCount = $this->groupRepo->groupMemberModel
