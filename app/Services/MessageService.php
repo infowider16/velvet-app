@@ -10,6 +10,7 @@ use App\Repositories\Eloquent\FriendshipRepository;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class MessageService
 {
@@ -915,62 +916,57 @@ class MessageService
     public function searchGroups($keyword = '', $perPage = 15, $page = 1)
     {
         try {
-
-            $userId = auth()->id(); // get logged-in user id for unread count
+            $userId = auth()->id();
             $groups = $this->groupRepo->searchGroups($keyword, $perPage, $page);
-          
-            // Filter: For removed users (status=2), allow public groups, exclude private groups
-            if ($userId) {
+
+            if ($userId && $groups instanceof LengthAwarePaginator) {
                 $removedGroupIds = $this->groupRepo->groupMemberModel
                     ->where('user_id', $userId)
                     ->where('status', 2)
                     ->pluck('group_id')
                     ->toArray();
+                  
 
                 if (!empty($removedGroupIds)) {
-                    foreach ($groups as $key => $group) {
-                        if (
-                            in_array($group->id, $removedGroupIds)
-                            && $group->group_type == 1 // private
-                        ) {
-                            unset($groups[$key]);
-                        }
-                        // For public, do NOT unset
-                    }
-                    // Re-index after unset
-                    $groups = $groups instanceof \Illuminate\Pagination\LengthAwarePaginator
-                        ? $groups->setCollection($groups->getCollection()->values())
-                        : collect($groups)->values();
+                    $filtered = $groups->getCollection()->filter(function ($group) use ($removedGroupIds) {
+                        return !(
+                            in_array($group->id, $removedGroupIds) &&
+                            $group->group_type == 1 // private group remove
+                        );
+                    })->values();
+
+                    $groups->setCollection($filtered);
                 }
             }
-           
-            foreach ($groups as $group) {
+
+            foreach ($groups->getCollection() as $group) {
                 $group->image = getImageUrl($group->image);
+
                 if ($group->creator) {
                     $group->creator->images = getImagesArray($group->creator->images);
                 }
-                $group->is_member_permission = (int) ($group->is_member_permission ?? 1) === 1 ? true : false;
 
-                // Last message in group
+                $group->is_member_permission = (int) ($group->is_member_permission ?? 1) === 1;
+
                 $lastMessage = $this->messageRepo->model
                     ->where('group_id', $group->id)
-                    ->orderBy('created_at', 'desc')
+                    ->latest('created_at')
                     ->first();
-                  
-                $group->sender_id = $lastMessage ? $lastMessage->sender_id : null;
-                $group->last_message = $lastMessage ? $lastMessage->message_text : null;
-                $group->last_message_time = $lastMessage ? $lastMessage->created_at : null;
-                $group->media_type = $lastMessage ? $lastMessage->media_type : null;
-                // Unread message count for this user in this group
+
+                $group->sender_id = $lastMessage?->sender_id;
+                $group->last_message = $lastMessage?->message_text;
+                $group->last_message_time = $lastMessage?->created_at;
+                $group->media_type = $lastMessage?->media_type;
+
                 $group->unread_count = $userId
                     ? $this->messageRepo->model
-                    ->where('group_id', $group->id)
-                    ->where('receiver_id', $userId)
-                    ->whereNull('read_at')
-                    ->count()
+                        ->where('group_id', $group->id)
+                        ->where('receiver_id', $userId)
+                        ->whereNull('read_at')
+                        ->count()
                     : 0;
             }
-            
+
             $data = [
                 'groups' => $groups->items(),
                 'pagination' => [
