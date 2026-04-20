@@ -832,7 +832,10 @@ class MessageService
 
             // Only include group_ids where status != 2 (not left)
             $memberGroupIds = $this->groupRepo->groupMemberModel
-                ->where('user_id', $userId)
+                ->where(function ($q) use ($userId) {
+                    $q->where('user_id', $userId)
+                    ->where('status', '!=', 1);
+                })
                 ->where('status', '!=', 2)
                 ->where(function ($q) {
                     $q->whereNull('group_status')           // keep NULL rows
