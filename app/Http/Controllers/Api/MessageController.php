@@ -1124,9 +1124,9 @@ class MessageController extends BaseController
             $userId = $request->input('user_id');
             $limit = (int) $request->input('limit', 20);
             $createdAt = $request->input('created_at');
-
+            $chatId = $request->input('chat_id');
             if ($groupId) {
-                $result = $this->messageService->getLatestGroupMessage($user->id, $groupId, $limit, $createdAt);
+                $result = $this->messageService->getLatestGroupMessage($user->id, $groupId, $limit, $createdAt,$chatId);
             } elseif ($userId) {
                 $result = $this->messageService->getLatestIndividualMessage($user->id, $userId, $limit, $createdAt);
             } else {

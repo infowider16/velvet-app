@@ -2326,83 +2326,202 @@ class MessageService
     /**
      * Get the latest message in a group chat.
      */
-    public function getLatestGroupMessage($userId, $groupId, $limit = 20, $createdAt = null)
+    // public function getLatestGroupMessage($userId, $groupId, $limit = 20, $createdAt = null,$chatId=null)
+    // {
+    //     try {
+    //         $query = $this->messageRepo->model->with(['sender:id,name,images,is_delete'])
+    //             ->where('group_id', $groupId)
+    //             ->where('id', '>', $chatId) // ensure we don't get deleted messages if soft delete is used
+    //             ->orderBy('created_at', 'desc');
+
+    //         if ($createdAt) {
+    //             // Accept both "2025-11-26 11:26:58" and "2025-11-26T11:26:58.000Z"
+    //             $createdAtParsed = $createdAt;
+    //             if (strpos($createdAt, 'T') !== false) {
+    //                 $createdAtParsed = str_replace('T', ' ', $createdAt);
+    //                 $createdAtParsed = preg_replace('/\.\d+Z$/', '', $createdAtParsed);
+    //             }
+    //             $query->where('created_at', '<', $createdAtParsed);
+    //         }
+    //         $messages = $query->limit($limit + 1)->get(); // fetch one extra for has_more
+    //         dd($messages);
+    //         $hasMore = $messages->count() > $limit;
+    //         $data = $messages->take($limit)->map(function ($message) {
+    //             $mediaUrl = null;
+               
+    //             if ($message->media_url) {
+    //                 $mediaUrl = asset('storage/' . ltrim($message->media_url, '/'));
+    //             } elseif ($message->document_url) {
+    //                 $mediaUrl = asset('storage/' . ltrim($message->document_url, '/'));
+    //             } elseif ($message->link_url) {
+    //                 $mediaUrl = $message->link_url;
+    //             }
+    //             $documentUrl = $message->document_url ? asset('storage/' . ltrim($message->document_url, '/')) : null;
+    //             foreach ($messages->items() as $msg) {
+    //                 if (!$msg->sender || (int)($msg->sender->is_delete ?? 0) === 1) {
+    //                     continue;
+    //                 }
+                
+    //                 $messagesData[] = $this->formatMessage($msg);
+    //             }
+    //             // getFirstImage
+    //             return [
+    //                 'id' => $message->id,
+    //                 'sender_id' => $message->sender_id,
+    //                 'message_text' => $message->message_text,
+                   
+    //                 'media_url' => $mediaUrl,
+    //                 'media_type' => $message->media_type,
+    //                 'thumbnail' => $message->thumbnail,
+    //                 'duration' => $message->duration,
+    //                 'file_size' => $message->file_size,
+    //                 'document_url' => $documentUrl,
+    //                 'link_url' => $message->link_url,
+    //                 'status' => $message->status,
+    //                 'read_at' => $message->read_at,
+    //                 'group_status' => $message->group_status,
+    //                 'created_at' => $message->created_at,
+    //                 'updated_at' => $message->updated_at,
+    //                 'sender'=>$message->sender??null
+    //             ];
+    //         })->values();
+
+    //         return [
+    //             'data' => [
+    //                 'messages' => $data,
+    //                 'pagination' => [
+    //                     'current_page' => $createdAt ? null : 1,
+    //                     'per_page' => (int)$limit,
+    //                     'has_more' => $hasMore,
+    //                     'total' => null // not available in this cursor-based approach
+    //                 ]
+    //             ],
+    //             'message' => __('message.latest_group_messages_fetched')
+    //         ];
+    //     } catch (\Exception $e) {
+    //         \Log::error('Error in getLatestGroupMessage: ' . $e->getMessage());
+    //         return [
+    //             'data' => [
+    //                 'messages' => [],
+    //                 'pagination' => [
+    //                     'current_page' => null,
+    //                     'per_page' => (int)$limit,
+    //                     'has_more' => false,
+    //                     'total' => null
+    //                 ]
+    //             ],
+    //             'message' => __('message.failed_to_fetch_latest_group_messages')
+    //         ];
+    //     }
+    // }
+
+    public function getLatestGroupMessage($userId, $groupId, $limit = 20, $createdAt = null, $chatId = null)
     {
         try {
             $query = $this->messageRepo->model
+                ->with(['sender:id,name,images,is_delete'])
                 ->where('group_id', $groupId)
+                ->when($chatId, fn ($q) => $q->where('id', '>', $chatId))
                 ->orderBy('created_at', 'desc');
 
             if ($createdAt) {
-                // Accept both "2025-11-26 11:26:58" and "2025-11-26T11:26:58.000Z"
                 $createdAtParsed = $createdAt;
+
                 if (strpos($createdAt, 'T') !== false) {
                     $createdAtParsed = str_replace('T', ' ', $createdAt);
                     $createdAtParsed = preg_replace('/\.\d+Z$/', '', $createdAtParsed);
                 }
+
                 $query->where('created_at', '<', $createdAtParsed);
             }
-            $messages = $query->limit($limit + 1)->get(); // fetch one extra for has_more
+
+            $messages = $query->limit($limit + 1)->get();
 
             $hasMore = $messages->count() > $limit;
-            $data = $messages->take($limit)->map(function ($message) {
-                $mediaUrl = null;
-               
-                if ($message->media_url) {
-                    $mediaUrl = asset('storage/' . ltrim($message->media_url, '/'));
-                } elseif ($message->document_url) {
-                    $mediaUrl = asset('storage/' . ltrim($message->document_url, '/'));
-                } elseif ($message->link_url) {
-                    $mediaUrl = $message->link_url;
-                }
-                $documentUrl = $message->document_url ? asset('storage/' . ltrim($message->document_url, '/')) : null;
-                return [
-                    'id' => $message->id,
-                    'sender_id' => $message->sender_id,
-                    'message_text' => $message->message_text,
-                   
-                    'media_url' => $mediaUrl,
-                    'media_type' => $message->media_type,
-                    'thumbnail' => $message->thumbnail,
-                    'duration' => $message->duration,
-                    'file_size' => $message->file_size,
-                    'document_url' => $documentUrl,
-                    'link_url' => $message->link_url,
-                    'status' => $message->status,
-                    'read_at' => $message->read_at,
-                    'group_status' => $message->group_status,
-                    'created_at' => $message->created_at,
-                    'updated_at' => $message->updated_at,
-                ];
-            })->values();
+
+            $data = $messages
+                ->take($limit)
+                ->filter(function ($message) {
+                    return $message->sender && (int) ($message->sender->is_delete ?? 0) !== 1;
+                })
+                ->map(function ($message) use ($userId) {
+                    $mediaUrl = null;
+
+                    if ($message->media_url) {
+                        $mediaUrl = asset('storage/' . ltrim($message->media_url, '/'));
+                    } elseif ($message->document_url) {
+                        $mediaUrl = asset('storage/' . ltrim($message->document_url, '/'));
+                    } elseif ($message->link_url) {
+                        $mediaUrl = $message->link_url;
+                    }
+
+                    $documentUrl = $message->document_url
+                        ? asset('storage/' . ltrim($message->document_url, '/'))
+                        : null;
+
+                    return [
+                        'id' => $message->id,
+                        'sender_id' => $message->sender_id,
+                        'message_text' => $message->message_text,
+                        'media_url' => $mediaUrl,
+                        'media_type' => $message->media_type,
+                        'thumbnail' => $message->thumbnail,
+                        'duration' => $message->duration,
+                        'file_size' => $message->file_size,
+                        'document_url' => $documentUrl,
+                        'link_url' => $message->link_url,
+                        'status' => $message->status,
+                        'read_at' => $message->read_at,
+                        'group_status' => $message->group_status,
+                        'created_at' => $message->created_at,
+                        'updated_at' => $message->updated_at,
+                        'is_me' => (int) $message->sender_id === (int) $userId,
+
+                        'sender' => $message->sender ? [
+                            'id' => $message->sender->id,
+                            'name' => $message->sender->name,
+                            'images' => $this->getFirstImage($message->sender->images),
+                            'is_delete' => $message->sender->is_delete,
+                        ] : null,
+                    ];
+                })
+                ->values();
 
             return [
                 'data' => [
                     'messages' => $data,
                     'pagination' => [
                         'current_page' => $createdAt ? null : 1,
-                        'per_page' => (int)$limit,
+                        'per_page' => (int) $limit,
                         'has_more' => $hasMore,
-                        'total' => null // not available in this cursor-based approach
-                    ]
+                        'total' => null,
+                    ],
                 ],
-                'message' => __('message.latest_group_messages_fetched')
+                'message' => __('message.latest_group_messages_fetched'),
             ];
         } catch (\Exception $e) {
             \Log::error('Error in getLatestGroupMessage: ' . $e->getMessage());
+
             return [
                 'data' => [
                     'messages' => [],
                     'pagination' => [
                         'current_page' => null,
-                        'per_page' => (int)$limit,
+                        'per_page' => (int) $limit,
                         'has_more' => false,
-                        'total' => null
-                    ]
+                        'total' => null,
+                    ],
                 ],
-                'message' => __('message.failed_to_fetch_latest_group_messages')
+                'message' => __('message.failed_to_fetch_latest_group_messages'),
             ];
         }
+    }
+    
+
+    private function getFirstImage($images): ?string
+    {
+        $imagesArray = getImagesArray($images);
+        return !empty($imagesArray) ? $imagesArray[0] : null;
     }
 
     public function getLatestIndividualMessage($userId, $otherUserId, $limit = 20, $createdAt = null)
