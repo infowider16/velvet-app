@@ -92,7 +92,7 @@ class UserRegisterService implements UserRegisterServiceInterface
                 'message' => 'Invalid signature.',
             ];
         }
-        $appSetting = AppSettingModel::where('status',1)->get()->toArray();
+        $appSetting = AppSettingModel::where('status',1)->pluck('value', 'key')->toArray();
         return ['status' => true,'data'=>$this->encodeSettings($appSetting)];
     }
 
