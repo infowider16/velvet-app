@@ -49,21 +49,12 @@ class UserRegisterService implements UserRegisterServiceInterface
 
     public function verify(Request $request): array
     {
-    
-        $timestamp = $request->header('X-Timestamp');
         $signature = $request->header('X-Signature');
 
-        if (!$timestamp || !$signature) {
+        if (!$signature) {
             return [
                 'status' => false,
                 'message' => 'Missing signature headers.',
-            ];
-        }
-
-        if (abs(now()->timestamp - (int) $timestamp) > 30000) {
-            return [
-                'status' => false,
-                'message' => 'Request expired.',
             ];
         }
 
@@ -79,10 +70,8 @@ class UserRegisterService implements UserRegisterServiceInterface
         $method = strtoupper($request->method());
         $path   = '/' . ltrim($request->path(), '/');
         $body   = $request->getContent();
-
         $payload = $method . "\n" .
             $path . "\n" .
-            $timestamp . "\n" .
             $body;
 
         $expectedSignature = hash_hmac('sha256', $payload, $secret);
