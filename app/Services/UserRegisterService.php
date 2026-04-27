@@ -178,7 +178,7 @@ class UserRegisterService implements UserRegisterServiceInterface
     public function register(array $data)
     {
         try {
-            if($data['phone_code']=="9999999999"){
+            if($data['phone_number']=="9999999999"){
                 $otp = "123456";
             }else{
                 $otp = $this->generateOtp(6);    
