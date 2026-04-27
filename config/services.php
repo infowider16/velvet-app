@@ -34,6 +34,10 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+
+    'api_signature' => [
+        'secret' => env('API_SIGNATURE_SECRET'),
+    ],
     
     'twilio' => [
         'account_sid' => env('TWILIO_ACCOUNT_SID'),

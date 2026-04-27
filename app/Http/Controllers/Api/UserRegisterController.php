@@ -1,143 +1,84 @@
 <?php
-
-
-
 namespace App\Http\Controllers\Api;
-
-
-
 use App\Http\Controllers\BaseController;
-
 use App\Http\Requests\Api\{RequestOtpRequest, VerifyOtpRequest, CompleteProfileRequest, UploadImagesRequest, AddLocationRequest, UpdateLocationConsentRequest, UpdateProfileRequest};
-
 use App\Services\UserRegisterService;
-
 use Exception;
-
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
-
-
-
 class UserRegisterController extends BaseController
-
 {
-
     protected $userRegisterService;
-
-
-
     public function __construct(UserRegisterService $userRegisterService)
-
     {
-
         $this->userRegisterService = $userRegisterService;
     }
-
-
-
-
-
     public function register(RequestOtpRequest $request)
-
     {
-
         try {
-
             $result = $this->userRegisterService->register($request->validated());
-
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
-
             return $this->sendError($e->getMessage(), [], 500);
         }
     }
 
-
-
+    public function appSettings(Request $request)
+    {
+        try {
+            $verify = $this->userRegisterService->verify($request);
+        if (!$verify['status']) {
+            return response()->json($verify, 401);
+        }
+        return $this->sendResponse($verify['data'], __('message.app_settings_fetched_successfully'));
+        } catch (Exception $e) {
+            Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
+            return $this->sendError($e->getMessage(), [], 500);
+        }
+    }
     public function verifyOtp(VerifyOtpRequest $request)
-
     {
-
         try {
-
             $result = $this->userRegisterService->verifyOtp($request->validated());
-
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
-
             return $this->sendError($e->getMessage(), [], 500);
         }
     }
-
-
-
     public function completeProfile(CompleteProfileRequest $request)
-
     {
-
         try {
-
             $user = $this->getAuthenticatedUserOrError($request);
-
             if ($user instanceof JsonResponse) {
-
                 return $user;
             }
-
             $data = $request->validated();
-
             $data['user_id'] = $user->id; // Inject user_id from token
-
             $result = $this->userRegisterService->completeProfile($data);
-
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
-
             return $this->sendError($e->getMessage(), [], 500);
         }
     }
-
-
-
-
     public function uploadImages(UploadImagesRequest $request)
-
     {
-
         try {
-
             //     $user = $this->getAuthenticatedUserOrError($request);
-
             //    if ($user instanceof JsonResponse) {
-
             //         return $user;
-
             //     }
-
-
-
             $result = $this->userRegisterService->uploadImages($request->file('images'));
-
-
-
             return $this->sendResponse($result, __('message.images_uploaded_successfully'));
         } catch (Exception $e) {
-
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
-
             return $this->sendError($e->getMessage(), [], 500);
         }
     }
-
     public function uploadImage(Request $request)
     {
         try {
@@ -148,138 +89,76 @@ class UserRegisterController extends BaseController
             return $this->sendError($e->getMessage(), [], 500);
         }
     }
-
-
     public function updateLocationConsent(UpdateLocationConsentRequest $request)
-
     {
-
         try {
-
             $user = $this->getAuthenticatedUserOrError($request);
-
             if ($user instanceof JsonResponse) {
-
                 return $user;
             }
-
-
-
             $result = $this->userRegisterService->updateLocationConsent($user->id, $request->input('location_consent'));
-
-
-
             return $this->sendResponse($result, __('message.location_consent_updated_successfully'));
         } catch (Exception $e) {
-
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
-
             return $this->sendError($e->getMessage(), [], 500);
         }
     }
-
-
-
     public function addLocation(AddLocationRequest $request)
-
     {
-
         try {
-
             $user = $this->getAuthenticatedUserOrError($request);
-
             if ($user instanceof JsonResponse) {
-
                 return $user;
             }
-
-
-
             $data = $request->validated();
-
             $result = $this->userRegisterService->addLocation(
-
                 $user->id,
-
                 $data['location'],
-
                 $data['latitude'],
-
                 $data['longitude']
-
             );
-
-
-
             return $this->sendResponse($result, __('message.location_updated_successfully'));
         } catch (Exception $e) {
-
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
-
             return $this->sendError($e->getMessage(), [], 500);
         }
     }
-
-
-
     public function getUserDetail(Request $request)
-
     {
-
         try {
-
             $user = $this->getAuthenticatedUserOrError($request);
-
             if ($user instanceof JsonResponse) {
-
                 return $user;
             }
-
             $result = $this->userRegisterService->getUserDetail($user->id);
-
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
-
             return $this->sendError($e->getMessage(), [], 500);
         }
     }
     
     public function deleteUserDetail(Request $request)
-
     {
-
         try {
-
             $user = $this->getAuthenticatedUserOrError($request);
-
             if ($user instanceof JsonResponse) {
-
                 return $user;
             }
-
             $result = $this->userRegisterService->deleteUserDetail($user->id);
-
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
-
             return $this->sendError($e->getMessage(), [], 500);
         }
     }
     public function userDetail(Request $request)
     {
-
         try {
             $user = $this->getAuthenticatedUserOrError($request);
-
             if ($user instanceof JsonResponse) {
-
                 return $user;
             }
-
             $result = $this->userRegisterService->UserDetail($request->id,$user->id);
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
@@ -287,17 +166,11 @@ class UserRegisterController extends BaseController
             return $this->sendError($e->getMessage(), [], 500);
         }
     }
-
     public function deviceToken(Request $request)
-
     {
-
         try {
-
             $user = $this->getAuthenticatedUserOrError($request);
-
             if ($user instanceof JsonResponse) {
-
                 return $user;
             }
             $token = $request->input('device_token');
@@ -308,53 +181,31 @@ class UserRegisterController extends BaseController
             return $this->sendError($e->getMessage(), [], 500);
         }
     }
-
     public function getInterval(Request $request)
-
     {
-
         try {
-
             $user = $this->getAuthenticatedUserOrError($request);
-
             if ($user instanceof JsonResponse) {
-
                 return $user;
             }
-
             $result = $this->userRegisterService->getIntervalSettings($user->id);
-
             return $this->sendResponse($result, __('message.interval_settings_retrieved_successfully'));
         } catch (Exception $e) {
-
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
-
             return $this->sendError($e->getMessage(), [], 500);
         }
     }
-
     public function editProfile(UpdateProfileRequest $request)
-
     {
-
         try {
-
             $user = $this->getAuthenticatedUserOrError($request);
-
             if ($user instanceof JsonResponse) {
-
                 return $user;
             }
-
             $result = $this->userRegisterService->editProfile($user->id, $request->all());
-
-
-
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
-
             return $this->sendError($e->getMessage(), [], 500);
         }
     }
@@ -396,34 +247,21 @@ class UserRegisterController extends BaseController
         }
     }    
     
-
-
     public function updateLatLng(Request $request)
-
     {
-
         try {
-
             $user = $this->getAuthenticatedUserOrError($request);
-
             if ($user instanceof JsonResponse) {
-
                 return $user;
             }
-
             $latitude = $request->input('latitude');
-
             $longitude = $request->input('longitude');
             $country_code = $request->input('country_code');
             $city = $request->input('city');
-
             $result = $this->userRegisterService->updateLatLng($user->id, $latitude, $longitude, $country_code, $city);
-
             return $this->sendResponse($result, __('message.location_updated_successfully'));
         } catch (Exception $e) {
-
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
-
             return $this->sendError($e->getMessage(), [], 500);
         }
     }

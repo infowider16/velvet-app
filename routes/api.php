@@ -32,6 +32,8 @@ Route::get('get', function () {
 });
 
 Route::post('register', [UserRegisterController::class, 'register']);
+Route::get('app-settings', [UserRegisterController::class, 'appSettings']);
+
 
 Route::post('verify-otp', [UserRegisterController::class, 'verifyOtp'])->name('verify-otp');
 Route::post('upload-images', [UserRegisterController::class, 'uploadImages']);

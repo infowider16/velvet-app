@@ -897,7 +897,7 @@ class MessageService
                 'message' => __('message.groups_retrieved_successfully')
             ];
         } catch (Exception $e) {
-            \Log::error('Failed to retrieve groups: ' . $e->getMessage());
+            Log::error('Failed to retrieve groups: ' . $e->getMessage());
             throw new Exception(__('message.failed_to_retrieve_groups'));
         }
     }
@@ -911,7 +911,7 @@ class MessageService
                 'message' => __('message.group_name_checked')
             ];
         } catch (Exception $e) {
-            \Log::error('Failed to check group name existence: ' . $e->getMessage());
+            Log::error('Failed to check group name existence: ' . $e->getMessage());
             throw new Exception(__('message.failed_to_check_group_name_existence'));
         }
     }
