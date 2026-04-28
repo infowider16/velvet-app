@@ -117,7 +117,7 @@ class MessageService
                     'count'
                 );
 
-                if ($existingMessages == 1) { // Only this message exists
+                //if ($existingMessages == 1) { // Only this message exists
                     $receiver = $this->userRepo->find($receiverId);
                     $sender = $this->userRepo->find($senderId);
                     $title = __('message.new_message_title');
@@ -134,7 +134,7 @@ class MessageService
                     } catch (\Throwable $e) {
                         \Log::error('Error in sendPushNotification (firstMessage): ' . $e->getMessage());
                     }
-                }
+                //}
             }
             $mediaUrl = null;
                 if ($message->media_url) {
