@@ -1013,11 +1013,10 @@ class MessageService
             if ($userId && $groups instanceof LengthAwarePaginator) {
                 $removedGroupIds = $this->groupRepo->groupMemberModel
                     ->where('user_id', $userId)
-                    ->where('status', 2)
+                    ->whereIN('status', [1,2])
                     ->pluck('group_id')
                     ->toArray();
                   
-
                 if (!empty($removedGroupIds)) {
                     $filtered = $groups->getCollection()->filter(function ($group) use ($removedGroupIds) {
                         return !(
