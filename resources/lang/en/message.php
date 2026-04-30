@@ -15,7 +15,7 @@ return [
     'failed_to_validate_group_access' => 'Failed to validate group access.',
     'new_group_request' => 'New Group Request',
     'sent_you_a_group_request' => 'sent you a group request',
-    'you_have_a_new_group_request' => ':name requested to join your group :group.',
+    'you_have_a_new_group_request' => 'requested to join your group :group.',
     'user_joined_group' => ':name joined your group :group.',
 
     //new added text end

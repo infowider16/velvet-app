@@ -107,7 +107,7 @@ return [
     'new_group_request' => 'Neue Gruppenanfrage',
     'user_joined_group' => ':name ist Ihrer Gruppe „:group“ beigetreten.',
     'sent_you_a_group_request' => ':name möchte Ihrer Gruppe :group beitreten',
-    'you_have_a_new_group_request' => 'Du hast eine neue Gruppenanfrage',
+    'you_have_a_new_group_request' => 'möchte Ihrer Gruppe :group beitreten',
 
     'document_mimes' => 'Nur PDF-, DOC-, DOCX-, XLS-, XLSX-, PPT-, PPTX-, TXT-, JPG-, JPEG- und PNG-Dateien sind erlaubt.',
 
