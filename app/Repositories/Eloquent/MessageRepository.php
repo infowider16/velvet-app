@@ -55,6 +55,21 @@ class MessageRepository extends BaseRepository implements MessageRepositoryInter
 
     }
 
+    public function markGroupMessagesAsRead($groupId, $receiverId)
+    {
+        return $this->model
+
+            ->where('group_id', $groupId)
+
+            ->where('receiver_id', $receiverId)
+
+            ->whereNull('read_at')
+
+            ->update(['read_at' => now()]);
+
+    }
+
+
     /**
      * Get notification status for 1-to-1 chat between two users.
      * Returns true (on) by default if not set.

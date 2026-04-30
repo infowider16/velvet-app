@@ -1598,7 +1598,7 @@ class MessageService
                     $mediaUrl = $msg->link_url;
                 }
                 $documentUrl = $msg->document_url ? asset('storage/' . ltrim($msg->document_url, '/')) : null;
-
+                $this->messageRepo->markGroupMessagesAsRead($msg->group_id, $userId);
                 $messagesData[] = [
                     'id' => $msg->id,
                     'sender_id' => $msg->sender_id,
@@ -1609,7 +1609,7 @@ class MessageService
                     'duration' => $msg->duration,
                     'file_size' => $msg->file_size,
                     'status' => $msg->status,
-                    'read_at' => $msg->read_at,
+                    'read_at' => now(),
                     'group_status' => $msg->group_status,
                     'created_at' => $msg->created_at,
                     'updated_at' => $msg->updated_at,
