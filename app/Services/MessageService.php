@@ -757,11 +757,11 @@ class MessageService
                     $receiver = $this->userRepo->find($group->created_by);
 
                     $bodyEn = $receiver
-                        ? ($receiver->name . ' ' . __('message.sent_you_a_group_request', ['name' => $receiver->name,'group' => $group->name], 'en'))
+                        ? ($receiver->name . ' ' . __('message.you_have_a_new_group_request', ['name' => $receiver->name,'group' => $group->name], 'en'))
                         : __('message.you_have_a_new_group_request', [], 'en');
 
                     $bodyGe = $receiver
-                        ? ($receiver->name . ' ' . __('message.sent_you_a_group_request', ['name' => $receiver->name,'group' => $group->name], 'ge'))
+                        ? ($receiver->name . ' ' . __('message.you_have_a_new_group_request', ['name' => $receiver->name,'group' => $group->name], 'ge'))
                         : __('message.you_have_a_new_group_request', [], 'ge');
 
                     $title = $titleEn;
