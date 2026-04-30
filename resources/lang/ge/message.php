@@ -105,7 +105,8 @@ return [
 
     'document_max' => 'Die Dokumentgröße darf 10 MB nicht überschreiten.',
     'new_group_request' => 'Neue Gruppenanfrage',
-    'sent_you_a_group_request' => 'hat dir eine Gruppenanfrage gesendet',
+    'user_joined_group' => ':name ist Ihrer Gruppe „:group“ beigetreten.',
+    'sent_you_a_group_request' => ':name möchte Ihrer Gruppe :group beitreten',
     'you_have_a_new_group_request' => 'Du hast eine neue Gruppenanfrage',
 
     'document_mimes' => 'Nur PDF-, DOC-, DOCX-, XLS-, XLSX-, PPT-, PPTX-, TXT-, JPG-, JPEG- und PNG-Dateien sind erlaubt.',

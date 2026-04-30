@@ -696,6 +696,52 @@ class MessageService
                     'user_id' => $userId,
                     'role' => 'member'
                 ]);
+
+                try {
+                    $titleEn = __('message.joined_group_successfully', [], 'en');
+                    $titleGe = __('message.joined_group_successfully', [], 'ge');
+                    $receiver = $this->userRepo->find($group->created_by);
+
+                    $bodyEn = $receiver
+                        ? ($receiver->name . ' ' . __('message.user_joined_group', ['name' => $receiver->name,'group' => $group->name], 'en'))
+                        : __('message.user_joined_group', [], 'en');
+
+                    $bodyGe = $receiver
+                        ? ($receiver->name . ' ' . __('message.user_joined_group', ['name' => $receiver->name,'group' => $group->name], 'ge'))
+                        : __('message.user_joined_group', [], 'ge');
+
+                    $title = $titleEn;
+                    $body = $bodyEn;
+                            $titleTranslation = [
+                        'en' => $titleEn,
+                        'ge' => $titleGe,
+                    ];
+
+                    $bodyTranslation = [
+                        'en' => $bodyEn,
+                        'ge' => $bodyGe,
+                    ];
+                    $other = [
+                        'type' => 'group_request',
+                        'user_id' => $userId,
+                        'screen_name' => 'group_request'
+                    ];
+                    $this->userRepo->createMobileNotification(
+                        $userId,
+                        $receiver->id,
+                        $title,
+                        $body,
+                        $other,
+                        $titleTranslation,
+                        $bodyTranslation
+                    );
+                    
+                    if (function_exists('sendPushNotification') && $receiver && !empty($receiver->device_token)) {
+                        sendPushNotification([$receiver->device_token], $title, $body, $other, [$receiver->id]);
+                    }
+                } catch (\Throwable $e) {
+                    Log::error('Error in sendPushNotification (sendGroupRequest): ' . $e->getMessage());
+                }
                 return [
                     'data' => [
                         'group' => $this->formatGroupInfo($group, $userId),
@@ -711,11 +757,11 @@ class MessageService
                     $receiver = $this->userRepo->find($group->created_by);
 
                     $bodyEn = $receiver
-                        ? ($receiver->name . ' ' . __('message.sent_you_a_group_request', [], 'en'))
+                        ? ($receiver->name . ' ' . __('message.sent_you_a_group_request', ['name' => $receiver->name,'group' => $group->name], 'en'))
                         : __('message.you_have_a_new_group_request', [], 'en');
 
                     $bodyGe = $receiver
-                        ? ($receiver->name . ' ' . __('message.sent_you_a_group_request', [], 'ge'))
+                        ? ($receiver->name . ' ' . __('message.sent_you_a_group_request', ['name' => $receiver->name,'group' => $group->name], 'ge'))
                         : __('message.you_have_a_new_group_request', [], 'ge');
 
                     $title = $titleEn;
