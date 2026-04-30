@@ -9,8 +9,9 @@ use App\Repositories\Eloquent\GroupRepository;
 use App\Repositories\Eloquent\FriendshipRepository;
 use Exception;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\FacadesLog;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 
 class MessageService
 {
@@ -132,7 +133,7 @@ class MessageService
                             }
                         }
                     } catch (\Throwable $e) {
-                        \Log::error('Error in sendPushNotification (firstMessage): ' . $e->getMessage());
+                        Log::error('Error in sendPushNotification (firstMessage): ' . $e->getMessage());
                     }
                 //}
             }
@@ -153,7 +154,7 @@ class MessageService
                 'message' => __('message.message_sent_successfully')
             ];
         } catch (Exception $e) {
-           \Log::error(__('message.failed_to_send_message') . ': ' . $e->getMessage());
+           Log::error(__('message.failed_to_send_message') . ': ' . $e->getMessage());
             throw new Exception(__('message.failed_to_send_message'));
         }
     }
@@ -178,7 +179,7 @@ class MessageService
                 'message' => __('message.group_chat_history_retrieved_successfully')
             ];
         } catch (Exception $e) {
-            \Log::error('Failed to retrieve group chat history: ' . $e->getMessage());
+            Log::error('Failed to retrieve group chat history: ' . $e->getMessage());
             throw new Exception(__('message.failed_to_retrieve_group_chat_history'));
         }
     }
@@ -310,7 +311,7 @@ class MessageService
                 'message' => __('message.chat_history_retrieved_successfully')
             ];
         } catch (Exception $e) {
-            \Log::error('Failed to retrieve chat history: ' . $e->getMessage());
+            Log::error('Failed to retrieve chat history: ' . $e->getMessage());
             throw new Exception(__('message.failed_to_retrieve_chat_history'));
         }
     }
@@ -334,7 +335,7 @@ class MessageService
                 'message' => __('message.message_deleted_successfully')
             ];
         } catch (Exception $e) {
-            \Log::error('Failed to delete message: ' . $e->getMessage());
+            Log::error('Failed to delete message: ' . $e->getMessage());
             throw new Exception(__('message.failed_to_delete_message'));
         }
     }
@@ -567,7 +568,7 @@ class MessageService
                 'message' => __('message.sent_message_users_fetched_successfully')
             ];
         } catch (Exception $e) {
-            \Log::error('Failed to fetch sent message users: ' . $e->getMessage());
+            Log::error('Failed to fetch sent message users: ' . $e->getMessage());
             throw new Exception(__('message.failed_to_fetch_sent_message_users'));
         }
     }
@@ -645,7 +646,7 @@ class MessageService
                 'message' => __('message.group_created_successfully')
             ];
         } catch (Exception $e) {
-            \Log::error('Failed to create group: ' . $e->getMessage());
+            Log::error('Failed to create group: ' . $e->getMessage());
             throw new Exception(__('message.create_group_failed'));
         }
     }
@@ -690,8 +691,6 @@ class MessageService
                     'message' => __('message.cannot_rejoin_private_group')
                 ];
             }
-            // dd('sdfkjsdfjsdf');
-
             if ($group->group_type === 0) {
                 // Public: allow re-join
                 $this->groupRepo->addMemberToGroup([
@@ -708,6 +707,33 @@ class MessageService
             } else {
                 // Private group: create join request (if not removed)
                 $this->groupRepo->createJoinRequest($group->id, $userId);
+                try {
+                    $titleEn = __('message.new_group_request', [], 'en');
+                    $titleGe = __('message.new_group_request', [], 'ge');
+                    $receiver = $this->userRepo->find($userId);
+
+                    $bodyEn = $receiver
+                        ? ($receiver->name . ' ' . __('message.sent_you_a_group_request', [], 'en'))
+                        : __('message.you_have_a_new_group_request', [], 'en');
+
+                    $bodyGe = $receiver
+                        ? ($receiver->name . ' ' . __('message.sent_you_a_group_request', [], 'ge'))
+                        : __('message.you_have_a_new_group_request', [], 'ge');
+
+                    $title = $titleEn;
+                    $body = $bodyEn;
+                    $other = [
+                        'type' => 'group_request',
+                        'user_id' => $userId,
+                        'screen_name' => 'group_request'
+                    ];
+                    
+                    if (function_exists('sendPushNotification') && $receiver && !empty($receiver->device_token)) {
+                        sendPushNotification([$receiver->device_token], $title, $body, $other, [$receiver->id]);
+                    }
+                } catch (\Throwable $e) {
+                    Log::error('Error in sendPushNotification (sendGroupRequest): ' . $e->getMessage());
+                }
                 return [
                     'data' => [
                         'group' => $this->formatGroupInfo($group, $userId),
@@ -716,7 +742,7 @@ class MessageService
                 ];
             }
         } catch (Exception $e) {
-            \Log::error('Failed to join group: ' . $e->getMessage());
+            Log::error('Failed to join group: ' . $e->getMessage());
             throw new Exception(__('message.join_group_failed'));
         }
     }
@@ -776,7 +802,7 @@ class MessageService
                 ];
             }
         } catch (Exception $e) {
-            \Log::error('Failed to handle join request: ' . $e->getMessage());
+            Log::error('Failed to handle join request: ' . $e->getMessage());
             throw new Exception(__('message.handle_join_request_failed'));
         }
     }
@@ -818,7 +844,7 @@ class MessageService
                 'message' => __('message.conversation_deleted_successfully')
             ];
         } catch (Exception $e) {
-            \Log::error('Failed to delete all conversation messages: ' . $e->getMessage());
+            Log::error('Failed to delete all conversation messages: ' . $e->getMessage());
             throw new Exception(__('message.delete_all_conversation_failed'));
         }
     }
@@ -1125,7 +1151,7 @@ class MessageService
                 'message' => __('message.member_removed_successfully'),
             ];
         } catch (\Exception $e) {
-            \Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
+            Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
             return [
                 'error' => true,
                 'message' => __('message.failed_to_remove_member_from_group'),
@@ -1216,7 +1242,7 @@ class MessageService
                 'message' => $status == 1 ? __('message.member_blocked_successfully') : __('message.member_unblocked_successfully'),
             ];
         } catch (\Exception $e) {
-            \Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
+            Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
             return [
                 'error' => true,
                 'message' => __('message.failed_to_update_group_member_status'),
@@ -1269,7 +1295,7 @@ class MessageService
                 'message' => __('message.group_permissions_updated'),
             ];
         } catch (\Exception $e) {
-            \Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
+            Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
             return [
                 'error' => true,
                 'message' => __('message.failed_to_update_permissions_for_all'),
@@ -1329,7 +1355,7 @@ class MessageService
                 'message' => __('message.member_permission_updated'),
             ];
         } catch (\Exception $e) {
-            \Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
+            Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
             return [
                 'error' => true,
                 'message' => __('message.failed_to_update_member_permission'),
@@ -1372,7 +1398,7 @@ class MessageService
                 'message' => __('message.member_permission_fetched')
             ];
         } catch (\Exception $e) {
-            \Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
+            Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
             return [
                 'error' => true,
                 'message' => __('message.failed_to_fetch_member_permission'),
@@ -1632,7 +1658,7 @@ class MessageService
                 'message' => __('message.group_messages_members_fetched')
             ];
         } catch (\Exception $e) {
-            \Log::error('Error in getGroupConversationDetail: ' . $e->getMessage());
+            Log::error('Error in getGroupConversationDetail: ' . $e->getMessage());
             return [
                 'error' => true,
                 'message' => __('message.failed_to_fetch_group_conversation_detail'),
@@ -1675,7 +1701,7 @@ class MessageService
                 'message' => __('message.group_deleted_successfully')
             ];
         } catch (\Exception $e) {
-            \Log::error('Error in deleteGroup: ' . $e->getMessage());
+            Log::error('Error in deleteGroup: ' . $e->getMessage());
             return [
                 'error' => true,
                 'message' => __('message.failed_to_delete_group'),
@@ -1804,7 +1830,7 @@ class MessageService
                 'message' => __('message.group_details_fetched')
             ];
         } catch (\Exception $e) {
-            \Log::error('Error in getGroupDetails: ' . $e->getMessage());
+            Log::error('Error in getGroupDetails: ' . $e->getMessage());
             return [
                 'error' => true,
                 'message' => __('message.fetch_group_details_failed'),
@@ -1897,7 +1923,7 @@ class MessageService
                     ];
                 }
 
-                \Log::error('Error in editGroup (DB): ' . $e->getMessage());
+                Log::error('Error in editGroup (DB): ' . $e->getMessage());
 
                 return [
                     'error' => true,
@@ -1918,7 +1944,7 @@ class MessageService
                 'message' => __('message.group_updated_successfully'),
             ];
         } catch (\Exception $e) {
-            \Log::error('Error in editGroup: ' . $e->getMessage());
+            Log::error('Error in editGroup: ' . $e->getMessage());
 
             return [
                 'error' => true,
@@ -2017,7 +2043,7 @@ class MessageService
                 'message' => __('message.left_group_successfully')
             ];
         } catch (\Exception $e) {
-            \Log::error('Error in leaveGroup: ' . $e->getMessage());
+            Log::error('Error in leaveGroup: ' . $e->getMessage());
             return [
                 'error' => true,
                 'message' => __('message.failed_to_leave_group'),
@@ -2086,7 +2112,7 @@ class MessageService
                 'message' => __('message.group_reported_successfully'),
             ];
         } catch (\Exception $e) {
-            \Log::error('Error in reportGroup: ' . $e->getMessage());
+            Log::error('Error in reportGroup: ' . $e->getMessage());
             return [
                 'error' => true,
                 'message' => __('message.failed_to_report_group'),
@@ -2153,7 +2179,7 @@ class MessageService
                 'message' => __('message.user_reported_successfully'),
             ];
         } catch (\Exception $e) {
-            \Log::error('Error in reportGroup: ' . $e->getMessage());
+            Log::error('Error in reportGroup: ' . $e->getMessage());
             return [
                 'error' => true,
                 'message' => __('message.failed_to_report_group'),
@@ -2219,7 +2245,7 @@ class MessageService
                 'message' => __('message.pin_reported_successfully'),
             ];
         } catch (\Exception $e) {
-            \Log::error('Error in reportGroup: ' . $e->getMessage());
+            Log::error('Error in reportGroup: ' . $e->getMessage());
             return [
                 'error' => true,
                 'message' => __('message.failed_to_report_pin'),
@@ -2318,7 +2344,7 @@ class MessageService
                 'message' => $msg
             ];
         } catch (\Exception $e) {
-            \Log::error('Error in getGroupMediaList: ' . $e->getMessage());
+            Log::error('Error in getGroupMediaList: ' . $e->getMessage());
             return [
                 'data' => [],
                 'message' => __('message.failed_to_fetch_group_media_list')
@@ -2402,7 +2428,7 @@ class MessageService
     //             'message' => __('message.latest_group_messages_fetched')
     //         ];
     //     } catch (\Exception $e) {
-    //         \Log::error('Error in getLatestGroupMessage: ' . $e->getMessage());
+    //         Log::error('Error in getLatestGroupMessage: ' . $e->getMessage());
     //         return [
     //             'data' => [
     //                 'messages' => [],
@@ -2503,7 +2529,7 @@ class MessageService
                 'message' => __('message.latest_group_messages_fetched'),
             ];
         } catch (\Exception $e) {
-            \Log::error('Error in getLatestGroupMessage: ' . $e->getMessage());
+            Log::error('Error in getLatestGroupMessage: ' . $e->getMessage());
 
             return [
                 'data' => [
@@ -2598,7 +2624,7 @@ class MessageService
                 'message' => __('message.latest_individual_messages_fetched')
             ];
         } catch (\Exception $e) {
-            \Log::error('Error in getLatestIndividualMessage: ' . $e->getMessage());
+            Log::error('Error in getLatestIndividualMessage: ' . $e->getMessage());
             return [
                 'data' => [
                     'messages' => [],
@@ -2634,7 +2660,7 @@ class MessageService
                 'message' => __('message.group_chat_deleted_for_user')
             ];
         } catch (\Exception $e) {
-            \Log::error('Failed to soft-delete group chat for user: ' . $e->getMessage());
+            Log::error('Failed to soft-delete group chat for user: ' . $e->getMessage());
             throw new \Exception(__('message.failed_to_delete_group_chat_for_user'));
         }
     }
@@ -2664,7 +2690,7 @@ class MessageService
                 'message' => __('message.group_messages_deleted_by_admin')
             ];
         } catch (\Exception $e) {
-            \Log::error('Failed to permanently delete all group messages by admin: ' . $e->getMessage());
+            Log::error('Failed to permanently delete all group messages by admin: ' . $e->getMessage());
             throw new \Exception(__('message.failed_to_delete_all_group_messages'));
         }
     }
@@ -2763,7 +2789,7 @@ class MessageService
                 'message' => $msg
             ];
         } catch (\Exception $e) {
-            \Log::error('Error in getIndividualMediaList: ' . $e->getMessage());
+            Log::error('Error in getIndividualMediaList: ' . $e->getMessage());
             return [
                 'data' => [],
                 'message' => __('message.failed_to_fetch_individual_media_list')

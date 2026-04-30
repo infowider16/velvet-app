@@ -104,6 +104,9 @@ return [
     'document_list_fetched' => 'Dokumentenliste erfolgreich abgerufen.',
 
     'document_max' => 'Die Dokumentgröße darf 10 MB nicht überschreiten.',
+    'new_group_request' => 'Neue Gruppenanfrage',
+    'sent_you_a_group_request' => 'hat dir eine Gruppenanfrage gesendet',
+    'you_have_a_new_group_request' => 'Du hast eine neue Gruppenanfrage',
 
     'document_mimes' => 'Nur PDF-, DOC-, DOCX-, XLS-, XLSX-, PPT-, PPTX-, TXT-, JPG-, JPEG- und PNG-Dateien sind erlaubt.',
 
