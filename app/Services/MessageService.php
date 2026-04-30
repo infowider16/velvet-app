@@ -654,7 +654,6 @@ class MessageService
     public function joinGroup($userId, $data)
     {
         try {
-          
             if (empty($data['group_id'])) {
                 return [
                     'data' => null,
@@ -681,7 +680,6 @@ class MessageService
 
             // Check if user was removed (status=2)
             $wasRemoved = $this->groupRepo->isRemovedFromGroup($group->id, $userId);
-
             if ($group->group_type == 1 && $wasRemoved) {
                
                  // private group
@@ -710,7 +708,7 @@ class MessageService
                 try {
                     $titleEn = __('message.new_group_request', [], 'en');
                     $titleGe = __('message.new_group_request', [], 'ge');
-                    $receiver = $this->userRepo->find($userId);
+                    $receiver = $this->userRepo->find($group->created_by);
 
                     $bodyEn = $receiver
                         ? ($receiver->name . ' ' . __('message.sent_you_a_group_request', [], 'en'))
