@@ -720,11 +720,29 @@ class MessageService
 
                     $title = $titleEn;
                     $body = $bodyEn;
+                            $titleTranslation = [
+                        'en' => $titleEn,
+                        'ge' => $titleGe,
+                    ];
+
+                    $bodyTranslation = [
+                        'en' => $bodyEn,
+                        'ge' => $bodyGe,
+                    ];
                     $other = [
                         'type' => 'group_request',
                         'user_id' => $userId,
                         'screen_name' => 'group_request'
                     ];
+                    $this->userRepo->createMobileNotification(
+                        $userId,
+                        $receiver->id,
+                        $title,
+                        $body,
+                        $other,
+                        $titleTranslation,
+                        $bodyTranslation
+                    );
                     
                     if (function_exists('sendPushNotification') && $receiver && !empty($receiver->device_token)) {
                         sendPushNotification([$receiver->device_token], $title, $body, $other, [$receiver->id]);
