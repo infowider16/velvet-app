@@ -16,6 +16,8 @@ use Illuminate\Validation\ValidationException;
 use Twilio\Exceptions\RestException;
 use App\Models\NotificationSetting;
 use App\Models\AppSettingModel;
+use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserRegisterService implements UserRegisterServiceInterface
@@ -632,9 +634,6 @@ class UserRegisterService implements UserRegisterServiceInterface
     public function getIntervalSettings($userId)
     {
         try {
-            // $user = $this->userRepo->getOneData(
-            //     ['id' => $userId]
-            // );
             $user = $this->userRepo->getByWhere(
                 ['id' => $userId],
                 [],
@@ -666,9 +665,17 @@ class UserRegisterService implements UserRegisterServiceInterface
                 [],
                 'count'
             );
+            $unreadMessageQuery = Message::where('receiver_id', $userId)
+            ->whereNull('read_at');
             return [
                 'unread_notification' => $unreadNotificationCount,
-                'unread_message' => $unreadMessageCount,
+                 'unread_message'         => (clone $unreadMessageQuery)
+                    ->whereNull('group_id')
+                    ->count(),
+
+                'unread_group_message'   => (clone $unreadMessageQuery)
+                    ->whereNotNull('group_id')
+                    ->count(),
                 'pending_friend_request' => count($user->pendingReceivedRequests),
                 'push_notification_status' => $user->push_notification_status,
                 'is_approve' => $user->is_approve,
