@@ -16,6 +16,7 @@ use Illuminate\Validation\ValidationException;
 use Twilio\Exceptions\RestException;
 use App\Models\NotificationSetting;
 use App\Models\AppSettingModel;
+use App\Models\GroupMember;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -667,15 +668,13 @@ class UserRegisterService implements UserRegisterServiceInterface
             );
             $unreadMessageQuery = Message::where('receiver_id', $userId)
             ->whereNull('read_at');
+            $unreadGroupMessageCount = GroupMember::where('user_id', $userId)->sum('unread_count');
             return [
                 'unread_notification' => $unreadNotificationCount,
-                 'unread_message'         => (clone $unreadMessageQuery)
+                'unread_message'         => (clone $unreadMessageQuery)
                     ->whereNull('group_id')
                     ->count(),
-
-                'unread_group_message'   => (clone $unreadMessageQuery)
-                    ->whereNotNull('group_id')
-                    ->count(),
+                'unread_group_message'   => $unreadGroupMessageCount,
                 'pending_friend_request' => count($user->pendingReceivedRequests),
                 'push_notification_status' => $user->push_notification_status,
                 'is_approve' => $user->is_approve,

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Block;
+use App\Models\GroupMember;
 use App\Repositories\Eloquent\MessageRepository;
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\GroupRepository;
@@ -58,7 +59,6 @@ class MessageService
                 'status' => 'sent',
             ];
 
-            // Attachments: media_url, thumbnail, duration, file_size, document_url, link_url
             if (isset($data['media_url'])) {
                 $messageData['media_url'] = $data['media_url'];
             }
@@ -79,20 +79,14 @@ class MessageService
             if (isset($data['link_url'])) {
                 $messageData['link_url'] = $data['link_url'];
             }
-
+            
             $message = $this->messageRepo->create($messageData);
-
-            // Fix media_url and document_url in returned message data (always use asset('storage/'))
-            // if ($message && $message->media_url) {
-            //     $mediaUrl = $message->media_url;
-            //     $message->media_url = asset('storage/' . $mediaUrl);
-            // }
-            // if ($message && isset($message->document_url) && $message->document_url) {
-            //     $docUrl = $message->document_url;
-            //     $message->document_url = asset('storage/' . $docUrl);
-            // }
-
-            // Send notification if this is the first message ever between these users (not group)
+            if(!empty($data['group_id'])){
+                $groupId = $data['group_id'];
+                GroupMember::where('group_id', $groupId)
+                ->where('user_id', '!=', $senderId)
+                ->increment('unread_count');
+            }
             if (!empty($data['receiver_id']) && empty($data['group_id'])) {
                 $receiverId = $data['receiver_id'];
                 // Check if this is the first message from sender to receiver (both directions)
@@ -962,11 +956,7 @@ class MessageService
                 $group->media_type = $lastMessage ? $lastMessage->media_type : null;
                 
                 // Unread message count for this user in this group
-                $group->unread_count = $this->messageRepo->model
-                    ->where('group_id', $group->id)
-                    ->where('receiver_id', $userId)
-                    ->whereNull('read_at')
-                    ->count();
+                $group->unread_count = GroupMember::where('user_id', $userId)->sum('unread_count');
             }
 
             $data = [
@@ -2413,98 +2403,6 @@ class MessageService
         }
     }
 
-    /**
-     * Get the latest message in a group chat.
-     */
-    // public function getLatestGroupMessage($userId, $groupId, $limit = 20, $createdAt = null,$chatId=null)
-    // {
-    //     try {
-    //         $query = $this->messageRepo->model->with(['sender:id,name,images,is_delete'])
-    //             ->where('group_id', $groupId)
-    //             ->where('id', '>', $chatId) // ensure we don't get deleted messages if soft delete is used
-    //             ->orderBy('created_at', 'desc');
-
-    //         if ($createdAt) {
-    //             // Accept both "2025-11-26 11:26:58" and "2025-11-26T11:26:58.000Z"
-    //             $createdAtParsed = $createdAt;
-    //             if (strpos($createdAt, 'T') !== false) {
-    //                 $createdAtParsed = str_replace('T', ' ', $createdAt);
-    //                 $createdAtParsed = preg_replace('/\.\d+Z$/', '', $createdAtParsed);
-    //             }
-    //             $query->where('created_at', '<', $createdAtParsed);
-    //         }
-    //         $messages = $query->limit($limit + 1)->get(); // fetch one extra for has_more
-    //         dd($messages);
-    //         $hasMore = $messages->count() > $limit;
-    //         $data = $messages->take($limit)->map(function ($message) {
-    //             $mediaUrl = null;
-               
-    //             if ($message->media_url) {
-    //                 $mediaUrl = asset('storage/' . ltrim($message->media_url, '/'));
-    //             } elseif ($message->document_url) {
-    //                 $mediaUrl = asset('storage/' . ltrim($message->document_url, '/'));
-    //             } elseif ($message->link_url) {
-    //                 $mediaUrl = $message->link_url;
-    //             }
-    //             $documentUrl = $message->document_url ? asset('storage/' . ltrim($message->document_url, '/')) : null;
-    //             foreach ($messages->items() as $msg) {
-    //                 if (!$msg->sender || (int)($msg->sender->is_delete ?? 0) === 1) {
-    //                     continue;
-    //                 }
-                
-    //                 $messagesData[] = $this->formatMessage($msg);
-    //             }
-    //             // getFirstImage
-    //             return [
-    //                 'id' => $message->id,
-    //                 'sender_id' => $message->sender_id,
-    //                 'message_text' => $message->message_text,
-                   
-    //                 'media_url' => $mediaUrl,
-    //                 'media_type' => $message->media_type,
-    //                 'thumbnail' => $message->thumbnail,
-    //                 'duration' => $message->duration,
-    //                 'file_size' => $message->file_size,
-    //                 'document_url' => $documentUrl,
-    //                 'link_url' => $message->link_url,
-    //                 'status' => $message->status,
-    //                 'read_at' => $message->read_at,
-    //                 'group_status' => $message->group_status,
-    //                 'created_at' => $message->created_at,
-    //                 'updated_at' => $message->updated_at,
-    //                 'sender'=>$message->sender??null
-    //             ];
-    //         })->values();
-
-    //         return [
-    //             'data' => [
-    //                 'messages' => $data,
-    //                 'pagination' => [
-    //                     'current_page' => $createdAt ? null : 1,
-    //                     'per_page' => (int)$limit,
-    //                     'has_more' => $hasMore,
-    //                     'total' => null // not available in this cursor-based approach
-    //                 ]
-    //             ],
-    //             'message' => __('message.latest_group_messages_fetched')
-    //         ];
-    //     } catch (\Exception $e) {
-    //         Log::error('Error in getLatestGroupMessage: ' . $e->getMessage());
-    //         return [
-    //             'data' => [
-    //                 'messages' => [],
-    //                 'pagination' => [
-    //                     'current_page' => null,
-    //                     'per_page' => (int)$limit,
-    //                     'has_more' => false,
-    //                     'total' => null
-    //                 ]
-    //             ],
-    //             'message' => __('message.failed_to_fetch_latest_group_messages')
-    //         ];
-    //     }
-    // }
-
     public function getLatestGroupMessage($userId, $groupId, $limit = 20, $createdAt = null, $chatId = null)
     {
         try {
@@ -2548,7 +2446,7 @@ class MessageService
                     $documentUrl = $message->document_url
                         ? asset('storage/' . ltrim($message->document_url, '/'))
                         : null;
-
+                    $this->groupRepo->membersDataUpdate(['group_id'=>$groupId],['unread_count'=>0]);
                     return [
                         'id' => $message->id,
                         'sender_id' => $message->sender_id,
