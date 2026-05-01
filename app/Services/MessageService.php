@@ -2446,7 +2446,7 @@ class MessageService
                     $documentUrl = $message->document_url
                         ? asset('storage/' . ltrim($message->document_url, '/'))
                         : null;
-                    $this->groupRepo->membersDataUpdate(['group_id'=>$groupId],['unread_count'=>0]);
+                    
                     return [
                         'id' => $message->id,
                         'sender_id' => $message->sender_id,
@@ -2474,7 +2474,7 @@ class MessageService
                     ];
                 })
                 ->values();
-
+            $this->groupRepo->membersDataUpdate(['group_id'=>$groupId],['unread_count'=>0]);
             return [
                 'data' => [
                     'messages' => $data,

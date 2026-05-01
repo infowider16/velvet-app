@@ -282,7 +282,7 @@ class GroupService
                
                 $messagesData[] = $this->formatMessage($msg);
             }
-
+            $this->groupRepo->membersDataUpdate(['group_id'=>$groupId],['unread_count'=>0]);
             return $this->successResponse([
                 'messages' => $messagesData,
                 'pagination' => [
