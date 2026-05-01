@@ -2474,7 +2474,7 @@ class MessageService
                     ];
                 })
                 ->values();
-            $this->groupRepo->membersDataUpdate(['group_id'=>$groupId],['unread_count'=>0]);
+            $this->groupRepo->membersDataUpdate(['group_id'=>$groupId,'user_id'=>$userId],['unread_count'=>0]);
             return [
                 'data' => [
                     'messages' => $data,
