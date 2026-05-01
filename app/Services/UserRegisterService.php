@@ -653,27 +653,15 @@ class UserRegisterService implements UserRegisterServiceInterface
             }
             // Get unread notification count dynamically
             $unreadNotificationCount = $this->userRepo->getUnreadNotificationCount($userId);
-            // --- DYNAMIC UNREAD MESSAGE COUNT ---
-            // Count all messages where receiver_id = $userId and read_at is null
-            $unreadMessageCount = $this->messageRepo->getByWhere(
-                [
-                    ['receiver_id', '=', $userId],
-                    ['read_at', '=', null]
-                ],
-                [],
-                ['*'],
-                [],
-                [],
-                'count'
-            );
-            $unreadMessageQuery = Message::where('receiver_id', $userId)
-            ->whereNull('read_at');
+            $unreadMessageCount = Message::where('receiver_id', $userId)
+            ->whereNull('read_at')
+            ->whereNotNull('message_text')
+            ->whereNull('group_id')
+            ->count();
             $unreadGroupMessageCount = GroupMember::where('user_id', $userId)->sum('unread_count');
             return [
                 'unread_notification' => $unreadNotificationCount,
-                'unread_message'         => (clone $unreadMessageQuery)
-                    ->whereNull('group_id')
-                    ->count(),
+                'unread_message'         => $unreadMessageCount,
                 'unread_group_message'   => $unreadGroupMessageCount,
                 'pending_friend_request' => count($user->pendingReceivedRequests),
                 'push_notification_status' => $user->push_notification_status,
