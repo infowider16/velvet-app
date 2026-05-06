@@ -217,6 +217,18 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
         }
     }
 
+    public function membersDataUpdate($bywhere, $data)
+    {
+        try {
+            return $this->groupMemberModel
+                ->where($bywhere)
+                ->update($data);
+        } catch (\Exception $e) {
+            \Log::error('Error in membersDataUpdate: ' . $e->getMessage());
+            return false;
+        }
+    }
+
     // Get a member's permission in a group
     public function getMemberPermission($groupId, $userId)
     {

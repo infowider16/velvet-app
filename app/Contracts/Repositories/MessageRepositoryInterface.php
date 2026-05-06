@@ -6,4 +6,5 @@ interface MessageRepositoryInterface
     // Define any additional methods specific to the Pin repository
 
     public function markMessagesAsRead($senderId, $receiverId);
+    public function markGroupMessagesAsRead($groupId, $receiverId);
 }

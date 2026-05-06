@@ -13,6 +13,10 @@ return [
     'no_access_to_private_group' => 'You do not have access to this private group.',
     'not_a_member_of_group' => 'You are not a member of this group.',
     'failed_to_validate_group_access' => 'Failed to validate group access.',
+    'new_group_request' => 'New Group Request',
+    'sent_you_a_group_request' => 'sent you a group request',
+    'you_have_a_new_group_request' => 'requested to join your group :group.',
+    'user_joined_group' => ':name joined your group :group.',
 
     //new added text end
     'validation_error' => 'validation error',

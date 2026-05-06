@@ -11,6 +11,8 @@ use App\Http\Requests\Api\{CreateGroupRequest, AddMemberRequest};
 use App\Repositories\Eloquent\GroupRepository;
 use Illuminate\Validation\ValidationException;
 use App\Traits\UploadImageTrait;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class MessageController extends BaseController
 {
@@ -38,7 +40,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-            \Log::error('Error in sendMessage: ' . $e->getMessage());
+            Log::error('Error in sendMessage: ' . $e->getMessage());
             return $this->sendError(__('message.send_message_failed'));
         }
     }
@@ -56,7 +58,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-            \Log::error('Error in groupChatHistory: ' . $e->getMessage());
+            Log::error('Error in groupChatHistory: ' . $e->getMessage());
             return $this->sendError(__('message.group_chat_history_failed'));
         }
     }
@@ -74,7 +76,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-            \Log::error('Error in getMessages: ' . $e->getMessage());
+            Log::error('Error in getMessages: ' . $e->getMessage());
             return $this->sendError(__('message.chat_history_failed'));
         }
     }
@@ -92,7 +94,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'] ?? [], $result['message']);
         } catch (Exception $e) {
-            \Log::error('Error in deleteMessage: ' . $e->getMessage());
+            Log::error('Error in deleteMessage: ' . $e->getMessage());
             return $this->sendError(__('message.delete_message_failed'));
         }
     }
@@ -111,7 +113,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-            \Log::error('Error in sentMessageUsers: ' . $e->getMessage());
+            Log::error('Error in sentMessageUsers: ' . $e->getMessage());
             return $this->sendError(__('message.sent_message_users_failed'));
         }
     }
@@ -129,7 +131,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-            \Log::error('Error in createGroup: ' . $e->getMessage());
+            Log::error('Error in createGroup: ' . $e->getMessage());
             return $this->sendError(__('message.create_group_failed'));
         }
     }
@@ -147,7 +149,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-            \Log::error('Error in joinGroup: ' . $e->getMessage());
+            Log::error('Error in joinGroup: ' . $e->getMessage());
             return $this->sendError(__('message.join_group_failed'));
         }
     }
@@ -165,7 +167,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-            \Log::error('Error in handleJoinRequest: ' . $e->getMessage());
+            Log::error('Error in handleJoinRequest: ' . $e->getMessage());
             return $this->sendError(__('message.handle_join_request_failed'));
         }
     }
@@ -183,7 +185,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-            \Log::error('Error in deleteAllConversation: ' . $e->getMessage());
+            Log::error('Error in deleteAllConversation: ' . $e->getMessage());
             return $this->sendError(__('message.delete_all_conversation_failed'));
         }
     }
@@ -205,7 +207,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse(['exists' => false], __('message.group_name_available'));
         } catch (Exception $e) {
-            \Log::error('Error in checkGroupName: ' . $e->getMessage());
+            Log::error('Error in checkGroupName: ' . $e->getMessage());
             return $this->sendError(__('message.search_groups_failed'));
         }
     }
@@ -223,7 +225,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-            \Log::error('Error in getMessages: ' . $e->getMessage());
+            Log::error('Error in getMessages: ' . $e->getMessage());
             return $this->sendError(__('message.chat_history_failed'));
         }
     }
@@ -239,7 +241,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-            \Log::error('Error in searchGroups: ' . $e->getMessage());
+            Log::error('Error in searchGroups: ' . $e->getMessage());
             return $this->sendError(__('message.search_groups_failed'));
         }
     }
@@ -281,7 +283,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'] ?? [], $result['message']);
         } catch (\Exception $e) {
-            \Log::error('Error in addMemberToGroup: ' . $e->getMessage());
+            Log::error('Error in addMemberToGroup: ' . $e->getMessage());
             return $this->sendError(__('message.add_member_failed'));
         }
     }
@@ -310,7 +312,7 @@ class MessageController extends BaseController
         } catch (ValidationException $e) {
             return $this->sendError($e->validator->errors()->first(), 422);
         } catch (\Exception $e) {
-            \Log::error('Error in removeMemberFromGroup: ' . $e->getMessage());
+            Log::error('Error in removeMemberFromGroup: ' . $e->getMessage());
             return $this->sendError(__('message.remove_member_failed'));
         }
     }
@@ -343,7 +345,7 @@ class MessageController extends BaseController
                 'errors' => $e->validator->errors(),
             ], 422);
         } catch (\Exception $e) {
-            \Log::error('Error in blockGroupMember: ' . $e->getMessage());
+            Log::error('Error in blockGroupMember: ' . $e->getMessage());
             return $this->sendError(__('message.block_member_failed'));
         }
     }
@@ -376,7 +378,7 @@ class MessageController extends BaseController
                 'errors' => $e->validator->errors(),
             ], 422);
         } catch (\Exception $e) {
-            \Log::error('Error in unblockGroupMember: ' . $e->getMessage());
+            Log::error('Error in unblockGroupMember: ' . $e->getMessage());
             return $this->sendError(__('message.unblock_member_failed'));
         }
     }
@@ -405,7 +407,7 @@ class MessageController extends BaseController
         } catch (ValidationException $e) {
             return $this->sendError($e->validator->errors()->first(), 422);
         } catch (\Exception $e) {
-            \Log::error('Error in updateGroupPermissionForAll: ' . $e->getMessage());
+            Log::error('Error in updateGroupPermissionForAll: ' . $e->getMessage());
             return $this->sendError(__('message.update_permission_all_failed'));
         }
     }
@@ -435,7 +437,7 @@ class MessageController extends BaseController
         } catch (ValidationException $e) {
             return $this->sendError($e->validator->errors()->first(), 422);
         } catch (\Exception $e) {
-            \Log::error('Error in updateGroupPermissionForMember: ' . $e->getMessage());
+            Log::error('Error in updateGroupPermissionForMember: ' . $e->getMessage());
             return $this->sendError(__('message.update_permission_member_failed'));
         }
     }
@@ -464,7 +466,7 @@ class MessageController extends BaseController
         } catch (ValidationException $e) {
             return $this->sendError($e->validator->errors()->first(), 422);
         } catch (\Exception $e) {
-            \Log::error('Error in getGroupMemberPermission: ' . $e->getMessage());
+            Log::error('Error in getGroupMemberPermission: ' . $e->getMessage());
             return $this->sendError(__('message.fetch_group_member_permission_failed'));
         }
     }
@@ -492,7 +494,7 @@ class MessageController extends BaseController
 
             return $this->sendError(__('message.group_id_required'), 400);
         } catch (\Exception $e) {
-            \Log::error('Error in groupConversations: ' . $e->getMessage());
+            Log::error('Error in groupConversations: ' . $e->getMessage());
             return $this->sendError(__('message.fetch_group_conversations_failed'));
         }
     }
@@ -506,7 +508,7 @@ class MessageController extends BaseController
                 return $user;
             }
 
-            $validator = \Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'group_id' => 'required|integer|exists:groups,id',
             ]);
 
@@ -540,7 +542,7 @@ class MessageController extends BaseController
                 'data' => null,
             ], 200);
         } catch (\Exception $e) {
-            \Log::error('Error in deleteGroup: ' . $e->getMessage());
+            Log::error('Error in deleteGroup: ' . $e->getMessage());
             return $this->sendError(__('message.delete_group_failed'));
         }
     }
@@ -554,7 +556,7 @@ class MessageController extends BaseController
                 return $user;
             }
 
-            $validator = \Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'group_id' => 'required|integer|exists:groups,id',
             ]);
 
@@ -579,7 +581,7 @@ class MessageController extends BaseController
                 'data' => $blockedMembers,
             ], 200);
         } catch (\Exception $e) {
-            \Log::error('Error in blockedGroupMembers: ' . $e->getMessage());
+            Log::error('Error in blockedGroupMembers: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'status' => 0,
@@ -599,7 +601,7 @@ class MessageController extends BaseController
                 return $user;
             }
 
-            $validator = \Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'group_id' => 'required|integer|exists:groups,id',
             ]);
 
@@ -634,7 +636,7 @@ class MessageController extends BaseController
                 'data' => $result['data'],
             ], 200);
         } catch (\Exception $e) {
-            \Log::error('Error in groupDetails: ' . $e->getMessage());
+            Log::error('Error in groupDetails: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'status' => 0,
@@ -708,7 +710,7 @@ class MessageController extends BaseController
                 'data' => $result['data'],
             ], 200);
         } catch (\Exception $e) {
-            \Log::error('Error in editGroup: ' . $e->getMessage());
+            Log::error('Error in editGroup: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'status' => 0,
@@ -728,7 +730,7 @@ class MessageController extends BaseController
                 return $user;
             }
 
-            $validator = \Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'group_id' => 'required|integer|exists:groups,id',
             ]);
 
@@ -762,7 +764,7 @@ class MessageController extends BaseController
                 'data' => null,
             ], 200);
         } catch (\Exception $e) {
-            \Log::error('Error in leaveGroup: ' . $e->getMessage());
+            Log::error('Error in leaveGroup: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'status' => 0,
@@ -776,7 +778,7 @@ class MessageController extends BaseController
     public function uploadDocument(Request $request): JsonResponse
     {
         try {
-            $validator = \Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'document' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,jpg,jpeg,png|max:10240',
             ], [
                 'document.required' => __('message.document_required'),
@@ -819,7 +821,7 @@ class MessageController extends BaseController
                 ],
             ], 200);
         } catch (\Exception $e) {
-            \Log::error('Error in uploadDocument: ' . $e->getMessage());
+            Log::error('Error in uploadDocument: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'status' => 0,
@@ -839,7 +841,7 @@ class MessageController extends BaseController
                 return $user;
             }
 
-            $validator = \Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'group_id' => 'required|integer|exists:groups,id',
                 'reason' => 'required|string|max:1000',
                 'report_type' => 'required|string|max:255',
@@ -879,7 +881,7 @@ class MessageController extends BaseController
                 'data' => $result['data'] ?? null,
             ], 200);
         } catch (\Exception $e) {
-            \Log::error('Error in reportGroup: ' . $e->getMessage());
+            Log::error('Error in reportGroup: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'status' => 0,
@@ -899,7 +901,7 @@ class MessageController extends BaseController
                 return $user;
             }
 
-            $validator = \Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'user_id' => 'required|integer|exists:users,id',
                 'reason' => 'required|string|max:1000',
                 'report_type' => 'required|string|max:255',
@@ -939,7 +941,7 @@ class MessageController extends BaseController
                 'data' => $result['data'] ?? null,
             ], 200);
         } catch (\Exception $e) {
-            \Log::error('Error in reportGroup: ' . $e->getMessage());
+            Log::error('Error in reportGroup: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'status' => 0,
@@ -959,7 +961,7 @@ class MessageController extends BaseController
                 return $user;
             }
 
-            $validator = \Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'pin_id' => 'required|integer|exists:users,id',
                 'reason' => 'required|string|max:1000',
                 'report_type' => 'required|string|max:255',
@@ -996,7 +998,7 @@ class MessageController extends BaseController
                 'data' => $result['data'] ?? null,
             ], 200);
         } catch (\Exception $e) {
-            \Log::error('Error in reportGroup: ' . $e->getMessage());
+            Log::error('Error in reportGroup: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'status' => 0,
@@ -1016,7 +1018,7 @@ class MessageController extends BaseController
                 return $user;
             }
 
-            $validator = \Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'group_id' => 'required|integer|exists:groups,id',
                 'type' => 'required|integer|in:1,2,3',
                 'per_page' => 'sometimes|integer|min:1|max:100',
@@ -1048,7 +1050,7 @@ class MessageController extends BaseController
                 'data' => $result['data'],
             ], 200);
         } catch (\Exception $e) {
-            \Log::error('Error in groupMediaList: ' . $e->getMessage());
+            Log::error('Error in groupMediaList: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'status' => 0,
@@ -1068,7 +1070,7 @@ class MessageController extends BaseController
                 return $user;
             }
 
-            $validator = \Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'user_id' => 'required|integer|exists:users,id',
                 'type' => 'required|integer|in:1,2,3',
                 'per_page' => 'sometimes|integer|min:1|max:100',
@@ -1100,7 +1102,7 @@ class MessageController extends BaseController
                 'data' => $result['data'],
             ], 200);
         } catch (\Exception $e) {
-            \Log::error('Error in individualMediaList: ' . $e->getMessage());
+            Log::error('Error in individualMediaList: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'status' => 0,
@@ -1124,9 +1126,9 @@ class MessageController extends BaseController
             $userId = $request->input('user_id');
             $limit = (int) $request->input('limit', 20);
             $createdAt = $request->input('created_at');
-
+            $chatId = $request->input('chat_id');
             if ($groupId) {
-                $result = $this->messageService->getLatestGroupMessage($user->id, $groupId, $limit, $createdAt);
+                $result = $this->messageService->getLatestGroupMessage($user->id, $groupId, $limit, $createdAt,$chatId);
             } elseif ($userId) {
                 $result = $this->messageService->getLatestIndividualMessage($user->id, $userId, $limit, $createdAt);
             } else {
@@ -1135,7 +1137,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'], $result['message']);
         } catch (\Exception $e) {
-            \Log::error('Error in latestMessage: ' . $e->getMessage());
+            Log::error('Error in latestMessage: ' . $e->getMessage());
             return $this->sendError(__('message.latest_message_failed'));
         }
     }
@@ -1153,7 +1155,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-            \Log::error('Error in deleteAllGroupMessages: ' . $e->getMessage());
+            Log::error('Error in deleteAllGroupMessages: ' . $e->getMessage());
             return $this->sendError(__('message.delete_all_group_messages_failed'));
         }
     }
@@ -1175,7 +1177,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'], $result['message']);
         } catch (\Exception $e) {
-            \Log::error('Error in deleteAllAdminGroupMessages: ' . $e->getMessage());
+            Log::error('Error in deleteAllAdminGroupMessages: ' . $e->getMessage());
             return $this->sendError(__('message.delete_all_admin_group_messages_failed'));
         }
     }
@@ -1198,7 +1200,7 @@ class MessageController extends BaseController
 
             return $this->sendResponse($result['data'], $result['message']);
         } catch (\Exception $e) {
-            \Log::error('Error in getIndividualNotificationStatus: ' . $e->getMessage());
+            Log::error('Error in getIndividualNotificationStatus: ' . $e->getMessage());
             return $this->sendError(__('message.fetch_notification_status_failed'));
         }
     }
