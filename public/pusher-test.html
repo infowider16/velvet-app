@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pusher Test</title>
+</head>
+<body>
+    <h3>Pusher Test</h3>
+    <pre id="log">Waiting...</pre>
+
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <script>
+        Pusher.logToConsole = true;
+
+        const pusher = new Pusher('0a1a0a75db188b8831d1', {
+            cluster: 'ap2'
+        });
+
+        const channel = pusher.subscribe('chat-user-1');
+
+        channel.bind('pusher:subscription_succeeded', function() {
+            document.getElementById('log').innerHTML += "\nSubscribed to chat-user-1";
+        });
+
+        channel.bind('message.sent', function(data) {
+            console.log('Received:', data);
+            document.getElementById('log').innerHTML += "\n\nReceived:\n" + JSON.stringify(data, null, 2);
+            alert(data.message.message);
+        });
+    </script>
+</body>
+</html>
