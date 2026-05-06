@@ -906,13 +906,12 @@ class MessageService
     }
 
 
-    public function getGroups($userId, $request)
+   public function getGroups($userId, $request)
     {
         try {
             $perPage = $request['per_page'] ?? 20;
             $page = $request['page'] ?? 1;
 
-            // Only include group_ids where status != 2 (not left)
             $memberGroupIds = $this->groupRepo->groupMemberModel
                 ->where(function ($q) use ($userId) {
                     $q->where('user_id', $userId)
@@ -920,36 +919,38 @@ class MessageService
                 })
                 ->where('status', '!=', 2)
                 ->where(function ($q) {
-                    $q->whereNull('group_status')           // keep NULL rows
-                      ->orWhere('group_status', '<>', 'pending'); // remove only pending
+                    $q->whereNull('group_status')
+                    ->orWhere('group_status', '!=', 'pending');
                 })
                 ->pluck('group_id')
                 ->toArray();
+
             $groups = $this->groupRepo->model
                 ->where(function ($query) use ($userId, $memberGroupIds) {
                     $query->where('created_by', $userId);
+
                     if (!empty($memberGroupIds)) {
                         $query->orWhereIn('id', $memberGroupIds);
                     }
                 })
                 ->with(['creator'])
-                ->orderBy('id', 'desc')
+                ->orderByDesc('id')
                 ->paginate($perPage, ['*'], 'page', $page);
-         
-            foreach ($groups as $group) {
+
+            foreach ($groups->getCollection() as $group) {
                 $group->image = getImageUrl($group->image);
+
                 if ($group->creator) {
                     $group->creator->images = getImagesArray($group->creator->images);
                 }
-               $group->is_member_permission = (int) ($group->is_member_permission ?? 1) === 1 ? true : false;
-                
 
-                // Last message in group
+                $group->is_member_permission = (int) ($group->is_member_permission ?? 1) === 1;
+
                 $lastMessage = $this->messageRepo->model
                     ->where('group_id', $group->id)
-                    ->orderBy('created_at', 'desc')
+                    ->latest('created_at')
                     ->first();
-                    //   dd($lastMessage);
+    
                 $group->sender_id = $lastMessage ? $lastMessage->sender_id : null;
                 $group->last_message = $lastMessage ? $lastMessage->message_text : null;
                 $group->last_message_time = $lastMessage ? $lastMessage->created_at : null;
@@ -959,19 +960,17 @@ class MessageService
                 $group->unread_count = GroupMember::where('user_id', $userId)->sum('unread_count');
             }
 
-            $data = [
-                'groups' => $groups->items(),
-                'pagination' => [
-                    'current_page' => $groups->currentPage(),
-                    'per_page' => $groups->perPage(),
-                    'total' => $groups->total(),
-                    'last_page' => $groups->lastPage(),
-                    'has_more' => $groups->hasMorePages(),
-                ],
-            ];
-
             return [
-                'data' => $data,
+                'data' => [
+                    'groups' => $groups->items(),
+                    'pagination' => [
+                        'current_page' => $groups->currentPage(),
+                        'per_page' => $groups->perPage(),
+                        'total' => $groups->total(),
+                        'last_page' => $groups->lastPage(),
+                        'has_more' => $groups->hasMorePages(),
+                    ],
+                ],
                 'message' => __('message.groups_retrieved_successfully')
             ];
         } catch (Exception $e) {
