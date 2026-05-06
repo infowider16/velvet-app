@@ -122,11 +122,9 @@ class PinMarkLikeService
 
                     'user_id'     => $userId,
 
-                    'screen_name' => 'post_detail', // post screen
+                    'screen_name' => 'post_detail', 
 
                 ];
-
-
 
                 // Send push
 

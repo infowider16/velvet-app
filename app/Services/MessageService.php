@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Support\FacadesLog;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
+use Pusher\Pusher;
 
 class MessageService
 {
@@ -37,10 +38,11 @@ class MessageService
             // Validate receiver_id if present
             if (!empty($data['receiver_id'])) {
                 $receiver = $this->userRepo->find($data['receiver_id']);
+
                 if (empty($receiver)) {
                     return [
                         'data' => null,
-                        'message' => __('message.receiver_user_does_not_exist')
+                        'message' => __('message.receiver_user_does_not_exist'),
                     ];
                 }
             }
@@ -59,96 +61,138 @@ class MessageService
                 'status' => 'sent',
             ];
 
-            if (isset($data['media_url'])) {
-                $messageData['media_url'] = $data['media_url'];
+            foreach (['media_url', 'thumbnail', 'duration', 'file_size', 'document_url', 'link_url'] as $field) {
+                if (isset($data[$field])) {
+                    $messageData[$field] = $data[$field];
+                }
             }
-            if (isset($data['thumbnail'])) {
-                $messageData['thumbnail'] = $data['thumbnail'];
-            }
-            if (isset($data['duration'])) {
-                $messageData['duration'] = $data['duration'];
-            }
-            if (isset($data['file_size'])) {
-                $messageData['file_size'] = $data['file_size'];
-            }
-            // New: document_url (for document attachments)
-            if (isset($data['document_url'])) {
-                $messageData['document_url'] = $data['document_url'];
-            }
-            // New: link_url (for link sharing)
-            if (isset($data['link_url'])) {
-                $messageData['link_url'] = $data['link_url'];
-            }
-            
+
             $message = $this->messageRepo->create($messageData);
-            if(!empty($data['group_id'])){
-                $groupId = $data['group_id'];
-                GroupMember::where('group_id', $groupId)
-                ->where('user_id', '!=', $senderId)
-                ->increment('unread_count');
+
+            // Prepare full media/document/link URL before Pusher payload
+            $mediaUrl = null;
+
+            if (!empty($message->media_url)) {
+                $mediaUrl = asset('storage/' . ltrim($message->media_url, '/'));
+            } elseif (!empty($message->document_url)) {
+                $mediaUrl = asset('storage/' . ltrim($message->document_url, '/'));
+            } elseif (!empty($message->link_url)) {
+                $mediaUrl = $message->link_url;
             }
+
+            $documentUrl = !empty($message->document_url)
+                ? asset('storage/' . ltrim($message->document_url, '/'))
+                : null;
+
+            $message->media_url = $mediaUrl;
+            $message->document_url = $documentUrl;
+
+            $pusher = new Pusher(
+                env('PUSHER_APP_KEY'),
+                env('PUSHER_APP_SECRET'),
+                env('PUSHER_APP_ID'),
+                [
+                    'cluster' => env('PUSHER_APP_CLUSTER'),
+                    'useTLS' => true,
+                ]
+            );
+
+            $sender = $this->userRepo->find($senderId);
+
+            $payload = [
+                'message' => [
+                    'id' => $message->id,
+                    'message_id' => $message->id,
+                    'sender_id' => $message->sender_id,
+                    'receiver_id' => $message->receiver_id,
+                    'group_id' => $message->group_id,
+                    'content_type' => $message->media_type ?? 'text',
+                    'message' => $message->message_text,
+                    'message_text' => $message->message_text,
+                    'media_type' => $message->media_type,
+                    'media_url' => $message->media_url,
+                    'document_url' => $message->document_url,
+                    'link_url' => $message->link_url,
+                    'thumbnail' => $message->thumbnail ?? null,
+                    'duration' => $message->duration ?? null,
+                    'file_size' => $message->file_size ?? null,
+                    'created_at' => $message->created_at,
+                ],
+                'notification' => [
+                    'title' => 'New Message',
+                    'body' => ($sender->name ?? 'Someone') . ' sent you a message',
+                    'type' => !empty($data['group_id']) ? 'group_chat' : 'one_to_one_chat',
+                    'screen_name' => 'chat_detail',
+                ],
+            ];
+
+            // Group chat
+            if (!empty($data['group_id'])) {
+                $groupId = $data['group_id'];
+
+                GroupMember::where('group_id', $groupId)
+                    ->where('user_id', '!=', $senderId)
+                    ->increment('unread_count');
+
+                $memberIds = GroupMember::where('group_id', $groupId)
+                    ->where('user_id', '!=', $senderId)
+                    ->pluck('user_id');
+
+                foreach ($memberIds as $memberId) {
+                    $pusher->trigger('chat-user-' . $memberId, 'message.sent', $payload);
+                    $pusher->trigger('notification-user-' . $memberId, 'notification.sent', $payload);
+                }
+            }
+ 
+            // One-to-one chat
             if (!empty($data['receiver_id']) && empty($data['group_id'])) {
                 $receiverId = $data['receiver_id'];
-                // Check if this is the first message from sender to receiver (both directions)
-                $existingMessages = $this->messageRepo->getByWhere(
-                    [
-                        ['sender_id', '=', $senderId],
-                        ['receiver_id', '=', $receiverId]
-                    ],
-                    [],
-                    ['id'],
-                    [],
-                    [],
-                    'count'
-                ) + $this->messageRepo->getByWhere(
-                    [
-                        ['sender_id', '=', $receiverId],
-                        ['receiver_id', '=', $senderId]
-                    ],
-                    [],
-                    ['id'],
-                    [],
-                    [],
-                    'count'
-                );
 
-                //if ($existingMessages == 1) { // Only this message exists
-                    $receiver = $this->userRepo->find($receiverId);
-                    $sender = $this->userRepo->find($senderId);
-                    $title = __('message.new_message_title');
-                    $body = $sender ? __('message.new_message_body_by_user', ['name' => $sender->name]) : __('message.new_message_body');
-                    $other = ['type' => 'first_message', 'user_id' => $senderId, 'screen_name' => 'chat'];
+                $pusher->trigger('chat-user-' . $receiverId, 'message.sent', $payload);
+                $pusher->trigger('notification-user-' . $receiverId, 'notification.sent', $payload);
 
-                    try {
-                        if (function_exists('sendPushNotification') && $receiver && !empty($receiver->device_token)) {
-                            $checknotification=$this->messageRepo->getNotificationStatus($receiver->id,$sender->id);
-                            if($checknotification){
-                                sendPushNotification([$receiver->device_token], $title, $body, $other,[$receiver->id],'new_messages');
-                            }
+                $receiver = $this->userRepo->find($receiverId);
+
+                $title = __('message.new_message_title');
+                $body = $sender
+                    ? __('message.new_message_body_by_user', ['name' => $sender->name])
+                    : __('message.new_message_body');
+
+                $other = [
+                    'type' => 'first_message',
+                    'user_id' => $senderId,
+                    'screen_name' => 'chat_detail',
+                ];
+
+                try {
+                    if (function_exists('sendPushNotification') && $receiver && !empty($receiver->device_token)) {
+                        $checknotification = $this->messageRepo->getNotificationStatus(
+                            $receiver->id,
+                            $sender->id
+                        );
+
+                        if ($checknotification) {
+                            sendPushNotification(
+                                [$receiver->device_token],
+                                $title,
+                                $body,
+                                $other,
+                                [$receiver->id],
+                                'new_messages'
+                            );
                         }
-                    } catch (\Throwable $e) {
-                        Log::error('Error in sendPushNotification (firstMessage): ' . $e->getMessage());
                     }
-                //}
-            }
-            $mediaUrl = null;
-                if ($message->media_url) {
-                    $mediaUrl = asset('storage/' . ltrim($message->media_url, '/'));
-                } elseif ($message->document_url) {
-                    $mediaUrl = asset('storage/' . ltrim($message->document_url, '/'));
-                } elseif ($message->link_url) {
-                    $mediaUrl = $message->link_url;
+                } catch (\Throwable $e) {
+                    Log::error('Error in sendPushNotification: ' . $e->getMessage());
                 }
-                $documentUrl = $message->document_url ? asset('storage/' . ltrim($message->document_url, '/')) : null;
+            }
 
-                $message->media_url = $mediaUrl;
-                $message->document_url = $documentUrl;
             return [
                 'data' => $message,
-                'message' => __('message.message_sent_successfully')
+                'message' => __('message.message_sent_successfully'),
             ];
         } catch (Exception $e) {
-           Log::error(__('message.failed_to_send_message') . ': ' . $e->getMessage());
+            Log::error(__('message.failed_to_send_message') . ': ' . $e->getMessage());
             throw new Exception(__('message.failed_to_send_message'));
         }
     }
@@ -706,7 +750,7 @@ class MessageService
 
                     $title = $titleEn;
                     $body = $bodyEn;
-                            $titleTranslation = [
+                    $titleTranslation = [
                         'en' => $titleEn,
                         'ge' => $titleGe,
                     ];
@@ -717,6 +761,7 @@ class MessageService
                     ];
                     $other = [
                         'type' => 'group_request',
+                        'group_id' => $group->id,
                         'user_id' => $userId,
                         'screen_name' => 'group_request'
                     ];
