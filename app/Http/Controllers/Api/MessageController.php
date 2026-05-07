@@ -14,6 +14,7 @@ use App\Traits\UploadImageTrait;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
+
 class MessageController extends BaseController
 {
     use UploadImageTrait;
@@ -37,7 +38,6 @@ class MessageController extends BaseController
             }
 
             $result = $this->messageService->sendMessage($user->id, $request->all());
-
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
             Log::error('Error in sendMessage: ' . $e->getMessage());
