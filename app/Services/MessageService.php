@@ -263,7 +263,7 @@ class MessageService
                 'data' => $message,
                 'message' => __('message.message_sent_successfully'),
             ];
-            
+
         } catch (Exception $e) {
             Log::error(__('message.failed_to_send_message') . ': ' . $e->getMessage());
             throw new Exception(__('message.failed_to_send_message'));
@@ -503,23 +503,66 @@ class MessageService
         }
     }
 
-    public function deleteMessage($userId, $messageId)
+  public function deleteMessage($userId, $messageId)
     {
         try {
             $message = $this->messageRepo->find($messageId);
+
             if (!$message) {
                 throw new Exception(__('message.message_not_found'));
             }
-            if ($message->sender_id != $userId) {
+
+            if ((int) $message->sender_id !== (int) $userId) {
                 throw new Exception(__('message.delete_only_own_message'));
             }
+
+            $receiverId = $message->receiver_id;
+            $groupId = $message->group_id;
+            $senderId = $message->sender_id;
+
+            $deletePayload = [
+                'message_id' => $message->id,
+                'sender_id' => $senderId,
+                'receiver_id' => $receiverId,
+                'group_id' => $groupId,
+            ];
+
             $deleted = $this->messageRepo->deleteData(['id' => $messageId]);
+
             if (!$deleted) {
                 throw new Exception(__('message.failed_to_delete_message'));
             }
+
+            if (!empty($receiverId)) {
+                $this->chatSocketService->trigger(
+                    'chat-user-' . $receiverId,
+                    'message.deleted',
+                    $deletePayload
+                );
+
+                $this->chatSocketService->trigger(
+                    'chat-user-' . $senderId,
+                    'message.deleted',
+                    $deletePayload
+                );
+            }
+
+            if (!empty($groupId)) {
+                $memberIds = GroupMember::where('group_id', $groupId)
+                    ->pluck('user_id');
+
+                foreach ($memberIds as $memberId) {
+                    $this->chatSocketService->trigger(
+                        'chat-user-' . $memberId,
+                        'message.deleted',
+                        $deletePayload
+                    );
+                }
+            }
+
             return [
                 'data' => [],
-                'message' => __('message.message_deleted_successfully')
+                'message' => __('message.message_deleted_successfully'),
             ];
         } catch (Exception $e) {
             Log::error('Failed to delete message: ' . $e->getMessage());
