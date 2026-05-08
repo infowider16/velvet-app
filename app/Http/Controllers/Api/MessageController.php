@@ -1285,5 +1285,51 @@ class MessageController extends BaseController
             ], 500);
         }
     }
-    
+
+    public function setOnline(Request $request)
+    {
+        try {
+            $user = $this->getAuthenticatedUserOrError($request);
+
+            if ($user instanceof JsonResponse) {
+                return $user;
+            }
+
+            Cache::put(
+                'user_online_' . $user->id,
+                true,
+                now()->addMinutes(5)
+            );
+
+            return response()->json([
+                'status' => true
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false
+            ], 500);
+        }
+    }
+
+    public function setOffline(Request $request)
+    {
+        try {
+            $user = $this->getAuthenticatedUserOrError($request);
+
+            if ($user instanceof JsonResponse) {
+                return $user;
+            }
+
+            Cache::forget('user_online_' . $user->id);
+
+            return response()->json([
+                'status' => true
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false
+            ], 500);
+        }
+    }
+        
 }
