@@ -254,11 +254,7 @@ class UserRegisterController extends BaseController
             if ($user instanceof JsonResponse) {
                 return $user;
             }
-            $latitude = $request->input('latitude');
-            $longitude = $request->input('longitude');
-            $country_code = $request->input('country_code');
-            $city = $request->input('city');
-            $result = $this->userRegisterService->updateLatLng($user->id, $latitude, $longitude, $country_code, $city);
+            $result = $this->userRegisterService->updateLatLng($request->all(), $user->id);
             return $this->sendResponse($result, __('message.location_updated_successfully'));
         } catch (Exception $e) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());

@@ -612,15 +612,30 @@ class UserRegisterService implements UserRegisterServiceInterface
             throw new Exception('Storing device token failed: ' . $e->getMessage());
         }
     }
-    public function updateLatLng($userId, $latitude, $longitude, $country_code, $city)
+
+    public function updateLatLng($data ,$userId)
     {
         try {
-            $user = $this->updateUser($userId, [
-                'lat' => $latitude,
-                'lng' => $longitude,
-                'country_code' => $country_code,
-                'city' => $city,
-            ]);
+            
+            $updateData = [];
+
+            if (isset($data['latitude'])) {
+                $updateData['lat'] = $data['latitude'];
+            }
+
+            if (isset($data['longitude'])) {
+                $updateData['lng'] = $data['longitude'];
+            }
+
+            if (isset($data['country_code'])) {
+                $updateData['country_code'] = $data['country_code'];
+            }
+
+            if (isset($data['city'])) {
+                $updateData['city'] = $data['city'];
+            }
+            $user = $this->updateUser($userId, $updateData);
+            
             return [
                 'user_id' => $user->id,
                 'lat' => $user->lat,
@@ -628,10 +643,12 @@ class UserRegisterService implements UserRegisterServiceInterface
                 'city' => $user->city,
                 'country_code' => $user->country_code,
             ];
+
         } catch (Exception $e) {
             throw new Exception('Updating latitude and longitude failed: ' . $e->getMessage());
         }
     }
+
     public function getIntervalSettings($userId)
     {
         try {
