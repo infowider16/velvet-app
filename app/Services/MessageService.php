@@ -503,7 +503,7 @@ class MessageService
         }
     }
 
-  public function deleteMessage($userId, $messageId)
+    public function deleteMessage($userId, $messageId)
     {
         try {
             $message = $this->messageRepo->find($messageId);
