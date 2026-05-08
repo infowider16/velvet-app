@@ -12,11 +12,11 @@
 			const pusher = new Pusher('0a1a0a75db188b8831d1', {
 				cluster: 'ap2'
 			});
-			const channel = pusher.subscribe('chat-user-14');
+			const channel = pusher.subscribe('chat-user-12');
 			channel.bind('pusher:subscription_succeeded', function() {
-				document.getElementById('log').innerHTML += "\nSubscribed to chat-user-14";
+				document.getElementById('log').innerHTML += "\nSubscribed to chat-user-12";
 			});
-			channel.bind('message.sent', function(data) {
+			channel.bind('group.list.updated', function(data) {
 				console.log('Received:', data);
 				document.getElementById('log').innerHTML += "\n\nReceived:\n" + JSON.stringify(data, null, 2);
 				alert(data.message.message);

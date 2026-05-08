@@ -35,6 +35,7 @@ class MessageService
     public function sendMessage($senderId, $data)
     {
         try {
+
             // Validate receiver_id if present
             if (!empty($data['receiver_id'])) {
                 $receiver = $this->userRepo->find($data['receiver_id']);
@@ -118,20 +119,103 @@ class MessageService
 
             // Group chat
             if (!empty($data['group_id'])) {
-                $groupId = $data['group_id'];
 
-                GroupMember::where('group_id', $groupId)
-                    ->where('user_id', '!=', $senderId)
-                    ->increment('unread_count');
+                $groupId = (int) $data['group_id'];
+
+                $group = $this->groupRepo->model->find($groupId);
+
+                if(empty($group)){
+                    return [
+                        'data' => null,
+                        'message' => __('message.group_not_found'),
+                    ];
+                }
 
                 $memberIds = GroupMember::where('group_id', $groupId)
                     ->where('user_id', '!=', $senderId)
                     ->pluck('user_id');
 
+
                 foreach ($memberIds as $memberId) {
-                    $this->chatSocketService->trigger('chat-user-' . $memberId, 'message.sent', $payload);
-                    $this->chatSocketService->trigger('notification-user-' . $memberId, 'notification.sent', $payload);
+                    $memberId = (int) $memberId;
+
+                    $isMemberInsideGroup = $this->isUserInsideGroupChat($memberId, $groupId);
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | 1. Group chat detail screen
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $this->chatSocketService->trigger(
+                        'chat-user-' . $memberId,
+                        'message.sent',
+                        $payload
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | 2. Unread count only if member is not inside group chat
+                    |--------------------------------------------------------------------------
+                    */
+                    if (!$isMemberInsideGroup) {
+                        GroupMember::where('group_id', $groupId)
+                            ->where('user_id', $memberId)
+                            ->increment('unread_count');
+                    }
+
+                    $memberUnreadCount = GroupMember::where('group_id', $groupId)
+                        ->where('user_id', $memberId)
+                        ->value('unread_count') ?? 0;
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | 3. Group list update like chat list
+                    |--------------------------------------------------------------------------
+                    */
+                    $groupListPayload = $this->makeGroupListSocketPayload(
+                        $group,
+                        $message,
+                        $memberUnreadCount
+                    );
+
+                    $this->chatSocketService->trigger(
+                        'chat-user-' . $memberId,
+                        'group.list.updated',
+                        $groupListPayload
+                    );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | 4. Notification only if member is not inside group
+                    |--------------------------------------------------------------------------
+                    */
+                    if (!$isMemberInsideGroup) {
+                        $this->chatSocketService->trigger(
+                            'notification-user-' . $memberId,
+                            'notification.sent',
+                            $payload
+                        );
+                    }
                 }
+
+                /*
+                |--------------------------------------------------------------------------
+                | 5. Sender group list update
+                |--------------------------------------------------------------------------
+                */
+                $senderGroupListPayload = $this->makeGroupListSocketPayload(
+                    $group,
+                    $message,
+                    0
+                );
+
+                $this->chatSocketService->trigger(
+                    'chat-user-' . $senderId,
+                    'group.list.updated',
+                    $senderGroupListPayload
+                );
+            
             }
  
             // One-to-one chat
@@ -146,6 +230,13 @@ class MessageService
                         $receiverId,
                         (int) $senderId
                     );
+
+                    Log::info('CHAT DEBUG', [
+                        'receiver_id' => $receiverId,
+                        'cache_key' => 'active_chat_' . $receiverId,
+                        'cache_value' => Cache::get('active_chat_' . $receiverId),
+                        'isReceiverInsideSameChat' => $isReceiverInsideSameChat,
+                    ]);
 
                     // 1. Chat detail screen ke liye required
                     $this->chatSocketService->trigger(
@@ -289,6 +380,25 @@ class MessageService
         }
     }
 
+    private function isUserInsideGroupChat(int $userId, int $groupId): bool
+    {
+        try {
+            $activeChat = Cache::get('active_chat_' . $userId);
+
+            return !empty($activeChat)
+                && ($activeChat['type'] ?? null) === 'group'
+                && (int) ($activeChat['group_id'] ?? 0) === (int) $groupId;
+        } catch (\Throwable $e) {
+            Log::error('isUserInsideGroupChat failed', [
+                'user_id' => $userId,
+                'group_id' => $groupId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
     private function makeChatListSocketPayload($otherUser, $message, int $unreadCount = 0): array
     {
         try {
@@ -345,7 +455,34 @@ class MessageService
         }
     }
 
-    
+    private function makeGroupListSocketPayload($group, $message, int $unreadCount = 0): array
+    {
+        try {
+            return [
+                'type' => 'group',
+                'group' => [
+                    'id' => $group->id,
+                    'name' => $group->name,
+                    'image' => getImageUrl($group->image),
+                    'created_by' => $group->created_by,
+                    'sender_id' => $message->sender_id,
+                    'last_message' => $message->message_text,
+                    'last_message_time' => $message->created_at,
+                    'media_type' => $message->media_type,
+                    'unread_count' => $unreadCount,
+                ],
+            ];
+        } catch (\Throwable $e) {
+            Log::error('makeGroupListSocketPayload failed', [
+                'group_id' => $group->id ?? null,
+                'message_id' => $message->id ?? null,
+                'error' => $e->getMessage(),
+            ]);
+
+            return [];
+        }
+    }
+
     public function getGroupChatHistory($userId, $groupId, $request)
     {
         try {
@@ -551,12 +688,46 @@ class MessageService
                 $memberIds = GroupMember::where('group_id', $groupId)
                     ->pluck('user_id');
 
+                $lastMessage = $this->messageRepo->model
+                    ->where('group_id', $groupId)
+                    ->latest('created_at')
+                    ->first();
+
+                $group = $this->groupRepo->model->find($groupId);
+
                 foreach ($memberIds as $memberId) {
+                    $memberId = (int) $memberId;
+
                     $this->chatSocketService->trigger(
                         'chat-user-' . $memberId,
                         'message.deleted',
                         $deletePayload
                     );
+
+                    if ($group) {
+                        $unreadCount = GroupMember::where('group_id', $groupId)
+                            ->where('user_id', $memberId)
+                            ->value('unread_count') ?? 0;
+
+                        $this->chatSocketService->trigger(
+                            'chat-user-' . $memberId,
+                            'group.list.updated',
+                            [
+                                'type' => 'group',
+                                'group' => [
+                                    'id' => $group->id,
+                                    'name' => $group->name,
+                                    'image' => getImageUrl($group->image),
+                                    'created_by' => $group->created_by,
+                                    'sender_id' => $lastMessage ? $lastMessage->sender_id : null,
+                                    'last_message' => $lastMessage ? $lastMessage->message_text : null,
+                                    'last_message_time' => $lastMessage ? $lastMessage->created_at : null,
+                                    'media_type' => $lastMessage ? $lastMessage->media_type : null,
+                                    'unread_count' => $unreadCount,
+                                ],
+                            ]
+                        );
+                    }
                 }
             }
 
@@ -564,6 +735,7 @@ class MessageService
                 'data' => [],
                 'message' => __('message.message_deleted_successfully'),
             ];
+            
         } catch (Exception $e) {
             Log::error('Failed to delete message: ' . $e->getMessage());
             throw new Exception(__('message.failed_to_delete_message'));
@@ -1144,7 +1316,7 @@ class MessageService
     }
 
 
-   public function getGroups($userId, $request)
+    public function getGroups($userId, $request)
     {
         try {
             $perPage = $request['per_page'] ?? 20;
@@ -1195,7 +1367,7 @@ class MessageService
                 $group->media_type = $lastMessage ? $lastMessage->media_type : null;
                 
                 // Unread message count for this user in this group
-                $group->unread_count = GroupMember::where('user_id', $userId)->sum('unread_count');
+                $group->unread_count = GroupMember::where('user_id', $userId)->where('group_id', $group->id)->value('unread_count') ?? 0;
             }
 
             return [
