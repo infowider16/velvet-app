@@ -10,10 +10,10 @@ use App\Repositories\Eloquent\GroupRepository;
 use App\Repositories\Eloquent\FriendshipRepository;
 use Exception;
 use Carbon\Carbon;
-use Illuminate\Support\FacadesLog;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
-use Pusher\Pusher;
+use App\Services\ChatSocketService;
+use Illuminate\Support\Facades\Cache;
 
 class MessageService
 {
@@ -21,16 +21,16 @@ class MessageService
     protected $userRepo;
     protected $groupRepo;
     protected $friendshipRepo;
+    protected $chatSocketService;
 
-    public function __construct(MessageRepository $messageRepo, UserRepository $userRepo, GroupRepository $groupRepo, FriendshipRepository $friendshipRepo)
+    public function __construct(MessageRepository $messageRepo, UserRepository $userRepo, GroupRepository $groupRepo, FriendshipRepository $friendshipRepo, ChatSocketService $chatSocketService)
     {
         $this->messageRepo = $messageRepo;
         $this->userRepo = $userRepo;
         $this->groupRepo = $groupRepo;
         $this->friendshipRepo = $friendshipRepo;
+        $this->chatSocketService = $chatSocketService;
     }
-
-
 
     public function sendMessage($senderId, $data)
     {
@@ -87,16 +87,6 @@ class MessageService
             $message->media_url = $mediaUrl;
             $message->document_url = $documentUrl;
 
-            $pusher = new Pusher(
-                env('PUSHER_APP_KEY'),
-                env('PUSHER_APP_SECRET'),
-                env('PUSHER_APP_ID'),
-                [
-                    'cluster' => env('PUSHER_APP_CLUSTER'),
-                    'useTLS' => true,
-                ]
-            );
-
             $sender = $this->userRepo->find($senderId);
 
             $payload = [
@@ -139,51 +129,133 @@ class MessageService
                     ->pluck('user_id');
 
                 foreach ($memberIds as $memberId) {
-                    $pusher->trigger('chat-user-' . $memberId, 'message.sent', $payload);
-                    $pusher->trigger('notification-user-' . $memberId, 'notification.sent', $payload);
+                    $this->chatSocketService->trigger('chat-user-' . $memberId, 'message.sent', $payload);
+                    $this->chatSocketService->trigger('notification-user-' . $memberId, 'notification.sent', $payload);
                 }
             }
  
             // One-to-one chat
             if (!empty($data['receiver_id']) && empty($data['group_id'])) {
-                $receiverId = $data['receiver_id'];
-
-                $pusher->trigger('chat-user-' . $receiverId, 'message.sent', $payload);
-                $pusher->trigger('notification-user-' . $receiverId, 'notification.sent', $payload);
-
-                $receiver = $this->userRepo->find($receiverId);
-
-                $title = __('message.new_message_title');
-                $body = $sender
-                    ? __('message.new_message_body_by_user', ['name' => $sender->name])
-                    : __('message.new_message_body');
-
-                $other = [
-                    'type' => 'first_message',
-                    'user_id' => $senderId,
-                    'screen_name' => 'chat_detail',
-                ];
-
                 try {
-                    if (function_exists('sendPushNotification') && $receiver && !empty($receiver->device_token)) {
-                        $checknotification = $this->messageRepo->getNotificationStatus(
-                            $receiver->id,
-                            $sender->id
+                    $receiverId = (int) $data['receiver_id'];
+
+                    $receiver = $this->userRepo->find($receiverId);
+                    $senderUser = $this->userRepo->find($senderId);
+
+                    $isReceiverInsideSameChat = $this->isUserInsideSingleChat(
+                        $receiverId,
+                        (int) $senderId
+                    );
+
+                    // 1. Chat detail screen ke liye required
+                    $this->chatSocketService->trigger(
+                        'chat-user-' . $receiverId,
+                        'message.sent',
+                        $payload
+                    );
+
+                    // 2. Receiver same chat me hai to message read mark karo
+                    if ($isReceiverInsideSameChat) {
+                        $message->read_at = now();
+                        $message->save();
+                    }
+
+                    // 3. Receiver unread count calculate karo
+                    $receiverUnreadCount = $this->messageRepo->getByWhere(
+                        function ($query) use ($senderId, $receiverId) {
+                            $query->where('sender_id', $senderId)
+                                ->where('receiver_id', $receiverId)
+                                ->whereNull('read_at')
+                                ->where(function ($q) {
+                                    $q->whereNotNull('message_text')
+                                        ->orWhereNotNull('media_url')
+                                        ->orWhereNotNull('document_url')
+                                        ->orWhereNotNull('link_url');
+                                });
+                        },
+                        [],
+                        ['*'],
+                        [],
+                        [],
+                        'count'
+                    );
+
+                    // 4. Receiver chat list update
+                    $receiverChatListPayload = $this->makeChatListSocketPayload(
+                        $senderUser,
+                        $message,
+                        $receiverUnreadCount
+                    );
+
+                    $this->chatSocketService->trigger(
+                        'chat-user-' . $receiverId,
+                        'chat.list.updated',
+                        $receiverChatListPayload
+                    );
+
+                    // 5. Sender chat list update
+                    $senderChatListPayload = $this->makeChatListSocketPayload(
+                        $receiver,
+                        $message,
+                        0
+                    );
+
+                    $this->chatSocketService->trigger(
+                        'chat-user-' . $senderId,
+                        'chat.list.updated',
+                        $senderChatListPayload
+                    );
+
+                    // 6. Notification only if receiver same chat me nahi hai
+                    if (!$isReceiverInsideSameChat) {
+                        $this->chatSocketService->trigger(
+                            'notification-user-' . $receiverId,
+                            'notification.sent',
+                            $payload
                         );
 
-                        if ($checknotification) {
-                            sendPushNotification(
-                                [$receiver->device_token],
-                                $title,
-                                $body,
-                                $other,
-                                [$receiver->id],
-                                'new_messages'
-                            );
+                        $title = __('message.new_message_title');
+
+                        $body = $sender
+                            ? __('message.new_message_body_by_user', ['name' => $sender->name])
+                            : __('message.new_message_body');
+
+                        $other = [
+                            'type' => 'first_message',
+                            'user_id' => $senderId,
+                            'screen_name' => 'chat_detail',
+                        ];
+
+                        try {
+                            if (function_exists('sendPushNotification') && $receiver && !empty($receiver->device_token)) {
+                                $checknotification = $this->messageRepo->getNotificationStatus(
+                                    $receiver->id,
+                                    $sender->id
+                                );
+
+                                if ($checknotification) {
+                                    sendPushNotification(
+                                        [$receiver->device_token],
+                                        $title,
+                                        $body,
+                                        $other,
+                                        [$receiver->id],
+                                        'new_messages'
+                                    );
+                                }
+                            }
+                        } catch (\Throwable $e) {
+                            Log::error('Error in sendPushNotification', [
+                                'error' => $e->getMessage(),
+                            ]);
                         }
                     }
                 } catch (\Throwable $e) {
-                    Log::error('Error in sendPushNotification: ' . $e->getMessage());
+                    Log::error('One-to-one socket failed', [
+                        'sender_id' => $senderId,
+                        'receiver_id' => $data['receiver_id'] ?? null,
+                        'error' => $e->getMessage(),
+                    ]);
                 }
             }
 
@@ -191,12 +263,89 @@ class MessageService
                 'data' => $message,
                 'message' => __('message.message_sent_successfully'),
             ];
+            
         } catch (Exception $e) {
             Log::error(__('message.failed_to_send_message') . ': ' . $e->getMessage());
             throw new Exception(__('message.failed_to_send_message'));
         }
     }
 
+    private function isUserInsideSingleChat(int $userId, int $otherUserId): bool
+    {
+        try {
+            $activeChat = Cache::get('active_chat_' . $userId);
+
+            return !empty($activeChat)
+                && ($activeChat['type'] ?? null) === 'single'
+                && (int) ($activeChat['user_id'] ?? 0) === (int) $otherUserId;
+        } catch (\Throwable $e) {
+            Log::error('isUserInsideSingleChat failed', [
+                'user_id' => $userId,
+                'other_user_id' => $otherUserId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
+    private function makeChatListSocketPayload($otherUser, $message, int $unreadCount = 0): array
+    {
+        try {
+            $images = [];
+
+            if (!empty($otherUser->images)) {
+                $userImages = is_string($otherUser->images)
+                    ? json_decode($otherUser->images, true)
+                    : $otherUser->images;
+
+                if (is_array($userImages) && count($userImages) > 0) {
+                    $images = array_map(function ($imagePath) {
+                        return asset('storage/' . $imagePath);
+                    }, $userImages);
+                }
+            }
+
+            $image = count($images) > 0 ? $images[0] : null;
+
+            $lastSeenAt = null;
+
+            if (!empty($otherUser->last_seen_at)) {
+                try {
+                    $lastSeenAt = Carbon::parse($otherUser->last_seen_at)->format('Y-m-d H:i:s');
+                } catch (\Throwable $e) {
+                    $lastSeenAt = $otherUser->last_seen_at;
+                }
+            }
+
+            return [
+                'type' => 'single',
+                'user' => [
+                    'id' => $otherUser->id,
+                    'name' => $otherUser->name,
+                    'is_delete' => $otherUser->is_delete,
+                    'image' => $image,
+                    'last_seen_at' => $lastSeenAt,
+                    'is_online' => Cache::has('user_online_' . $otherUser->id),
+                    'last_message_at' => $message->created_at,
+                    'unread_message_count' => $unreadCount,
+                    'last_message' => $message->message_text,
+                    'last_message_type' => $message->media_type,
+                    'last_message_status' => $message->status,
+                ],
+            ];
+        } catch (\Throwable $e) {
+            Log::error('makeChatListSocketPayload failed', [
+                'other_user_id' => $otherUser->id ?? null,
+                'message_id' => $message->id ?? null,
+                'error' => $e->getMessage(),
+            ]);
+
+            return [];
+        }
+    }
+
+    
     public function getGroupChatHistory($userId, $groupId, $request)
     {
         try {
@@ -410,7 +559,7 @@ class MessageService
         ];
     }
 
-    public function getSentMessageUsers($userId, $request)
+    public function getChatListUsers($userId, $request)
     {
         try {
             
@@ -581,9 +730,10 @@ class MessageService
                 $usersWithDetails[] = [
                     'id' => $otherUser->id,
                     'name' => $otherUser->name,
-                    'is_delete'=>$otherUser->is_delete,
+                    'is_delete' => $otherUser->is_delete,
                     'image' => $image,
                     'last_seen_at' => $last_seen_at,
+                    'is_online' => Cache::has('user_online_' . $otherUser->id),
                     'last_message_at' => $last_message_at,
                     'unread_message_count' => $unreadCount,
                     'last_message' => $last_message,

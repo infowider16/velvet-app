@@ -15,10 +15,10 @@
             cluster: 'ap2'
         });
 
-        const channel = pusher.subscribe('chat-user-1');
+        const channel = pusher.subscribe('chat-user-13');
 
         channel.bind('pusher:subscription_succeeded', function() {
-            document.getElementById('log').innerHTML += "\nSubscribed to chat-user-1";
+            document.getElementById('log').innerHTML += "\nSubscribed to chat-user-13";
         });
 
         channel.bind('message.sent', function(data) {
