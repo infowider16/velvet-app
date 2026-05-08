@@ -735,6 +735,7 @@ class MessageService
                 'data' => [],
                 'message' => __('message.message_deleted_successfully'),
             ];
+            
         } catch (Exception $e) {
             Log::error('Failed to delete message: ' . $e->getMessage());
             throw new Exception(__('message.failed_to_delete_message'));

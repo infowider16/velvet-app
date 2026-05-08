@@ -1252,15 +1252,9 @@ class MessageController extends BaseController
                 'group_id' => $request->type === 'group' ? $request->group_id : null,
             ], now()->addMinutes(30));
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Active chat set successfully',
-            ]);
+            return $this->sendResponse([], __('message.active_chat_set_successfully'));
         } catch (\Throwable $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+            return $this->sendError(__('message.active_chat_set_failed'));
         }
     }
 
@@ -1275,15 +1269,9 @@ class MessageController extends BaseController
           
             Cache::forget('active_chat_' . $user->id);
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Active chat cleared successfully',
-            ]);
+            return $this->sendResponse([], __('message.active_chat_cleared_successfully'));
         } catch (\Throwable $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+            return $this->sendError(__('message.active_chat_clear_failed'));
         }
     }
 
@@ -1302,13 +1290,9 @@ class MessageController extends BaseController
                 now()->addMinutes(5)
             );
 
-            return response()->json([
-                'status' => true
-            ]);
+          return $this->sendResponse([], __('message.user_set_online'));
         } catch (\Throwable $e) {
-            return response()->json([
-                'status' => false
-            ], 500);
+           return $this->sendError(__('message.user_set_online_failed'));
         }
     }
 
@@ -1323,13 +1307,9 @@ class MessageController extends BaseController
 
             Cache::forget('user_online_' . $user->id);
 
-            return response()->json([
-                'status' => true
-            ]);
+            return $this->sendResponse([], __('message.user_set_offline'));
         } catch (\Throwable $e) {
-            return response()->json([
-                'status' => false
-            ], 500);
+            return $this->sendError(__('message.user_set_offline_failed'));
         }
     }
         
