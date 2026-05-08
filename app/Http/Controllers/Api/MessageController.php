@@ -1233,6 +1233,7 @@ class MessageController extends BaseController
     public function setActiveChat(Request $request)
     {
         try {
+          
             $user = $this->getAuthenticatedUserOrError($request);
 
             if ($user instanceof JsonResponse) {
@@ -1271,7 +1272,7 @@ class MessageController extends BaseController
             if ($user instanceof JsonResponse) {
                 return $user;
             }
-
+          
             Cache::forget('active_chat_' . $user->id);
 
             return response()->json([
