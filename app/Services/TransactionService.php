@@ -36,7 +36,6 @@ class TransactionService
             
             // Fetch last transaction by type (needed for subscription extend)
             $lastTransaction = $this->getLastTransactionByType($userId, $type);
-            
             // Type specific validation & data preparation
             $plan = null;
             $swissNowFormatted = convertTimezone( Carbon::now(), null,  'Y-m-d H:i:s' );
@@ -70,7 +69,6 @@ class TransactionService
             }elseif ($type === 0) {
                 $requestDatas = $this->mergeExistingPinCount($requestDatas, $userId);
             }
-           
             // Ensure start_time/end_time are stored as DB-friendly strings
             $requestDatas = $this->castDateTimesForStorage($requestDatas);
             // Create transaction
@@ -87,7 +85,6 @@ class TransactionService
             throw $e;
 
         } catch (\Throwable $e) {
-            dd($e);
             Log::error(
                 __CLASS__ . '::' . __FUNCTION__,
                 ['error' => $e->getMessage(), 'data' => $requestDatas]
@@ -218,17 +215,35 @@ class TransactionService
         return $data;
     }
 
+    // private function castDateTimesForStorage(array $data): array
+    // {
+    //     dd($data['start_time']);
+    //     // If start_time is Carbon, convert to string for DB insert
+    //     if (isset($data['start_time']) && $data['start_time'] instanceof Carbon) {
+    //         $data['start_time'] = $data['start_time']->format('Y-m-d H:i:s');
+    //     }
+
+    //     // end_time might be Carbon or string depending on your helper return
+    //     if (isset($data['end_time']) && $data['end_time'] instanceof Carbon) {
+    //         $data['end_time'] = $data['end_time']->format('Y-m-d H:i:s');
+    //     }
+    //     return $data;
+    // }
+
     private function castDateTimesForStorage(array $data): array
     {
-        // If start_time is Carbon, convert to string for DB insert
-        if (isset($data['start_time']) && $data['start_time'] instanceof Carbon) {
-            $data['start_time'] = $data['start_time']->format('Y-m-d H:i:s');
+        if (!empty($data['start_time'])) {
+            $data['start_time'] = $data['start_time'] instanceof Carbon
+                ? $data['start_time']->format('Y-m-d H:i:s')
+                : Carbon::parse($data['start_time'])->format('Y-m-d H:i:s');
         }
 
-        // end_time might be Carbon or string depending on your helper return
-        if (isset($data['end_time']) && $data['end_time'] instanceof Carbon) {
-            $data['end_time'] = $data['end_time']->format('Y-m-d H:i:s');
+        if (!empty($data['end_time'])) {
+            $data['end_time'] = $data['end_time'] instanceof Carbon
+                ? $data['end_time']->format('Y-m-d H:i:s')
+                : Carbon::parse($data['end_time'])->format('Y-m-d H:i:s');
         }
+
         return $data;
     }
 
