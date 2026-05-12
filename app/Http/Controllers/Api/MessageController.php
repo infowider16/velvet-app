@@ -13,6 +13,7 @@ use Illuminate\Validation\ValidationException;
 use App\Traits\UploadImageTrait;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 
 class MessageController extends BaseController
 {
@@ -37,7 +38,6 @@ class MessageController extends BaseController
             }
 
             $result = $this->messageService->sendMessage($user->id, $request->all());
-
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
             Log::error('Error in sendMessage: ' . $e->getMessage());
@@ -99,7 +99,7 @@ class MessageController extends BaseController
         }
     }
 
-    public function sentMessageUsers(Request $request): JsonResponse
+    public function chatListUsers(Request $request): JsonResponse
     {
         try {
          
@@ -109,12 +109,12 @@ class MessageController extends BaseController
                 return $user;
             }
           
-            $result = $this->messageService->getSentMessageUsers($user->id, $request->all());
+            $result = $this->messageService->getChatListUsers($user->id, $request->all());
 
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
-            Log::error('Error in sentMessageUsers: ' . $e->getMessage());
-            return $this->sendError(__('message.sent_message_users_failed'));
+            Log::error('Error in chatListUsers: ' . $e->getMessage());
+            return $this->sendError(__('message.chat_list_users_failed'));
         }
     }
 
@@ -1229,4 +1229,88 @@ class MessageController extends BaseController
             return $this->sendError(__('message.update_notification_status_failed'));
         }
     }
+
+    public function setActiveChat(Request $request)
+    {
+        try {
+          
+            $user = $this->getAuthenticatedUserOrError($request);
+
+            if ($user instanceof JsonResponse) {
+                return $user;
+            }
+
+            $request->validate([
+                'type' => 'required|in:single,group',
+                'user_id' => 'required_if:type,single|nullable|integer',
+                'group_id' => 'required_if:type,group|nullable|integer',
+            ]);
+
+            Cache::put('active_chat_' . $user->id, [
+                'type' => $request->type,
+                'user_id' => $request->type === 'single' ? $request->user_id : null,
+                'group_id' => $request->type === 'group' ? $request->group_id : null,
+            ], now()->addMinutes(30));
+
+            return $this->sendResponse([], __('message.active_chat_set_successfully'));
+        } catch (\Throwable $e) {
+            return $this->sendError(__('message.active_chat_set_failed'));
+        }
+    }
+
+    public function clearActiveChat(Request $request)
+    {
+        try {
+            $user = $this->getAuthenticatedUserOrError($request);
+
+            if ($user instanceof JsonResponse) {
+                return $user;
+            }
+          
+            Cache::forget('active_chat_' . $user->id);
+
+            return $this->sendResponse([], __('message.active_chat_cleared_successfully'));
+        } catch (\Throwable $e) {
+            return $this->sendError(__('message.active_chat_clear_failed'));
+        }
+    }
+
+    public function setOnline(Request $request)
+    {
+        try {
+            $user = $this->getAuthenticatedUserOrError($request);
+
+            if ($user instanceof JsonResponse) {
+                return $user;
+            }
+
+            Cache::put(
+                'user_online_' . $user->id,
+                true,
+                now()->addMinutes(5)
+            );
+
+          return $this->sendResponse([], __('message.user_set_online'));
+        } catch (\Throwable $e) {
+           return $this->sendError(__('message.user_set_online_failed'));
+        }
+    }
+
+    public function setOffline(Request $request)
+    {
+        try {
+            $user = $this->getAuthenticatedUserOrError($request);
+
+            if ($user instanceof JsonResponse) {
+                return $user;
+            }
+
+            Cache::forget('user_online_' . $user->id);
+
+            return $this->sendResponse([], __('message.user_set_offline'));
+        } catch (\Throwable $e) {
+            return $this->sendError(__('message.user_set_offline_failed'));
+        }
+    }
+        
 }

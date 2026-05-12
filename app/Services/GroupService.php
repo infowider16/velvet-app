@@ -6,16 +6,23 @@ use App\Repositories\Eloquent\GroupRepository;
 use App\Repositories\Eloquent\MessageRepository;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use App\Models\GroupMember;
+use App\Services\ChatSocketService;
 
 class GroupService
 {
     protected GroupRepository $groupRepo;
     protected MessageRepository $messageRepo;
+    protected ChatSocketService $chatSocketService;
 
-    public function __construct(GroupRepository $groupRepo, MessageRepository $messageRepo)
-    {
+    public function __construct(
+        GroupRepository $groupRepo,
+        MessageRepository $messageRepo,
+        ChatSocketService $chatSocketService
+    ) {
         $this->groupRepo = $groupRepo;
         $this->messageRepo = $messageRepo;
+        $this->chatSocketService = $chatSocketService;
     }
 
     /**
@@ -95,11 +102,12 @@ class GroupService
                     'description' => $group->description,
                     'image' => getImageUrl($group->image),
                     'group_type' => (int) $group->group_type,
-                    'is_member_permission' => (int) $group->is_member_permission  == 1 ? true : false,
+                    'is_member_permission' => (int) $group->is_member_permission == 1,
                     'created_by' => $group->created_by,
                     'subscriber_user_count' => $subscriberCount,
                     'user_request_count' => $requestCount,
                     'notification_status' => (int) ($group->notification_status ?? 0),
+                    'unread_count' => $userMember ? (int) $userMember->unread_count : 0,
                     'user_detail' => ($userMember && $userMember->user)
                         ? $this->formatGroupMember($userMember)
                         : null,
@@ -282,7 +290,42 @@ class GroupService
                
                 $messagesData[] = $this->formatMessage($msg);
             }
+            
             $this->groupRepo->membersDataUpdate(['group_id'=>$groupId,'user_id'=>$userId],['unread_count'=>0]);
+
+            try {
+                $lastMessage = $this->messageRepo->model
+                    ->where('group_id', $groupId)
+                    ->latest('created_at')
+                    ->first();
+
+                $this->chatSocketService->trigger(
+                    'chat-user-' . $userId,
+                    'group.list.updated',
+                    [
+                        'type' => 'group',
+                        'group' => [
+                            'id' => $group->id,
+                            'name' => $group->name,
+                            'image' => getImageUrl($group->image),
+                            'created_by' => $group->created_by,
+                            'sender_id' => $lastMessage ? $lastMessage->sender_id : null,
+                            'last_message' => $lastMessage ? $lastMessage->message_text : null,
+                            'last_message_time' => $lastMessage ? $lastMessage->created_at : null,
+                            'media_type' => $lastMessage ? $lastMessage->media_type : null,
+                            'unread_count' => 0,
+                        ],
+                    ]
+                );
+            } catch (\Throwable $e) {
+                Log::error('Group messages unread reset socket failed', [
+                    'user_id' => $userId,
+                    'group_id' => $groupId,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+
+
             return $this->successResponse([
                 'messages' => $messagesData,
                 'pagination' => [

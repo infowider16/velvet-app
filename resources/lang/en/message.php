@@ -2,6 +2,15 @@
 
 return [
     //new added text start 
+    'active_chat_set_failed' => 'Failed to set active chat.',
+    'active_chat_set_successfully' => 'Active chat set successfully.',
+    'active_chat_clear_failed' => 'Failed to clear active chat.',
+    'active_chat_cleared_successfully' => 'Active chat cleared successfully.',
+    'user_set_online' => 'User set to online successfully.',
+    'user_set_online_failed' => 'Failed to set user online.',
+    'user_set_offline' => 'User set to offline successfully.',
+    'user_set_offline_failed' => 'Failed to set user offline.',
+    ///old text start
     'group_requests_fetched_successfully' => 'Group join requests fetched successfully.',
     'failed_to_fetch_group_requests' => 'Failed to fetch group join requests.',
     'group_details_fetched_successfully' => 'Group details fetched successfully.',

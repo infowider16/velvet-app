@@ -263,7 +263,9 @@ class HomeService
     public function getMapUsers(array $filters, $currentUserId)
     {
         try {
+          
             $getuserData = $this->userRepo->find($currentUserId);
+          
             // Build where conditions for filtering
             $whereConditions = [
                 ['is_active', '>=', 7], // Only completed profiles
@@ -271,18 +273,23 @@ class HomeService
                 ['id', '!=', $currentUserId],
                 ['lat', '!=', null], // Must have location
                 ['lng', '!=', null],
-                ['country_code', '=', $getuserData->country_code]
             ];
 
+            //['country_code', '=', $getuserData->country_code]
+
+        
             $swissNowFormatted = convertTimezone(
                 Carbon::now(),
                 null,
                 'Y-m-d H:i:s'
             );
+
+        
             $whereConditions[] = function ($q) use ($swissNowFormatted) {
                 $q->whereNull('gost_expire')
                 ->orWhere('gost_expire', '<', $swissNowFormatted);
             };
+
 
             // Gender filter
             if ($filters['gender'] !== 'all') {
@@ -293,14 +300,18 @@ class HomeService
             if ($filters['min_age'] > 0 || $filters['max_age'] < 100) {
                 $maxBirthDate = Carbon::now()->subYears($filters['min_age'])->format('Y-m-d');
                 $minBirthDate = Carbon::now()->subYears($filters['max_age'] + 1)->addDay()->format('Y-m-d');
-
+             
                 $whereConditions[] = ['date_of_birth', '<=', $maxBirthDate];
                 $whereConditions[] = ['date_of_birth', '>=', $minBirthDate];
+
+              
             }
             // Select columns
             $columns = ['id', 'name', 'date_of_birth', 'country_code', 'gender', 'images', 'lat', 'lng', 'created_at','booster_ranking','gost_expire','boost','is_delete'];
             // Use getDataWithPagination to get larger dataset for distance filtering
             $perPage = 100; // Get more records to filter by distance
+
+          
             $users = $this->userRepo->getDataWithPagination(
                 $whereConditions,
                 ['pendingSentRequests', 'pendingReceivedRequests', 'acceptedFriendships', 'sentFriendRequests', 'receivedFriendRequests', 'blocks', 'blockedBy','lastShipping'],
@@ -311,6 +322,7 @@ class HomeService
                 1 // Always get first page to have more data for distance filtering
             );
 
+           
             
             // Filter out blocked users (users blocked by current user OR users who blocked current user)
             $filteredBlockedUsers = $users->getCollection()->filter(function ($user) use ($currentUserId) {
@@ -325,10 +337,13 @@ class HomeService
                 return !$currentUserBlockedThisUser && !$thisUserBlockedCurrentUser;
             });
 
+         
+
             // Process users and calculate distances
             $processedUsers = $filteredBlockedUsers->map(function ($user) use ($filters, $currentUserId) {
                 return $this->processMapUserData($user, $filters, $currentUserId);
             });
+
 
             // Filter by distance
             $filteredUsers = $processedUsers->filter(function ($user) use ($filters) {

@@ -86,7 +86,11 @@ Route::middleware('auth:api')->group(function () {
     Route::get('group/{group_id}/messages', [MessageController::class, 'groupChatHistory']);
     Route::get('conversation/{user_id}', [MessageController::class, 'getMessages']); // 1-to-1 chat history
     Route::delete('delete-message/{message_id}', [MessageController::class, 'deleteMessage']); // delete message
-    Route::get('sent-message-users', [MessageController::class, 'sentMessageUsers']);
+    Route::get('chat-list', [MessageController::class, 'chatListUsers']);
+    Route::post('/chat/set-active', [MessageController::class, 'setActiveChat']);
+    Route::post('/chat/clear-active', [MessageController::class, 'clearActiveChat']);
+    Route::post('/chat/set-online', [MessageController::class, 'setOnline']);
+    Route::post('/chat/set-offline', [MessageController::class, 'setOffline']);
     Route::post('group/create', [MessageController::class, 'createGroup']); // Add this line
 
     // Add this line for checking group name

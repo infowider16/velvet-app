@@ -5,6 +5,15 @@
 return [
     
     // new added text start 
+    'active_chat_set_failed' => 'Fehler beim Setzen des aktiven Chats.',
+    'active_chat_set_successfully' => 'Aktiver Chat erfolgreich gesetzt.',
+    'active_chat_clear_failed' => 'Fehler beim Löschen des aktiven Chats.',
+    'active_chat_cleared_successfully' => 'Aktiver Chat erfolgreich gelöscht.',
+    'user_set_online' => 'Benutzer erfolgreich online gesetzt.',
+    'user_set_online_failed' => 'Fehler beim Setzen des Benutzers auf online.',
+    'user_set_offline' => 'Benutzer erfolgreich offline gesetzt.',
+    'user_set_offline_failed' => 'Fehler beim Setzen des Benutzers auf offline.',
+    //old text start
     'group_requests_fetched_successfully' => 'Beitrittsanfragen zur Gruppe wurden erfolgreich abgerufen.',
     'failed_to_fetch_group_requests' => 'Beitrittsanfragen zur Gruppe konnten nicht abgerufen werden.',
     'group_details_fetched_successfully' => 'Gruppendetails wurden erfolgreich abgerufen.',
