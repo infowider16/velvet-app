@@ -962,7 +962,7 @@ class MessageController extends BaseController
             }
 
             $validator = Validator::make($request->all(), [
-                'pin_id' => 'required|integer|exists:users,id',
+                'pin_id' => 'required|integer|exists:pin_marks,id',
                 'reason' => 'required|string|max:1000',
                 'report_type' => 'required|string|max:255',
                 'email' => 'sometimes|email|max:255',
