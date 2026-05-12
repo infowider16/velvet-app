@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Events\NewMessageEvent;
 use App\Models\Block;
 use App\Models\GroupMember;
 use App\Repositories\Eloquent\MessageRepository;
