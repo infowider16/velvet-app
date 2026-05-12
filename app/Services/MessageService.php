@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\NewMessageEvent;
 use App\Models\Block;
 use App\Models\GroupMember;
 use App\Repositories\Eloquent\MessageRepository;
@@ -129,6 +130,22 @@ class MessageService
                     } catch (\Throwable $e) {
                         Log::error('Error in sendPushNotification (firstMessage): ' . $e->getMessage());
                     }
+
+                    broadcast(new NewMessageEvent(
+                        $this->formatMessageForBroadcast($message),
+                        'individual',
+                        $data['receiver_id'],
+                        $senderId,
+                        $data['receiver_id']
+                    ));
+                    // Also broadcast to sender for their own updates
+                    broadcast(new NewMessageEvent(
+                        $this->formatMessageForBroadcast($message),
+                        'individual',
+                        $senderId,
+                        $senderId,
+                        $data['receiver_id']
+                    ));
                 //}
             }
             $mediaUrl = null;

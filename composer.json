@@ -10,6 +10,7 @@
         "google/apiclient": "^2.18",
         "laravel/framework": "^12.0",
         "laravel/passport": "^13.2",
+        "laravel/reverb": "^1.10",
         "laravel/tinker": "^2.10.1",
         "twilio/sdk": "^8.10",
         "yajra/laravel-datatables-oracle": "^12.4"
@@ -72,12 +73,12 @@
         "platform": {
             "php": "8.3.0"
         },
-        "optimize-autoloader": true,
+        "optimize-autoloader": false,
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": false
         }
     },
     "minimum-stability": "stable",
