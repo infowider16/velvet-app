@@ -1249,6 +1249,7 @@ class MessageService
                     $groupMember->status = 0; // make sure status is active
                     $groupMember->save();
                 }
+                $this->chatSocketService->groupUpdatesocket($data['group_id']);
                 // $this->groupRepo->deleteJoinRequest($group->id, $data['user_id']); // not needed
                 return [
                     'data' => $groupMember,
@@ -1257,6 +1258,7 @@ class MessageService
             } elseif ($data['action'] === 'reject') {
                 
                 $this->groupRepo->deleteJoinRequest($group->id, $data['user_id']);
+                $this->chatSocketService->groupUpdatesocket($data['group_id']);
                 return [
                     'data' => null,
                     'message' => __('message.join_request_rejected')
@@ -1267,6 +1269,7 @@ class MessageService
                     'message' => __('message.invalid_action')
                 ];
             }
+            
         } catch (Exception $e) {
             Log::error('Failed to handle join request: ' . $e->getMessage());
             throw new Exception(__('message.handle_join_request_failed'));
@@ -1604,7 +1607,7 @@ class MessageService
                     'code' => 500,
                 ];
             }
-
+            $this->chatSocketService->groupUpdatesocket($data['group_id']);
             return [
                 'error' => false,
                 'data' => ['member_id' => $memberId],
@@ -1695,7 +1698,7 @@ class MessageService
                 }
             }
             // --- END GLOBAL BLOCK/UNBLOCK LOGIC ---
-
+            $this->chatSocketService->groupUpdatesocket($data['group_id']);
             return [
                 'error' => false,
                 'data' => ['member_id' => $memberId, 'status' => $status],
@@ -1800,7 +1803,7 @@ class MessageService
             }
 
             $updated = $this->groupRepo->updateMemberPermission($groupId, $userId, $isMemberPermission);
-
+            $this->chatSocketService->groupUpdatesocket($data['group_id']);
             if ($updated === false) {
                 return [
                     'error' => true,
@@ -2395,7 +2398,7 @@ class MessageService
             $group = $this->groupRepo->model
                 ->with(['members.user', 'creator'])
                 ->find($groupId);
-
+            $this->chatSocketService->groupUpdatesocket($data['group_id']);
             return [
                 'error' => false,
                 'data' => [

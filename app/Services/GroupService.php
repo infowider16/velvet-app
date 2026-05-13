@@ -68,7 +68,6 @@ class GroupService
     public function getGroupDetails(int $userId, int $groupId): array
     {
         try {
-
             $group = $this->groupRepo->getOneData(
                 ['id' => $groupId],
                 ['creator', 'members.user']

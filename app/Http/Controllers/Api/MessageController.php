@@ -336,7 +336,7 @@ class MessageController extends BaseController
             if (isset($result['error']) && $result['error']) {
                 return $this->sendError($result['message'], $result['code'] ?? 400);
             }
-
+        
             return $this->sendResponse($result['data'] ?? [], $result['message']);
         } catch (ValidationException $e) {
             return response()->json([
