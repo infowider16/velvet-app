@@ -20,22 +20,25 @@ use App\Models\GroupMember;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Services\ChatSocketService;
 
 class UserRegisterService implements UserRegisterServiceInterface
 {
     use UploadImageTrait;
     protected $userRepo;
     protected $messageRepo;
+    protected $chatSocketService;
     public const TYPES = [
         'new_messages',
         'comments_on_pins',
         'likes_on_pins',
         'friend_requests',
     ];
-    public function __construct(UserRepository $userRepo, MessageRepository $messageRepo)
+    public function __construct(UserRepository $userRepo, MessageRepository $messageRepo , ChatSocketService $chatSocketService)
     {
         $this->userRepo = $userRepo;
         $this->messageRepo = $messageRepo;
+        $this->chatSocketService = $chatSocketService;
     }
     private function generateOtp($length = 6)
     {
@@ -692,7 +695,8 @@ class UserRegisterService implements UserRegisterServiceInterface
     public function resetGroupCount($userId,$groupId)
     {
         try {
-            return GroupMember::where('user_id', $userId)->where('group_id', $groupId)->update(['unread_count' => 0]);
+            GroupMember::where('user_id', $userId)->where('group_id', $groupId)->update(['unread_count' => 0]);
+            $this->chatSocketService->groupUpdatesocket($groupId);
         } catch (Exception $e) {
             throw new Exception('Resetting group count failed: ' . $e->getMessage());
         }

@@ -204,6 +204,7 @@ class UserRegisterController extends BaseController
                 return $user;
             }
             $result = $this->userRegisterService->resetGroupCount($user->id,$request->group_id);
+            
             return $this->sendResponse($result, __('message.group_count_reset_successfully'));
         } catch (Exception $e) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
