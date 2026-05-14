@@ -149,7 +149,7 @@ class MessageService
 
                     $this->chatSocketService->trigger(
                         'chat-user-' . $memberId,
-                        'message.sent',
+                        'group.message.sent',
                         $payload
                     );
 
@@ -701,6 +701,11 @@ class MessageService
                     $this->chatSocketService->trigger(
                         'chat-user-' . $memberId,
                         'message.deleted',
+                        $deletePayload
+                    );
+                    $this->chatSocketService->trigger(
+                        'delete.chat.group.' . $groupId,
+                        'delete.chat.group',
                         $deletePayload
                     );
 
@@ -1307,7 +1312,23 @@ class MessageService
             )->each(function ($msg) {
                 $msg->delete();
             });
+            $this->chatSocketService->trigger(
+                'delete.chat.all' . $userId,
+                'delete.chat.all',
+                [
+                    'sender_id' => $userId,
+                    'receiver_id' => $otherUserId,
+                ]
+            );
 
+            $this->chatSocketService->trigger(
+                'delete.chat.all' . $otherUserId,
+                'delete.chat.all',
+                [
+                    'sender_id' => $userId,
+                    'receiver_id' => $otherUserId,
+                ]
+            );
             return [
                 'data' => [],
                 'message' => __('message.conversation_deleted_successfully')
@@ -1535,7 +1556,7 @@ class MessageService
                     'code' => 409,
                 ];
             }
-
+            $this->chatSocketService->groupUpdatesocket($data['group_id']);
             return [
                 'error' => false,
                 'data' => [
@@ -3025,7 +3046,14 @@ class MessageService
                 $groupMember->group_deleted_at = now();
                 $groupMember->save();
             }
-
+            $this->chatSocketService->trigger(
+                'delete.chat.group.all.' . $groupId,
+                'delete.chat.group.all',
+                [
+                    'group_id' => $groupId,
+                    'status' => true,
+                ]
+            );
             return [
                 'data' => [],
                 'message' => __('message.group_chat_deleted_for_user')
