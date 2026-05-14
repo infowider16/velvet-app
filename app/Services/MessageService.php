@@ -1151,6 +1151,7 @@ class MessageService
                 } catch (\Throwable $e) {
                     Log::error('Error in sendPushNotification (sendGroupRequest): ' . $e->getMessage());
                 }
+                $this->chatSocketService->groupUpdatesocket($group->id);
                 return [
                     'data' => [
                         'group' => $this->formatGroupInfo($group, $userId),
@@ -1205,6 +1206,7 @@ class MessageService
                 } catch (\Throwable $e) {
                     Log::error('Error in sendPushNotification (sendGroupRequest): ' . $e->getMessage());
                 }
+                $this->chatSocketService->groupUpdatesocket($group->id);
                 return [
                     'data' => [
                         'group' => $this->formatGroupInfo($group, $userId),
@@ -1719,7 +1721,7 @@ class MessageService
                 }
             }
             // --- END GLOBAL BLOCK/UNBLOCK LOGIC ---
-            $this->chatSocketService->groupUpdatesocket($data['group_id']);
+            $this->chatSocketService->groupUpdatesocket($groupId);
             return [
                 'error' => false,
                 'data' => ['member_id' => $memberId, 'status' => $status],
