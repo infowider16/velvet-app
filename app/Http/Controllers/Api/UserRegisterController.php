@@ -195,6 +195,21 @@ class UserRegisterController extends BaseController
             return $this->sendError($e->getMessage(), [], 500);
         }
     }
+
+    public function resetGroupCount(Request $request)
+    {
+        try {
+            $user = $this->getAuthenticatedUserOrError($request);
+            if ($user instanceof JsonResponse) {
+                return $user;
+            }
+            $result = $this->userRegisterService->resetGroupCount($user->id,$request->group_id);
+            return $this->sendResponse($result, __('message.group_count_reset_successfully'));
+        } catch (Exception $e) {
+            Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
+            return $this->sendError($e->getMessage(), [], 500);
+        }
+    }
     public function editProfile(UpdateProfileRequest $request)
     {
         try {

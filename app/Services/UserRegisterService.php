@@ -689,6 +689,14 @@ class UserRegisterService implements UserRegisterServiceInterface
             throw new Exception('Fetching interval failed: ' . $e->getMessage());
         }
     }
+    public function resetGroupCount($userId,$groupId)
+    {
+        try {
+            return GroupMember::where('user_id', $userId)->where('group_id', $groupId)->update(['unread_count' => 0]);
+        } catch (Exception $e) {
+            throw new Exception('Resetting group count failed: ' . $e->getMessage());
+        }
+    }
     private function determineFriendStatus($user, $currentUserId)
     {
         // Check if they are friends (accepted friendship)
