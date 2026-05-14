@@ -313,7 +313,7 @@ class GroupService
                             'last_message_time' => $lastMessage ? $lastMessage->created_at : null,
                             'media_type' => $lastMessage ? $lastMessage->media_type : null,
                             'unread_count' => 0,
-                        ],
+                        ]
                     ]
                 );
             } catch (\Throwable $e) {
