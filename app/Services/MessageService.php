@@ -148,7 +148,7 @@ class MessageService
                     */
 
                     $this->chatSocketService->trigger(
-                        'chat-user-' . $memberId,
+                        'groupdetail-' . $data['group_id'],
                         'group.message.sent',
                         $payload
                     );
@@ -704,7 +704,7 @@ class MessageService
                         $deletePayload
                     );
                     $this->chatSocketService->trigger(
-                        'delete.chat.group.' . $groupId,
+                        'groupdetail-' . $groupId,
                         'delete.chat.group',
                         $deletePayload
                     );
@@ -1313,7 +1313,7 @@ class MessageService
                 $msg->delete();
             });
             $this->chatSocketService->trigger(
-                'delete.chat.all' . $userId,
+                'chat-user-' . $userId,
                 'delete.chat.all',
                 [
                     'sender_id' => $userId,
@@ -1322,7 +1322,7 @@ class MessageService
             );
 
             $this->chatSocketService->trigger(
-                'delete.chat.all' . $otherUserId,
+                'chat-user-' . $otherUserId,
                 'delete.chat.all',
                 [
                     'sender_id' => $userId,
@@ -3047,7 +3047,7 @@ class MessageService
                 $groupMember->save();
             }
             $this->chatSocketService->trigger(
-                'delete.chat.group.all.' . $groupId,
+                'groupdetail-' . $groupId,
                 'delete.chat.group.all',
                 [
                     'group_id' => $groupId,
