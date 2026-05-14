@@ -3083,7 +3083,14 @@ class MessageService
             $this->messageRepo->model
                 ->where('group_id', $groupId)
                 ->delete();
-
+            $this->chatSocketService->trigger(
+                'groupdetail-' . $groupId,
+                'delete.chat.group.all',
+                [
+                    'group_id' => $groupId,
+                    'status' => true,
+                ]
+            );
             return [
                 'data' => [],
                 'message' => __('message.group_messages_deleted_by_admin')
