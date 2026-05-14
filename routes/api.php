@@ -61,6 +61,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('add-location', [UserRegisterController::class, 'addLocation']); // Add this line
     Route::post('device-token', [UserRegisterController::class, 'deviceToken']);
     Route::get('get-interval', [UserRegisterController::class, 'getInterval']);
+    Route::get('reset-group-count', [UserRegisterController::class, 'resetGroupCount']);
     Route::post('updateLatLng', [UserRegisterController::class, 'updateLatLng']);
 
     // Friendship routes
