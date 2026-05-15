@@ -215,6 +215,17 @@
             </div>
 
         </li>
+        <li class="nav-item {{ request()->routeIs('admin.report.index') ? 'active' : '' }}">
+
+            <a class="nav-link" href="{{ route('admin.report.index') }}">
+
+                <i class="menu-icon typcn typcn-document-text"></i>
+
+                <span class="menu-title">Pin Reports</span>
+
+            </a>
+
+        </li>
         
 
 

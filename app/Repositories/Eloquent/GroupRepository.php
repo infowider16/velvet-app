@@ -1,15 +1,9 @@
 <?php
 
-
-
 namespace App\Repositories\Eloquent;
-
-
-
 use App\Contracts\Repositories\GroupRepositoryInterface;
-
 use App\Models\{Group,GroupMember,GroupReport};
-
+use Illuminate\Support\Facades\Log;
 
 
 class GroupRepository extends BaseRepository implements GroupRepositoryInterface
@@ -260,6 +254,25 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
     public function whereData($byWhere=[])
     {
         return $this->groupReportModel->where($byWhere);
+    }
+
+    /**
+     * Get all pin reports for admin.
+     *
+     * @return mixed
+     */
+    public function getPinReport()
+    {
+        try {
+        
+            return $this->groupReportModel
+            ->with(['group', 'reporter', 'pinmark'])
+            ->latest();
+
+        } catch (\Exception $e) {
+            Log::error('Get pin report failed: ' . $e->getMessage());
+            throw $e;
+        }
     }
 
     // Add: Store a group report

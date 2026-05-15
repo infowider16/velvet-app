@@ -150,6 +150,10 @@ Route::prefix('admin')->name('admin.')->namespace('App\Http\Controllers\Admin')-
         
         Route::get('transaction/pin', 'TransactionController@pinTransactions')->name('transaction.pin');
         Route::get('transaction/pin/list', 'TransactionController@pinTransactionList')->name('transaction-pin-list');
+
+        Route::get('pin-reports', 'ReportController@index')->name('report.index');
+        Route::get('pin-reports/list', 'ReportController@reportList')->name('report-list');
+
     });
 
 });
