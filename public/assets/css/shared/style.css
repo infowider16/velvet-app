@@ -9842,3 +9842,127 @@ ul {
 /*-------------------------------------------------------------------*/
 
 /*# sourceMappingURL=style.css.map */
+
+
+
+
+/* Responsive Start*/
+
+.page-body-wrapper {
+    min-height: 100vh;
+}
+
+nav#sidebar {
+    padding-top: 50px;
+}
+
+.navbar.default-layout .navbar-brand-wrapper {
+    padding-top: 30px;
+}
+
+.table-responsive {
+    width: 100% !important;
+}
+
+.card.mb-4.inner-card {
+    box-shadow: none;
+    border: none;
+}
+
+table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+table th,
+table td {
+    width: auto;
+}
+
+table th:first-child,
+table td:first-child {
+    width: 1%;
+    white-space: nowrap;
+}
+
+@media screen and (max-width:768px) {
+  div#user-data-table_wrapper {
+        padding: 20px;
+    }
+
+    .content-wrapper {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter {
+        text-align: start;
+    }
+
+    .breadcrumb {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .card.inner-card .card-header, .card.inner-card .card-body {
+        padding-inline: 0px;
+    }
+}
+
+
+
+@media screen and (max-width:576px) {
+  .h1, h1 {
+      font-size: 1.75rem;
+  }
+
+  .content-wrapper.mob-wrapper {
+      padding-inline: 0px;
+  }
+
+  .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter {
+      text-align: start !important;
+  }
+
+  .content-wrapper {
+      padding: 1.5rem 0.5rem !important;
+  }
+
+  .breadcrumb {
+      display: flex;
+      justify-content: flex-start !important;
+      padding-inline: 10px;
+  }
+
+  .stretch-card > .card {
+      width: 100%;
+      min-width: 100%;
+      border-radius: 15px;
+  }
+
+  .card {
+      border-radius: 15px !important; 
+  }
+
+  div#interest-table_wrapper {
+      padding: 0px;
+  }
+
+  .card .card-body, .card .card-header {
+      padding: 1.25rem 1.25rem;
+  }
+
+    div#sub-interest-table_wrapper {
+      padding: 0px;
+  }
+
+  div#reportDetailModal td {
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      white-space: normal;
+      width:50%;
+  }
+}
+
+
+
+/* Responsive End */

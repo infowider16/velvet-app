@@ -3,10 +3,10 @@
 @section('title', 'Group Reports')
 
 @section('content')
-<div class="content-wrapper">
+<div class="content-wrapper px-0">
     <div class="content-header">
         <div class="container-fluid">
-            <h1 class="m-0 text-info">
+            <h1 class="m-0 text-info mb-3">
                 <i class="fas fa-flag mr-2"></i>Group Reports
             </h1>
         </div>
@@ -22,8 +22,8 @@
                 </div>
 
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-striped" id="report-data-table">
+                    <div class="">
+                        <table class="table table-hover table-striped table-responsive" id="report-data-table">
                             <thead>
                                 <tr>
                                     <th>#</th>

@@ -3,7 +3,7 @@
 @section('title', 'Ghost Plan Management')
 
 @section('content')
-<div class="content-wrapper">
+<div class="content-wrapper px-0">
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">

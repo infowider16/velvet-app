@@ -78,7 +78,7 @@
 </style>
 @endpush
 @section('content')
-<div class="content-wrapper">
+<div class="content-wrapper px-0">
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -162,7 +162,7 @@
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover table-striped mb-0" id="pin-transaction-table">
+                                <table class="table table-hover table-striped mb-0 table-responsive" id="pin-transaction-table">
                                     <thead class="bg-light">
                                         <tr>
                                             <th class="border-0">#</th>

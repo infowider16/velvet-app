@@ -179,7 +179,7 @@
 
         <li class="nav-item {{ (request()->routeIs('admin.ghost.*') || request()->routeIs('admin.boost.*') || request()->routeIs('admin.pin.*')) && !request()->routeIs('admin.transaction.*') ? 'active' : '' }}">
 
-            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+            <a class="nav-link" data-toggle="collapse" href="#ui-basic1" aria-expanded="false" aria-controls="ui-basic1">
 
                 <i class="menu-icon typcn typcn-coffee"></i>
 
@@ -189,7 +189,7 @@
 
             </a>
 
-            <div class="collapse" id="ui-basic">
+            <div class="collapse" id="ui-basic1">
 
                 <ul class="nav flex-column sub-menu">
 
