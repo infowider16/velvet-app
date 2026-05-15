@@ -752,3 +752,66 @@
     display: none; }
 
 /*# sourceMappingURL=style.css.map */
+
+
+
+
+
+
+/* Responsive Start*/
+
+.page-body-wrapper {
+    min-height: 100vh;
+}
+
+nav#sidebar {
+    padding-top: 60px;
+}
+
+.navbar.default-layout .navbar-brand-wrapper {
+    padding-top: 20px;
+}
+
+.dataTables_wrapper {
+    padding: 20px;
+}
+
+body.auth-bg-custom .container-fluid.page-body-wrapper.full-page-wrapper .content-wrapper.auth.auth-bg-1.theme-one {
+    margin-top: 0px;
+}
+
+@media screen and (max-width:768px) {
+  .navbar.default-layout .navbar-brand-wrapper {
+      padding-top: 0px;
+  }
+
+  .sidebar-offcanvas {
+    top: 40px;
+  }
+
+  nav#sidebar {
+    padding-top: 0px;
+  }
+
+  div#user-data-table_wrapper {
+        padding: 20px;
+    }
+
+    .content-wrapper {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter {
+        text-align: start;
+    }
+}
+
+
+
+@media screen and (max-width:576px) {
+  
+}
+
+
+
+/* Responsive End */

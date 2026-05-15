@@ -122,7 +122,7 @@
 </style>
 @endpush
 @section('content')
-<div class="content-wrapper">
+<div class="content-wrapper  mob-wrapper">
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -159,8 +159,8 @@
                             </div>
                         </div>
                         <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover table-striped mb-0" id="user-data-table">
+                            <div class="">
+                                <table class="table table-hover table-striped mb-0 table-responsive" id="user-data-table">
                                     <thead class="bg-light">
                                         <tr>
                                             <th class="border-0">#</th>

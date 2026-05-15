@@ -8,7 +8,7 @@
 
 @section('content')
 
-<div class="content-wrapper">
+<div class="content-wrapper px-0">
 
     <div class="row">
 
@@ -26,7 +26,7 @@
 
                     </div>
 
-                    <table class="table" id="faq-data-table">
+                    <table class="table table-responsive" id="faq-data-table">
 
                         <thead>
 

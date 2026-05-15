@@ -3,7 +3,7 @@
 @section('title', 'Interest Management')
 
 @section('content')
-<div class="content-wrapper">
+<div class="content-wrapper px-0">
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -23,18 +23,18 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-12">
+                <div class="col-12 p-0">
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">Interest List</h3>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-primary" id="add-interest">
+                                <button type="button" class="btn btn-primary m-0 mt-2" id="add-interest">
                                     <i class="fas fa-plus"></i> Add Interest
                                 </button>
                             </div>
                         </div>
                         <div class="card-body">
-                            <table id="interest-table" class="table table-bordered table-striped">
+                            <table id="interest-table" class="table table-bordered table-striped table-responsive">
                                 <thead>
                                     <tr>
                                         <th>Sr No</th>

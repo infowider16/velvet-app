@@ -74,7 +74,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-8">
-                                    <table class="table table-borderless">
+                                    <table class="table table-borderless table-responsive">
                                         <tr>
                                             <th>Name:</th>
                                             <td>{{ $user->name ?: '-' }}</td>

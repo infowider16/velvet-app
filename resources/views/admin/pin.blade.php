@@ -2,8 +2,8 @@
 
 @section('title', 'Pin Plan Management')
 
-@section('content')
-<div class="content-wrapper">
+@section('content') 
+<div class="content-wrapper px-0">
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -28,14 +28,14 @@
                         <div class="card-header">
                             <h3 class="card-title">Pin Plan List</h3>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-primary" id="add-pin">
+                                <button type="button" class="btn btn-primary m-0 mt-2" id="add-pin">
                                     <i class="fas fa-plus"></i> Add Pin Plan
                                 </button>
                             </div>
                         </div>
 
                         <div class="card-body">
-                            <table id="pin-table" class="table table-bordered table-striped">
+                            <table id="pin-table" class="table table-bordered table-striped table-responsive mb-2">
                                 <thead>
                                     <tr>
                                         <th>Sr No</th>

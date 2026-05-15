@@ -10,7 +10,7 @@
 
 
 
-<div class="content-wrapper">
+<div class="content-wrapper px-0">
 
     <div class="row">
 
@@ -22,7 +22,7 @@
 
                     <h4 class="card-title">Contact Us List</h4>
 
-                    <table class="table" id="contact-data-table">
+                    <table class="table table-responsive" id="contact-data-table">
 
                         <thead>
 

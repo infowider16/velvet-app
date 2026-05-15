@@ -3,7 +3,7 @@
 @section('title', 'Content Management')
 
 @section('content')
-<div class="content-wrapper">
+<div class="content-wrapper px-0">
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
@@ -22,7 +22,7 @@
                                 : json_decode($content->description_translation, true);
                         @endphp
                    
-                    <div class="card mb-4">
+                    <div class="card mb-4 inner-card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <button class="btn btn-primary btn-sm edit-content" 
                                 data-id="{{ $content->id }}" 
