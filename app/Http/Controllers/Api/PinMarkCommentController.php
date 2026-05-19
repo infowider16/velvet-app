@@ -22,6 +22,7 @@ class PinMarkCommentController extends BaseController
         try {
             $allData=$request->all();
             $pinMarkComment=$this->pinMarkCommentService->storePinMarkComment($allData);
+           
             return $this->sendResponse($pinMarkComment, __('message.pin_mark_comment_fetched_successfully'));
         } catch (Exception $e) {
             Log::error(

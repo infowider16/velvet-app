@@ -106,8 +106,6 @@ class PinMarkCommentService
 
             $pinMarkComment = $this->pinMarkCommentRepo->create($requestDatas);
 
-
-
             // Deduct pin count
 
             $this->updateDeductPinCount($userId);
@@ -151,8 +149,9 @@ class PinMarkCommentService
             
 
             // Send push
-
-            if (!empty($receiver?->device_token) && $receiver->id!=$userId) {
+            $deviceTokens = is_array($receiver->device_token) ? $receiver->device_token : json_decode($receiver->device_token, true);
+            
+            if (!empty($deviceTokens) && $receiver->id!=$userId) {
 
                 sendPushNotification(
 
@@ -169,12 +168,7 @@ class PinMarkCommentService
                 );
 
             }
-
-
-
             return $pinMarkComment;
-
-
 
         } catch (ValidationException $e) {
             throw $e;
