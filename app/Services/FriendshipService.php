@@ -610,21 +610,6 @@ class FriendshipService
 
                         $this->groupRepo->updateGroupMemberStatus($groupId, $blockedUserId, 1);
 
-                        Log::info('Member status updated. Deleting user from group.', [
-                            'group_id' => $groupId,
-                            'blocked_user_id' => $blockedUserId
-                        ]);
-
-                        $this->groupRepo->delete([
-                            'group_id' => $groupId,
-                            'user_id' => $blockedUserId
-                        ]);
-
-                        Log::info('User deleted from group. Triggering socket update.', [
-                            'group_id' => $groupId,
-                            'blocked_user_id' => $blockedUserId
-                        ]);
-
                         $this->chatSocketService->groupUpdatesocket($groupId);
 
                         Log::info('Socket update triggered successfully.', [
