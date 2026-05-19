@@ -182,10 +182,12 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
     public function updateGroupMemberStatus($groupId, $userId, $status)
     {
         try {
-            return $this->groupMemberModel
+            $data =  $this->groupMemberModel
                 ->where('group_id', $groupId)
                 ->where('user_id', $userId)
                 ->update(['status' => $status]);
+            log::info('Membership status updated', ['group_id' => $groupId, 'user_id' => $userId, 'status' => $status]);
+            return $data;
         } catch (\Exception $e) {
             \Log::error('Error in updateGroupMemberStatus: ' . $e->getMessage());
             return false;

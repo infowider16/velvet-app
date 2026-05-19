@@ -588,23 +588,60 @@ class FriendshipService
             $this->messageRepository->deleteChat($userId, $blockedUserId);
         
             // Remove blocked user from groups where blocker is admin
-            if ($this->groupRepo) {
+           if ($this->groupRepo) {
+                Log::info('Group repository exists. Fetching admin groups.', [
+                    'user_id' => $userId,
+                    'blocked_user_id' => $blockedUserId
+                ]);
+
                 $adminGroups = $this->groupRepo->getAdminGroupsOfUser($userId);
 
                 foreach ($adminGroups as $group) {
-                    $groupId = $group->id ?? $group->group_id;
+                    $groupId = $group->group_id;
 
-                    if ($this->groupRepo->isMember($groupId, $blockedUserId)) {
+                
+                    $isMember = $this->groupRepo->isMember($groupId, $blockedUserId);
+
+                    if ($isMember) {
+                        Log::info('Blocked user found in group. Updating member status.', [
+                            'group_id' => $groupId,
+                            'blocked_user_id' => $blockedUserId
+                        ]);
+
                         $this->groupRepo->updateGroupMemberStatus($groupId, $blockedUserId, 1);
+
+                        Log::info('Member status updated. Deleting user from group.', [
+                            'group_id' => $groupId,
+                            'blocked_user_id' => $blockedUserId
+                        ]);
 
                         $this->groupRepo->delete([
                             'group_id' => $groupId,
                             'user_id' => $blockedUserId
                         ]);
 
+                        Log::info('User deleted from group. Triggering socket update.', [
+                            'group_id' => $groupId,
+                            'blocked_user_id' => $blockedUserId
+                        ]);
+
                         $this->chatSocketService->groupUpdatesocket($groupId);
+
+                        Log::info('Socket update triggered successfully.', [
+                            'group_id' => $groupId
+                        ]);
+                    } else {
+                        Log::info('Blocked user is not a member of this group.', [
+                            'group_id' => $groupId,
+                            'blocked_user_id' => $blockedUserId
+                        ]);
                     }
                 }
+            } else {
+                Log::warning('Group repository is null.', [
+                    'user_id' => $userId,
+                    'blocked_user_id' => $blockedUserId
+                ]);
             }
 
             return [
