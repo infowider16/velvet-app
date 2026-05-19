@@ -52,7 +52,7 @@ class PinMarkCommentService
 
         $this->userRegisterService = $userRegisterService;
 
-        $this->PinMarkRepository = $pinMarkRepo;
+        $this->pinMarkRepo = $pinMarkRepo;
 
     }
 
@@ -60,149 +60,149 @@ class PinMarkCommentService
 
    public function storePinMarkComment(array $requestDatas)
 
-        {
+    {
 
-    try {
+        try {
+            
+            $this->validateRequiredKeys($requestDatas);
 
-        $this->validateRequiredKeys($requestDatas);
+            $userId = (int) $requestDatas['user_id'];
 
-        $userId = (int) $requestDatas['user_id'];
+            $pinDetail=$this->pinMarkRepo->getOneData(['id'=>$requestDatas['pin_mark_id']],['user']);
 
-        $pinDetail=$this->PinMarkRepository->getOneData(['id'=>$requestDatas['pin_mark_id']],['user']);
+            if (!$pinDetail) {
+                throw ValidationException::withMessages([
+                    'pin_mark_id' => [__('message.pin_mark_not_found')],
+                ]);
+            }
 
-        $swissNowFormatted = convertTimezone(
+            $swissNowFormatted = convertTimezone(
 
-            Carbon::now(),
+                Carbon::now(),
 
-            null,
+                null,
 
-            'Y-m-d H:i:s'
-
-        );
-
-
-
-        $requestDatas['created_at']   = $swissNowFormatted;
-
-        $requestDatas['commented_on'] = $swissNowFormatted;
-
-        $requestDatas['total_like'] = 0;
-
-
-
-        // Validate pin availability
-
-        // $this->validatePinCount($userId);
-
-
-
-        // Create MarkComment
-
-        $pinMarkComment = $this->pinMarkCommentRepo->create($requestDatas);
-
-
-
-        // Deduct pin count
-
-        $this->updateDeductPinCount($userId);
-
-
-
-        // Fetch user detail ONCE
-
-        $userResponse = $this->userRegisterService->getUserDetail($userId);
-
-
-
-        // Attach only user_info
-
-        $pinMarkComment->user = $userResponse['data']['user_info'] ?? null;
-
-        
-
-        $sender   = $this->userRepo->find($userId);      // commenter
-
-        $receiver = $pinDetail->user;    // post owner / receiver
-
-        
-
-        $title = __('message.new_comment_title');
-        $body = $sender ? __('message.commented_on_post_by_user', ['name' => $sender->name]) : __('message.commented_on_post');
-
-
-        // Extra payload for app handling
-
-        $other = [
-
-            'type'        => 'comment',
-
-            'user_id'     => $userId,
-
-            'screen_name' => 'post_detail', // or 'comment_list'
-
-        ];
-
-        
-
-        // Send push
-
-        if (!empty($receiver?->device_token) && $receiver->id!=$userId) {
-
-            sendPushNotification(
-
-                [$receiver->device_token],
-
-                $title,
-
-                $body,
-
-                $other,
-
-                [$receiver->id],'comments_on_pins'
+                'Y-m-d H:i:s'
 
             );
 
+
+
+            $requestDatas['created_at']   = $swissNowFormatted;
+
+            $requestDatas['commented_on'] = $swissNowFormatted;
+
+            $requestDatas['total_like'] = 0;
+
+
+
+            // Validate pin availability
+
+            // $this->validatePinCount($userId);
+
+
+
+            // Create MarkComment
+
+            $pinMarkComment = $this->pinMarkCommentRepo->create($requestDatas);
+
+
+
+            // Deduct pin count
+
+            $this->updateDeductPinCount($userId);
+
+
+
+            // Fetch user detail ONCE
+
+            $userResponse = $this->userRegisterService->getUserDetail($userId);
+
+
+
+            // Attach only user_info
+
+            $pinMarkComment->user = $userResponse['data']['user_info'] ?? null;
+
+            
+
+            $sender   = $this->userRepo->find($userId);      // commenter
+
+            $receiver = $pinDetail->user;    // post owner / receiver
+
+            
+
+            $title = __('message.new_comment_title');
+            $body = $sender ? __('message.commented_on_post_by_user', ['name' => $sender->name]) : __('message.commented_on_post');
+
+
+            // Extra payload for app handling
+
+            $other = [
+
+                'type'        => 'comment',
+
+                'user_id'     => $userId,
+
+                'screen_name' => 'post_detail', // or 'comment_list'
+
+            ];
+
+            
+
+            // Send push
+
+            if (!empty($receiver?->device_token) && $receiver->id!=$userId) {
+
+                sendPushNotification(
+
+                    [$receiver->device_token],
+
+                    $title,
+
+                    $body,
+
+                    $other,
+
+                    [$receiver->id],'comments_on_pins'
+
+                );
+
+            }
+
+
+
+            return $pinMarkComment;
+
+
+
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+
+            Log::error(
+
+                __CLASS__ . '::' . __FUNCTION__,
+
+                [
+
+                    'error' => $e->getMessage(),
+
+                    'trace' => $e->getTraceAsString(),
+
+                    'data'  => $requestDatas
+
+                ]
+
+            );
+
+
+
+            return null;
+
         }
 
-
-
-        return $pinMarkComment;
-
-
-
-    } catch (ValidationException $e) {
-
-        throw $e;
-
-
-
-    } catch (\Throwable $e) {
-
-        dd($e);
-
-        Log::error(
-
-            __CLASS__ . '::' . __FUNCTION__,
-
-            [
-
-                'error' => $e->getMessage(),
-
-                'trace' => $e->getTraceAsString(),
-
-                'data'  => $requestDatas
-
-            ]
-
-        );
-
-
-
-        return null;
-
     }
-
-}
 
 
 

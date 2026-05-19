@@ -10,6 +10,7 @@ use Exception;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
+use App\Services\ChatSocketService;
 
 class FriendshipService
 {
@@ -17,13 +18,15 @@ class FriendshipService
     protected $userRepo;
     protected $groupRepo;
     protected $messageRepository;
+    protected $chatSocketService;
 
-    public function __construct(FriendshipRepository $friendshipRepo, UserRepository $userRepo, GroupRepository $groupRepo, MessageRepository $messageRepository)
+    public function __construct(FriendshipRepository $friendshipRepo, UserRepository $userRepo, GroupRepository $groupRepo, MessageRepository $messageRepository, ChatSocketService $chatSocketService)
     {
         $this->friendshipRepo = $friendshipRepo;
         $this->messageRepository = $messageRepository;
         $this->userRepo = $userRepo;
         $this->groupRepo = $groupRepo;
+        $this->chatSocketService = $chatSocketService;
     }
 
     public function sendFriendRequest($userId, $friendId)
@@ -583,7 +586,26 @@ class FriendshipService
             //         ->update(['status' => 1]); // 1 = blocked
             // }
             $this->messageRepository->deleteChat($userId, $blockedUserId);
-            // --- END group block logic ---
+        
+            // Remove blocked user from groups where blocker is admin
+            if ($this->groupRepo) {
+                $adminGroups = $this->groupRepo->getAdminGroupsOfUser($userId);
+
+                foreach ($adminGroups as $group) {
+                    $groupId = $group->id ?? $group->group_id;
+
+                    if ($this->groupRepo->isMember($groupId, $blockedUserId)) {
+                        $this->groupRepo->updateGroupMemberStatus($groupId, $blockedUserId, 1);
+
+                        $this->groupRepo->delete([
+                            'group_id' => $groupId,
+                            'user_id' => $blockedUserId
+                        ]);
+
+                        $this->chatSocketService->groupUpdatesocket($groupId);
+                    }
+                }
+            }
 
             return [
                 'data' => [

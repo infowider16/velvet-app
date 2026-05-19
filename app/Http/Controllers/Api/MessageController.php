@@ -555,7 +555,7 @@ class MessageController extends BaseController
             if ($user instanceof JsonResponse) {
                 return $user;
             }
-
+          
             $validator = Validator::make($request->all(), [
                 'group_id' => 'required|integer|exists:groups,id',
             ]);

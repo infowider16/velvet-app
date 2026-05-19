@@ -26,6 +26,7 @@ class PinMarkCommentRepository
     public function create(array $data): PinMarkComment
         {
         try {
+       
             return $this->model->create($data);
         } catch (\Exception $e) {
             Log::error('PinMarkComment create failed', [

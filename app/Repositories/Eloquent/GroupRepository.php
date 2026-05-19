@@ -69,6 +69,14 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
             ->exists();
     }
 
+    public function getAdminGroupsOfUser($userId)
+    {
+        return $this->groupMemberModel
+            ->where('user_id', $userId)
+            ->where('role', 'admin')
+            ->get();
+    }
+
     public function createJoinRequest($groupId, $userId)
     {
         // You may want to use a separate table for join requests in production.
