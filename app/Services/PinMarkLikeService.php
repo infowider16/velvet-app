@@ -68,6 +68,7 @@ class PinMarkLikeService
 
 
         $pinMark = PinMark::find($pinMarkId);
+       
 
 
         if (!$pinMark) {
@@ -118,9 +119,9 @@ class PinMarkLikeService
 
                 $other = [
 
-                    'type'        => 'like',
+                    'pin_id'        => $pinMark->id,
 
-                    'user_id'     => $userId,
+                    'pin_user_id'     => $pinMark->user_id,
 
                     'screen_name' => 'post_detail', 
 

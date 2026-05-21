@@ -171,7 +171,7 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
             return $this->groupMemberModel
                 ->where('group_id', $groupId)
                 ->where('user_id', $userId)
-                ->update(['status' => 2]);
+                ->delete();
         } catch (\Exception $e) {
             \Log::error('Error in removeMemberFromGroup: ' . $e->getMessage());
             return false;

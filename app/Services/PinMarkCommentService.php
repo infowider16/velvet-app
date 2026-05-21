@@ -69,6 +69,7 @@ class PinMarkCommentService
             $userId = (int) $requestDatas['user_id'];
 
             $pinDetail=$this->pinMarkRepo->getOneData(['id'=>$requestDatas['pin_mark_id']],['user']);
+           
 
             if (!$pinDetail) {
                 throw ValidationException::withMessages([
@@ -105,10 +106,10 @@ class PinMarkCommentService
             // Create MarkComment
 
             $pinMarkComment = $this->pinMarkCommentRepo->create($requestDatas);
-
+     
             // Deduct pin count
 
-            $this->updateDeductPinCount($userId);
+            $pinTotalCount = $this->updateDeductPinCount($userId);
 
 
 
@@ -138,15 +139,15 @@ class PinMarkCommentService
 
             $other = [
 
-                'type'        => 'comment',
+                'pin_id'        => $pinDetail->id,
 
-                'user_id'     => $userId,
+                'pin_user_id'     => $pinDetail->user_id,
 
-                'screen_name' => 'post_detail', // or 'comment_list'
+                'pin_total_count'     => $pinTotalCount,
+
+                'screen_name' => 'pin_comment', 
 
             ];
-
-            
 
             // Send push
             $deviceTokens = is_array($receiver->device_token) ? $receiver->device_token : json_decode($receiver->device_token, true);
