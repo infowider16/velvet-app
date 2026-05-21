@@ -151,7 +151,7 @@ class PinMarkService
         try {
 
             $marks = $this->pinMarkRepo->fetch($filters);
-           
+       
             $items = method_exists($marks, 'getCollection')
                 ? $marks->getCollection()
                 : collect($marks);
@@ -173,8 +173,11 @@ class PinMarkService
                 $mark->pin_liked = $alreadyLiked;
 
                 if ($user) {
-                    $result = $this->userRegisterService->getUserDetail($user->id);
-                    $mark->user = $result['data']['user_info'] ?? null;
+                    $mark->user = [
+                        'name' => $user->name,
+                        'images' => $user->images ?? [],
+                        'last_seen_at' => $user->last_seen_at,
+                    ];
                 } else {
                     $mark->user = null;
                 }

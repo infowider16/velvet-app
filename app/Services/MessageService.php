@@ -1554,7 +1554,7 @@ class MessageService
             if (empty($added)) {
                 return [
                     'error' => true,
-                    'message' => __('message.no_new_members_added'),
+                    'message' => __('message.already_member_group'),
                     'code' => 409,
                 ];
             }
