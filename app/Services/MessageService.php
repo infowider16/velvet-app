@@ -132,8 +132,14 @@ class MessageService
                 }
 
                 $memberIds = GroupMember::where('group_id', $groupId)
-                    ->where('user_id', '!=', $senderId)
-                    ->pluck('user_id');
+                ->where('user_id', '!=', $senderId)
+                ->where('is_delete', 0)
+                ->where('status', 0)
+                ->where(function ($q) {
+                    $q->whereNull('group_status')
+                    ->orWhere('group_status', '!=', 'pending');
+                })
+                ->pluck('user_id');
 
 
                 foreach ($memberIds as $memberId) {
@@ -1102,7 +1108,8 @@ class MessageService
                 $this->groupRepo->addMemberToGroup([
                     'group_id' => $group->id,
                     'user_id' => $userId,
-                    'role' => 'member'
+                    'role' => 'member',
+                    'accepted_at' => now(),
                 ]);
 
                 try {
@@ -1252,6 +1259,7 @@ class MessageService
                     ->first();
                 if ($groupMember) {
                     $groupMember->group_status = 'accept';
+                    $groupMember->accepted_at = now();
                     $groupMember->is_member_permission = true;
                     $groupMember->status = 0; // make sure status is active
                     $groupMember->save();
@@ -1544,8 +1552,10 @@ class MessageService
                 $result = $this->groupRepo->addMemberToGroup([
                     'group_id' => $groupId,
                     'user_id' => $memberId,
-                    'role' => $role
+                    'role' => $role,
+                    'accepted_at' => now(),
                 ]);
+
                 if ($result) {
                     $added[] = $memberId;
                 }
@@ -2156,43 +2166,92 @@ class MessageService
     /**
      * Delete a group (admin only).
      */
+    // public function deleteGroup($userId, $groupId)
+    // {
+    //     try {
+    //         $group = $this->groupRepo->model->find($groupId);
+    //         if (!$group) {
+    //             return [
+    //                 'error' => true,
+    //                 'message' => __('message.group_not_found'),
+    //                 'code' => 404,
+    //             ];
+    //         }
+    //         // Only admin can delete
+    //         if (!$this->groupRepo->isAdmin($groupId, $userId)) {
+    //             return [
+    //                 'error' => true,
+    //                 'message' => __('message.only_admin_delete_group'),
+    //                 'code' => 403,
+    //             ];
+    //         }
+    //         // Delete all group members
+    //         $this->groupRepo->groupMemberModel->where('group_id', $groupId)->delete();
+    //         // Delete all group messages
+    //         $this->messageRepo->model->where('group_id', $groupId)->delete();
+    //         // Delete the group itself
+    //         $group->delete();
+
+    //         return [
+    //             'error' => false,
+    //             'message' => __('message.group_deleted_successfully')
+    //         ];
+    //     } catch (\Exception $e) {
+    //         Log::error('Error in deleteGroup: ' . $e->getMessage());
+    //         return [
+    //             'error' => true,
+    //             'message' => __('message.failed_to_delete_group'),
+    //             'code' => 500,
+    //         ];
+    //     }
+    // }
+
     public function deleteGroup($userId, $groupId)
     {
         try {
             $group = $this->groupRepo->model->find($groupId);
+
             if (!$group) {
-                return [
-                    'error' => true,
-                    'message' => __('message.group_not_found'),
-                    'code' => 404,
-                ];
+                throw new Exception('Group not found');
             }
-            // Only admin can delete
-            if (!$this->groupRepo->isAdmin($groupId, $userId)) {
-                return [
-                    'error' => true,
-                    'message' => __('message.only_admin_delete_group'),
-                    'code' => 403,
-                ];
+
+            // Optional: only creator/admin can delete
+            if ((int)$group->created_by !== (int)$userId) {
+                throw new Exception('Only group creator can delete this group');
             }
-            // Delete all group members
-            $this->groupRepo->groupMemberModel->where('group_id', $groupId)->delete();
-            // Delete all group messages
-            $this->messageRepo->model->where('group_id', $groupId)->delete();
-            // Delete the group itself
+
+            // Get all members before deleting
+            $memberIds = GroupMember::where('group_id', $groupId)
+                ->pluck('user_id');
+
+            // Delete members
+            GroupMember::where('group_id', $groupId)->delete();
+
+            // Delete group
             $group->delete();
 
-            return [
-                'error' => false,
-                'message' => __('message.group_deleted_successfully')
+            $payload = [
+                'group_id' => $groupId,
+                'message' => 'Group deleted successfully',
             ];
-        } catch (\Exception $e) {
-            Log::error('Error in deleteGroup: ' . $e->getMessage());
+
+            // Notify every user to remove from accepted list
+            foreach ($memberIds as $memberId) {
+                $this->chatSocketService->trigger(
+                    'chat-user-' . $memberId,
+                    'group.deleted',
+                    $payload
+                );
+            }
+
             return [
-                'error' => true,
-                'message' => __('message.failed_to_delete_group'),
-                'code' => 500,
+                'data' => [],
+                'message' => 'Group deleted successfully'
             ];
+
+        } catch (Exception $e) {
+            Log::error('Delete group failed: ' . $e->getMessage());
+            throw new Exception('Failed to delete group');
         }
     }
 

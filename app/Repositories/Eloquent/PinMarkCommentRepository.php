@@ -87,5 +87,17 @@ class PinMarkCommentRepository
         ]);
     }
 
+    public function getOneData($byWhere){
+        try {
+            return $this->model->where($byWhere)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            Log::error('PinMarkComment not found', [
+                'byWhere' => $byWhere,
+                'error' => $e->getMessage(),
+            ]);
+            return null;
+        }
+    }
+
 
 }
