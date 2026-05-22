@@ -79,7 +79,6 @@ class GroupService
 
             $subscriberCount = $this->groupRepo->groupMemberModel
             ->where('group_id', $groupId)
-            ->where('role', 'member')
             ->whereNotIn('status', [1, 2])
             ->where(function ($query) {
                 $query->whereNull('group_status')
