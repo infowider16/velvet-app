@@ -1067,13 +1067,14 @@ class MessageService
 
             //socket for group list update for all members
             $groupMemberIds = GroupMember::where('group_id', $group->id)
-                ->where('is_delete', 0)
-                ->where('status', 0)
-                ->where(function ($q) {
-                    $q->whereNull('group_status')
-                    ->orWhere('group_status', 'accept');
-                })
-                ->pluck('user_id');
+            ->where('is_delete', 0)
+            ->where('status', 0)
+            ->where('role','member')
+            ->where(function ($q) {
+                $q->whereNull('group_status')
+                ->orWhere('group_status', 'accept');
+            })
+            ->pluck('user_id');
         
             foreach ($groupMemberIds as $memberId) {
                 $this->chatSocketService->trigger(
@@ -1625,6 +1626,30 @@ class MessageService
                     'code' => 409,
                 ];
             }
+
+            $group = $this->groupRepo->find($groupId);
+            
+            foreach ($added as $memberId) {
+                $this->chatSocketService->trigger(
+                    'chat-user-' . $memberId,
+                    'group.list.updated',
+                    [
+                        'type' => 'group',
+                        'group' => [
+                            'id' => $group->id,
+                            'name' => $group->name,
+                            'image' => getImageUrl($group->image),
+                            'created_by' => $group->created_by,
+                            'sender_id' => null,
+                            'last_message' => null,
+                            'last_message_time' => $group->created_at,
+                            'media_type' => null,
+                            'unread_count' => 0,
+                        ],
+                    ]
+                );
+            }
+
             $this->chatSocketService->groupUpdatesocket($data['group_id']);
             return [
                 'error' => false,
