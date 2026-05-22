@@ -41,7 +41,7 @@ class MessageController extends BaseController
             return $this->sendResponse($result['data'], $result['message']);
         } catch (Exception $e) {
             Log::error('Error in sendMessage: ' . $e->getMessage());
-            return $this->sendError(__('message.send_message_failed'));
+            return $this->sendError($e->getMessage());
         }
     }
 

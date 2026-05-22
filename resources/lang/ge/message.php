@@ -5,6 +5,10 @@
 return [
     
     // new added text start 
+    'only_group_creator_can_delete' => 'Nur der Gruppen-Ersteller kann diese Gruppe löschen.',
+    'message_cannot_be_sent_due_to_block' => 'Nachricht kann nicht gesendet werden, da einer der Benutzer den anderen blockiert hat.',
+    
+    //Active chat related messages
     'active_chat_set_failed' => 'Fehler beim Setzen des aktiven Chats.',
     'active_chat_set_successfully' => 'Aktiver Chat erfolgreich gesetzt.',
     'active_chat_clear_failed' => 'Fehler beim Löschen des aktiven Chats.',
