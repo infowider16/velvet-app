@@ -1071,10 +1071,10 @@ class MessageService
                 ->where('status', 0)
                 ->where(function ($q) {
                     $q->whereNull('group_status')
-                    ->orWhere('group_status', 'accepted');
+                    ->orWhere('group_status', 'accept');
                 })
                 ->pluck('user_id');
-
+        
             foreach ($groupMemberIds as $memberId) {
                 $this->chatSocketService->trigger(
                     'chat-user-' . $memberId,
