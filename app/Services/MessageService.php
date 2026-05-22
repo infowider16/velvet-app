@@ -36,6 +36,7 @@ class MessageService
     {
         try {
 
+          
             // Validate receiver_id if present
             if (!empty($data['receiver_id'])) {
                 $receiver = $this->userRepo->find($data['receiver_id']);
@@ -61,6 +62,24 @@ class MessageService
                 'media_type' => $data['media_type'] ?? null,
                 'status' => 'sent',
             ];
+
+            if (!empty($data['receiver_id']) && empty($data['group_id'])) {
+                $receiverId = (int) $data['receiver_id'];
+
+                $isBlocked = Block::where(function ($q) use ($senderId, $receiverId) {
+                    $q->where('blocker_id', $senderId)
+                    ->where('blocked_id', $receiverId);
+                })
+                ->orWhere(function ($q) use ($senderId, $receiverId) {
+                    $q->where('blocker_id', $receiverId)
+                    ->where('blocked_id', $senderId);
+                })
+                ->exists();
+
+                if ($isBlocked) {
+                    throw new Exception(__('message.message_cannot_be_sent_due_to_block'));
+                }
+            }
 
             foreach (['media_url', 'thumbnail', 'duration', 'file_size', 'document_url', 'link_url'] as $field) {
                 if (isset($data[$field])) {
@@ -363,7 +382,7 @@ class MessageService
 
         } catch (Exception $e) {
             Log::error(__('message.failed_to_send_message') . ': ' . $e->getMessage());
-            throw new Exception(__('message.failed_to_send_message'));
+            throw new Exception($e->getMessage());
         }
     }
 
@@ -1041,6 +1060,38 @@ class MessageService
                     ]);
                 }
             }
+
+            //socket for group list update for all members
+            $groupMemberIds = GroupMember::where('group_id', $group->id)
+                ->where('is_delete', 0)
+                ->where('status', 0)
+                ->where(function ($q) {
+                    $q->whereNull('group_status')
+                    ->orWhere('group_status', 'accepted');
+                })
+                ->pluck('user_id');
+
+            foreach ($groupMemberIds as $memberId) {
+                $this->chatSocketService->trigger(
+                    'chat-user-' . $memberId,
+                    'group.list.updated',
+                    [
+                        'type' => 'group',
+                        'group' => [
+                            'id' => $group->id,
+                            'name' => $group->name,
+                            'image' => getImageUrl($group->image),
+                            'created_by' => $group->created_by,
+                            'sender_id' => null,
+                            'last_message' => null,
+                            'last_message_time' => $group->created_at,
+                            'media_type' => null,
+                            'unread_count' => 0,
+                        ],
+                    ]
+                );
+            }
+
 
             // Reload group with all members and their user relation
             $group = $this->groupRepo->model
@@ -2212,12 +2263,13 @@ class MessageService
             $group = $this->groupRepo->model->find($groupId);
 
             if (!$group) {
-                throw new Exception('Group not found');
+                throw new Exception(__('message.group_not_found'));
             }
 
             // Optional: only creator/admin can delete
             if ((int)$group->created_by !== (int)$userId) {
-                throw new Exception('Only group creator can delete this group');
+                throw new Exception(__('message.only_group_creator_can_delete'));
+
             }
 
             // Get all members before deleting
@@ -2232,7 +2284,7 @@ class MessageService
 
             $payload = [
                 'group_id' => $groupId,
-                'message' => 'Group deleted successfully',
+                'message' => __('message.group_deleted_successfully'),
             ];
 
             // Notify every user to remove from accepted list
@@ -2246,12 +2298,12 @@ class MessageService
 
             return [
                 'data' => [],
-                'message' => 'Group deleted successfully'
+                'message' => __('message.group_deleted_successfully')
             ];
 
         } catch (Exception $e) {
             Log::error('Delete group failed: ' . $e->getMessage());
-            throw new Exception('Failed to delete group');
+            throw new Exception(__('message.failed_to_delete_group'));
         }
     }
 

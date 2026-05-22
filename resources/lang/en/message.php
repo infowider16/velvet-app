@@ -2,6 +2,11 @@
 
 return [
     //new added text start 
+    
+    'only_group_creator_can_delete' => 'Only group creator can delete this group.',
+    'message_cannot_be_sent_due_to_block' => 'Message cannot be sent because one of the users has blocked the other.',
+
+    //Active chat related messages
     'active_chat_set_failed' => 'Failed to set active chat.',
     'active_chat_set_successfully' => 'Active chat set successfully.',
     'active_chat_clear_failed' => 'Failed to clear active chat.',

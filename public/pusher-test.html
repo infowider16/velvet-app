@@ -12,15 +12,15 @@
 			const pusher = new Pusher('0a1a0a75db188b8831d1', {
 				cluster: 'ap2'
 			});
-			const channel = pusher.subscribe('groupdetail-19-14');
-			channel.bind('pusher:subscription_succeeded', function() {
-				document.getElementById('log').innerHTML += "\nSubscribed to groupdetail-19-14";
-			});
-			// channel.bind('message.sent', function(data) {
-			// 	console.log('Received:', data);
-			// 	document.getElementById('log').innerHTML += "\n\nReceived:\n" + JSON.stringify(data, null, 2);
-			// 	alert(data.group.group_id);
+			const channel = pusher.subscribe('chat-user-13');
+			// channel.bind('group.list.updated', function() {
+			// 	document.getElementById('log').innerHTML += "\nSubscribed to chat-user-13";
 			// });
+			channel.bind('group.list.updated', function(data) {
+				console.log('Received:', data);
+				document.getElementById('log').innerHTML += "\n\nReceived:\n" + JSON.stringify(data, null, 2);
+				
+			});
 			channel.bind('group.detail', function(data) {
 				console.log(data);
 			});

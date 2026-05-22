@@ -325,6 +325,28 @@ class FriendshipService
                 throw new Exception(__('message.failed_to_delete_friend_request'));
             }
 
+            //socket call for update real time chat list for both users when friend request is deleted (cancelling or rejecting)    
+            $this->chatSocketService->trigger(
+                'chat-user-' . $userId,
+                'chat.user.removed',
+                [
+                    'type' => 'single',
+                    'user_id' => $friendId,
+                    'remove_from_chat_list' => true,
+                ]
+            );
+
+            $this->chatSocketService->trigger(
+                'chat-user-' . $friendId,
+                'chat.user.removed',
+                [
+                    'type' => 'single',
+                    'user_id' => $userId,
+                    'remove_from_chat_list' => true,
+                ]
+            );
+
+
             $otherUserId = ($friendship->user_id == $userId) ? $friendship->friend_id : $friendship->user_id;
             $otherUser = $this->userRepo->find($otherUserId);
             $actor = $this->userRepo->find($userId);
@@ -586,9 +608,30 @@ class FriendshipService
             //         ->update(['status' => 1]); // 1 = blocked
             // }
             $this->messageRepository->deleteChat($userId, $blockedUserId);
-        
+
+            //socket call for update real time chat list for both users when block happens and also to remove blocked user from chat list of blocker    
+            $this->chatSocketService->trigger(
+                'chat-user-' . $userId,
+                'chat.user.blocked',
+                [
+                    'type' => 'single',
+                    'blocked_user_id' => $blockedUserId,
+                    'remove_from_chat_list' => true,
+                ]
+            );
+
+            $this->chatSocketService->trigger(
+                'chat-user-' . $blockedUserId,
+                'chat.user.blocked',
+                [
+                    'type' => 'single',
+                    'blocked_by_user_id' => $userId,
+                    'remove_from_chat_list' => true,
+                ]
+            );
+
             // Remove blocked user from groups where blocker is admin
-           if ($this->groupRepo) {
+            if ($this->groupRepo) {
                 Log::info('Group repository exists. Fetching admin groups.', [
                     'user_id' => $userId,
                     'blocked_user_id' => $blockedUserId
