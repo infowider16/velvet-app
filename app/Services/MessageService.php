@@ -1619,16 +1619,16 @@ class MessageService
                 }
             }
 
-            if (empty($added)) {
-                return [
-                    'error' => true,
-                    'message' => __('message.already_member_group'),
-                    'code' => 409,
-                ];
-            }
+            // if (empty($added)) {
+            //     return [
+            //         'error' => true,
+            //         'message' => __('message.already_member_group'),
+            //         'code' => 409,
+            //     ];
+            // }
 
             $group = $this->groupRepo->find($groupId);
-            
+
             foreach ($added as $memberId) {
                 $this->chatSocketService->trigger(
                     'chat-user-' . $memberId,
