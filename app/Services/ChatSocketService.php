@@ -69,8 +69,8 @@ class ChatSocketService
             $counts = $groupMemberModel
                 ->where('group_id', $groupId)
                 ->selectRaw("
-                    COUNT(CASE WHEN status NOT IN (1, 2) AND is_delete = 0 THEN 1 END) as subscriber_count,
-                    COUNT(CASE WHEN group_status = 'pending' THEN 1 END) as request_count
+                    COUNT(CASE WHEN group_status = 'accept' AND is_delete = 0 THEN 1 END) as subscriber_count,
+                    COUNT(CASE WHEN group_status = 'pending' AND is_delete = 0 THEN 1 END) as request_count
                 ")
                 ->first();
 

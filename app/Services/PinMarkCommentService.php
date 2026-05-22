@@ -70,7 +70,6 @@ class PinMarkCommentService
 
             $pinDetail=$this->pinMarkRepo->getOneData(['id'=>$requestDatas['pin_mark_id']],['user']);
            
-
             if (!$pinDetail) {
                 throw ValidationException::withMessages([
                     'pin_mark_id' => [__('message.pin_mark_not_found')],
@@ -134,7 +133,7 @@ class PinMarkCommentService
             $title = __('message.new_comment_title');
             $body = $sender ? __('message.commented_on_post_by_user', ['name' => $sender->name]) : __('message.commented_on_post');
 
-
+       
             // Extra payload for app handling
 
             $other = [
@@ -143,11 +142,12 @@ class PinMarkCommentService
 
                 'pin_user_id'     => $pinDetail->user_id,
 
-                'pin_total_count'     => $pinTotalCount,
+                'pin_likes'     => $pinDetail ? $pinDetail->total_like : 0,
 
                 'screen_name' => 'pin_comment', 
 
             ];
+           
 
             // Send push
             $deviceTokens = is_array($receiver->device_token) ? $receiver->device_token : json_decode($receiver->device_token, true);
