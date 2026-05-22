@@ -67,12 +67,18 @@ class ChatSocketService
             $groupMemberModel = $this->groupRepo->groupMemberModel;
 
             $counts = $groupMemberModel
-                ->where('group_id', $groupId)
-                ->selectRaw("
-                    COUNT(CASE WHEN group_status = 'accept' AND is_delete = 0 THEN 1 END) as subscriber_count,
-                    COUNT(CASE WHEN group_status = 'pending' AND is_delete = 0 THEN 1 END) as request_count
-                ")
-                ->first();
+            ->where('group_id', $groupId)
+            ->selectRaw("
+                COUNT(CASE 
+                    WHEN group_status = 'accept'
+                    AND is_delete = 0
+                    AND status != 2
+                    THEN 1 
+                END) as subscriber_count,
+
+                COUNT(CASE WHEN group_status = 'pending' AND is_delete = 0 THEN 1 END) as request_count
+            ")
+            ->first();
 
             $subscriberCount = (int) $counts->subscriber_count;
             $requestCount    = (int) $counts->request_count;
