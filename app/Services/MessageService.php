@@ -1046,7 +1046,9 @@ class MessageService
                 'group_id' => $group->id,
                 'user_id' => $userId,
                 'role' => 'admin',
-                'is_member_permission' => true
+                'is_member_permission' => true,
+                'group_status' => 'accept',
+                'accepted_at' => now(),
             ]);
             // dd($data['member_ids']);
             // Add other members as 'member'
@@ -1056,7 +1058,9 @@ class MessageService
                         'group_id' => $group->id,
                         'user_id' => $memberId,
                         'role' => 'member',
-                        'is_member_permission' => true
+                        'is_member_permission' => true,
+                        'group_status' => 'accept',
+                        'accepted_at' => now(),
                     ]);
                 }
             }
@@ -1160,6 +1164,7 @@ class MessageService
                     'group_id' => $group->id,
                     'user_id' => $userId,
                     'role' => 'member',
+                    'group_status' => 'accept',
                     'accepted_at' => now(),
                 ]);
 
@@ -1604,6 +1609,7 @@ class MessageService
                     'group_id' => $groupId,
                     'user_id' => $memberId,
                     'role' => $role,
+                    'group_status' => 'accept',
                     'accepted_at' => now(),
                 ]);
 

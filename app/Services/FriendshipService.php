@@ -325,6 +325,9 @@ class FriendshipService
                 throw new Exception(__('message.failed_to_delete_friend_request'));
             }
 
+            // Remove chat also, so refresh par user wapas na aaye
+            $this->messageRepository->deleteChat($userId, $friendId);
+
             //socket call for update real time chat list for both users when friend request is deleted (cancelling or rejecting)    
             $this->chatSocketService->trigger(
                 'chat-user-' . $userId,
