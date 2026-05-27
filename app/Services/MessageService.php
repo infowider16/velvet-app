@@ -868,7 +868,8 @@ class MessageService
             uasort($uniqueUsers, function ($a, $b) use ($latestMessageTimes) {
                 return strtotime($latestMessageTimes[$b->id]) <=> strtotime($latestMessageTimes[$a->id]);
             });
-
+            
+           
             $uniqueUsers = array_filter($uniqueUsers, function ($otherUser) use ($userId) {
                 // Hide users whom I blocked
                 return !Block::where('blocker_id', $userId)
