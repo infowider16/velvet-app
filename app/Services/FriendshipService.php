@@ -615,24 +615,29 @@ class FriendshipService
             //socket call for update real time chat list for both users when block happens and also to remove blocked user from chat list of blocker    
             $this->chatSocketService->trigger(
                 'chat-user-' . $userId,
-                'chat.user.blocked',
+                'chat.block.updated',
                 [
                     'type' => 'single',
-                    'blocked_user_id' => $blockedUserId,
-                    'remove_from_chat_list' => true,
+                    'action' => 'remove',
+                    'user_id' => $blockedUserId,
+                    'blocked_by_me' => true,
+                    'blocked_me' => false,
                 ]
             );
 
             $this->chatSocketService->trigger(
                 'chat-user-' . $blockedUserId,
-                'chat.user.blocked',
+                'chat.block.updated',
                 [
                     'type' => 'single',
-                    'blocked_by_user_id' => $userId,
-                    'remove_from_chat_list' => true,
+                    'action' => 'remove',
+                    'user_id' => $userId,
+                    'blocked_by_me' => false,
+                    'blocked_me' => true,
                 ]
             );
 
+            
             // Remove blocked user from groups where blocker is admin
             if ($this->groupRepo) {
                 Log::info('Group repository exists. Fetching admin groups.', [
