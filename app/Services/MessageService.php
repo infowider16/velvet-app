@@ -870,9 +870,9 @@ class MessageService
             });
 
             $uniqueUsers = array_filter($uniqueUsers, function ($otherUser) use ($userId) {
-                // Hide only users who blocked me
-                return !Block::where('blocker_id', $otherUser->id)
-                    ->where('blocked_id', $userId)
+                // Hide users whom I blocked
+                return !Block::where('blocker_id', $userId)
+                    ->where('blocked_id', $otherUser->id)
                     ->exists();
             });
 
@@ -970,8 +970,8 @@ class MessageService
                     }
                 }
 
-                $isBlockedByMe = Block::where('blocker_id', $userId)
-                ->where('blocked_id', $otherUser->id)
+                $isBlocked = Block::where('blocker_id', $otherUser->id)
+                ->where('blocked_id', $userId)
                 ->exists() ? 1 : 0;
 
                 $usersWithDetails[] = [
@@ -986,7 +986,7 @@ class MessageService
                     'last_message' => $last_message,
                     'last_message_type' => $last_message_type,
                     'last_message_status' => $last_message_status,
-                    'is_blocked' => $isBlockedByMe,
+                    'is_blocked' => $isBlocked,
                 ];
             }
 
