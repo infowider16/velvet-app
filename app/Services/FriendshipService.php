@@ -610,7 +610,7 @@ class FriendshipService
             //         ->where('status', '!=', 2) // not left
             //         ->update(['status' => 1]); // 1 = blocked
             // }
-            $this->messageRepository->deleteChat($userId, $blockedUserId);
+            //$this->messageRepository->deleteChat($userId, $blockedUserId);
 
             //socket call for update real time chat list for both users when block happens and also to remove blocked user from chat list of blocker    
             $this->chatSocketService->trigger(
@@ -637,7 +637,6 @@ class FriendshipService
                 ]
             );
 
-            
             // Remove blocked user from groups where blocker is admin
             if ($this->groupRepo) {
                 Log::info('Group repository exists. Fetching admin groups.', [
@@ -661,7 +660,7 @@ class FriendshipService
 
                         $this->groupRepo->updateGroupMemberStatus($groupId, $blockedUserId, 1);
 
-                        $this->chatSocketService->groupUpdatesocket($groupId);
+                        // $this->chatSocketService->groupUpdatesocket($groupId);
 
                         Log::info('Socket update triggered successfully.', [
                             'group_id' => $groupId
