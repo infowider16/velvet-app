@@ -72,7 +72,7 @@ class ChatSocketService
                 COUNT(CASE 
                     WHEN group_status = 'accept'
                     AND is_delete = 0
-                    AND status != 2
+                    AND status = 0
                     THEN 1 
                 END) as subscriber_count,
 

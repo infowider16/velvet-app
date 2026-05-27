@@ -868,8 +868,15 @@ class MessageService
             uasort($uniqueUsers, function ($a, $b) use ($latestMessageTimes) {
                 return strtotime($latestMessageTimes[$b->id]) <=> strtotime($latestMessageTimes[$a->id]);
             });
+
+            $uniqueUsers = array_filter($uniqueUsers, function ($otherUser) use ($userId) {
+                // Hide only users who blocked me
+                return !Block::where('blocker_id', $otherUser->id)
+                    ->where('blocked_id', $userId)
+                    ->exists();
+            });
+
             $uniqueUsers = array_values($uniqueUsers);
-         
 
             // Pagination for unique users
             $total = count($uniqueUsers);
@@ -962,16 +969,11 @@ class MessageService
                         $last_seen_at = $otherUser->last_seen_at;
                     }
                 }
-                $blockData = Block::where(function ($q) use ($userId, $otherUser) {
-                    $q->where('blocker_id', $userId)
-                      ->where('blocked_id', $otherUser->id);
-                })->orWhere(function ($q) use ($userId, $otherUser) {
-                    $q->where('blocker_id', $otherUser->id)
-                      ->where('blocked_id', $userId);
-                })->first();
-                if(isset($blockData->id)){
-                    continue; // Skip this user if there is a block relationship
-                }
+
+                $isBlockedByMe = Block::where('blocker_id', $userId)
+                ->where('blocked_id', $otherUser->id)
+                ->exists() ? 1 : 0;
+
                 $usersWithDetails[] = [
                     'id' => $otherUser->id,
                     'name' => $otherUser->name,
@@ -984,6 +986,7 @@ class MessageService
                     'last_message' => $last_message,
                     'last_message_type' => $last_message_type,
                     'last_message_status' => $last_message_status,
+                    'is_blocked' => $isBlockedByMe,
                 ];
             }
 

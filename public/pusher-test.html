@@ -12,16 +12,16 @@
 			const pusher = new Pusher('0a1a0a75db188b8831d1', {
 				cluster: 'ap2'
 			});
-			const channel = pusher.subscribe('chat-user-2');
+			const channel = pusher.subscribe('groupdetail-24-13');
 			// channel.bind('group.list.updated', function() {
 			// 	document.getElementById('log').innerHTML += "\nSubscribed to chat-user-2";
 			// });
-			channel.bind('group.list.updated', function(data) {
+			channel.bind('group.detail', function(data) {
 				console.log('Received:', data);
 				document.getElementById('log').innerHTML += "\n\nReceived:\n" + JSON.stringify(data, null, 2);
 				
 			});
-			channel.bind('group.detail', function(data) {
+			channel.bind('groupdetail-24-13', function(data) {
 				console.log(data);
 			});
 		</script>
