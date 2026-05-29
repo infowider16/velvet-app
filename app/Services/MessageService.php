@@ -2017,6 +2017,15 @@ class MessageService
                 'is_member_permission' => $member->is_member_permission  == 1 ? true : false,
                 'is_delete' => $user->is_delete ?? 0
             ];
+            $payload = [
+                'group_id' => $groupId,
+                'message' => __('message.group_deleted_successfully'),
+            ];
+            $this->chatSocketService->trigger(
+                'chat-user-' . $user,
+                'group.deleted',
+                $payload
+            );
         }
         return $result;
     }
