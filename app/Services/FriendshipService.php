@@ -610,7 +610,7 @@ class FriendshipService
             //         ->where('status', '!=', 2) // not left
             //         ->update(['status' => 1]); // 1 = blocked
             // }
-            //$this->messageRepository->deleteChat($userId, $blockedUserId);
+            $this->messageRepository->deleteChat($userId, $blockedUserId);
 
             //socket call for update real time chat list for both users when block happens and also to remove blocked user from chat list of blocker    
             $this->chatSocketService->trigger(

@@ -65,7 +65,7 @@ class ChatSocketService
                 ['creator', 'members.user']
             );
             $groupMemberModel = $this->groupRepo->groupMemberModel;
-
+        
             $counts = $groupMemberModel
             ->where('group_id', $groupId)
             ->selectRaw("
