@@ -2020,11 +2020,7 @@ class MessageService
                 'group_id' => $groupId,
                 'message' => __('message.group_deleted_successfully'),
             ];
-            $this->chatSocketService->trigger(
-                'chat-user-' . $user->id,
-                'group.deleted',
-                $payload
-            );
+            
         }
         return $result;
     }
