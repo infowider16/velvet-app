@@ -2377,7 +2377,7 @@ class MessageService
             // Members: Exclude pending members
             $members = [];
             foreach ($group->members as $member) {
-                if ($member->group_status === 'pending') {
+                if ($member->group_status === 'pending'  || $member->status == 1) {
                     continue; // skip pending members
                 }
                 $userObj = $member->user;

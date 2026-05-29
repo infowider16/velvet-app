@@ -129,11 +129,9 @@ class PinMarkCommentService
             $receiver = $pinDetail->user;    // post owner / receiver
 
             
-
+            
             $title = __('message.new_comment_title');
             $body = $sender ? __('message.commented_on_post_by_user', ['name' => $sender->name]) : __('message.commented_on_post');
-
-       
             // Extra payload for app handling
 
             $other = [
