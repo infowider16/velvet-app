@@ -1510,7 +1510,6 @@ class MessageService
                     ->whereIN('status', [1,2])
                     ->pluck('group_id')
                     ->toArray();
-                  
                 if (!empty($removedGroupIds)) {
                     $filtered = $groups->getCollection()->filter(function ($group) use ($removedGroupIds) {
                         return !(
@@ -2022,7 +2021,7 @@ class MessageService
                 'message' => __('message.group_deleted_successfully'),
             ];
             $this->chatSocketService->trigger(
-                'chat-user-' . $user,
+                'chat-user-' . $user->id,
                 'group.deleted',
                 $payload
             );
