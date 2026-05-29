@@ -1179,11 +1179,11 @@ class MessageService
                     $receiver = $this->userRepo->find($group->created_by);
 
                     $bodyEn = $receiver
-                        ? ($receiver->name . ' ' . __('message.user_joined_group', ['name' => $receiver->name,'group' => $group->name], 'en'))
+                        ? (__('message.user_joined_group', ['name' => $receiver->name,'group' => $group->name], 'en'))
                         : __('message.user_joined_group', [], 'en');
 
                     $bodyGe = $receiver
-                        ? ($receiver->name . ' ' . __('message.user_joined_group', ['name' => $receiver->name,'group' => $group->name], 'ge'))
+                        ? (__('message.user_joined_group', ['name' => $receiver->name,'group' => $group->name], 'ge'))
                         : __('message.user_joined_group', [], 'ge');
 
                     $title = $titleEn;
