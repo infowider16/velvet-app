@@ -3,7 +3,6 @@
 namespace App\Repositories\Eloquent;
 use App\Contracts\Repositories\GroupRepositoryInterface;
 use App\Models\{Group,GroupMember,GroupReport};
-use App\Services\ChatSocketService;
 use Illuminate\Support\Facades\Log;
 
 
@@ -12,13 +11,12 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
 {
 
     // Change from protected to public
-    public $model, $groupMemberModel, $groupReportModel, $chatSocketService;
-    public function __construct(Group $model, GroupMember $groupMemberModel, GroupReport $groupReportModel, ChatSocketService $chatSocketService)
+    public $model, $groupMemberModel, $groupReportModel;
+    public function __construct(Group $model, GroupMember $groupMemberModel, GroupReport $groupReportModel)
     {
         $this->model = $model;
         $this->groupMemberModel = $groupMemberModel;
         $this->groupReportModel = $groupReportModel;
-        $this->chatSocketService = $chatSocketService;
         parent::__construct($model);
     }
 
@@ -182,23 +180,13 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
 
     // Update status (block/unblock) for a group member
     public function updateGroupMemberStatus($groupId, $userId, $status)
-    {
+    { 
+        // status: 0 = active, 1 = blocked, 2 = removed
         try {
             $data =  $this->groupMemberModel
                 ->where('group_id', $groupId)
                 ->where('user_id', $userId)
                 ->update(['status' => $status]);
-            if($status==1){
-                $payload = [
-                    'group_id' => $groupId,
-                    'message' => __('message.group_deleted_successfully'),
-                ];
-                $this->chatSocketService->trigger(
-                    'chat-user-' . $userId,
-                    'group.deleted',
-                    $payload
-                );
-            }
             log::info('Membership status updated', ['group_id' => $groupId, 'user_id' => $userId, 'status' => $status]);
             return $data;
         } catch (\Exception $e) {
