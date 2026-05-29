@@ -547,23 +547,11 @@ if (!function_exists('getAccessToken')) {
 if (!function_exists('sendPushNotification')) {
     function sendPushNotification($deviceIds, $title, $body, $data,$userIds=[],$type=null)
     {
-        // if($type!=null){
-        //     $users = NotificationSetting::whereIn('id', $userIds)->where('type',$type)->get();
-        //     if(isset($users[0]->id) && $users[0]->type==0){
-        //         return 0;
-        //     }
-        // }else{
-        //     $users = User::whereIn('id', $userIds)->get(['id', 'push_notification_status']);
-        //     if(isset($users[0]->id) && $users[0]->push_notification_status==0){
-        //         return 0;
-        //     }
-        // }
         if (!empty($type) && !empty($userIds)) {
             $typeDisabled = NotificationSetting::whereIn('user_id', $userIds)
                 ->where('type', $type)
                 ->where('is_enabled', 0)
                 ->exists();
-        
             if ($typeDisabled) {
                 return 0;
             }
@@ -581,8 +569,7 @@ if (!function_exists('sendPushNotification')) {
                 return $status;
             }
 
-            $accessToken = getAccessToken($project_id);
-            Log::info(json_encode($accessToken));
+            $accessToken = getAccessToken($project_id);;
             if (empty($accessToken)) {
                 Log::error("Error in Helper.sendPushNotification(): accesstoken=empty");
                 return $status;
