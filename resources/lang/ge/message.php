@@ -5,6 +5,8 @@
 return [
     
     // new added text start 
+    'new_pin_title' => 'Neuer Pin',
+    'friend_posted_new_pin' => ':name hat einen neuen Pin gepostet',
     'only_group_creator_can_delete' => 'Nur der Gruppen-Ersteller kann diese Gruppe löschen.',
     'message_cannot_be_sent_due_to_block' => 'Nachricht kann nicht gesendet werden, da einer der Benutzer den anderen blockiert hat.',
     
@@ -26,17 +28,17 @@ return [
     'group_messages_fetched_successfully' => 'Gruppennachrichten wurden erfolgreich abgerufen.',
     'fetch_group_messages_failed' => 'Gruppennachrichten konnten nicht abgerufen werden.',
     'failed_to_fetch_blocked_users' => 'Gesperrte Benutzer konnten nicht abgerufen werden.',
-    'no_access_to_private_group' => 'Sie haben keinen Zugriff auf diese private Gruppe.',
-    'not_a_member_of_group' => 'Sie sind kein Mitglied dieser Gruppe.',
+    'no_access_to_private_group' => 'Du haben keinen Zugriff auf diese private Gruppe.',
+    'not_a_member_of_group' => 'Du bist kein Mitglied dieser Gruppe.',
     'failed_to_validate_group_access' => 'Zugriff auf die Gruppe konnte nicht überprüft werden.',
     // new added text end
 
     'validation_error' => 'Validierungsfehler',
     'accepted_your_friend_request' => 'hat deine Freundschaftsanfrage akzeptiert.',
 
-    'account_blocked_contact_admin' => 'Ihr Konto wurde gesperrt. Bitte kontaktieren du den Administrator.',
+    'account_blocked_contact_admin' => 'Dein Konto wurde gesperrt. Bitte kontaktieren du den Administrator.',
 
-    'account_rejected_message' => 'Wir bedauern, dir mitteilen zu müssen, dass Ihr Konto abgelehnt wurde. Bitte kontaktieren du den Support für weitere Informationen.',
+    'account_rejected_message' => 'Wir bedauern, dir mitteilen zu müssen, dass Dein Konto abgelehnt wurde. Bitte kontaktieren du den Support für weitere Informationen.',
 
     'add_member_failed' => 'Mitglied konnte nicht zur Gruppe hinzugefügt werden.',
 
@@ -82,9 +84,9 @@ return [
 
     'chat_history_retrieved_successfully' => 'Chat-Verlauf erfolgreich abgerufen.',
 
-    'commented_on_post' => 'Jemand hat deinen Beitrag kommentiert.',
+    'commented_on_post' => 'Jemand hat deinen Pin kommentiert.',
 
-    'commented_on_post_by_user' => ':name hat deinen Beitrag kommentiert.',
+    'commented_on_post_by_user' => ':name hat deinen Pin kommentiert.',
 
     'contact_message_submitted_successfully' => 'Kontaktnachricht erfolgreich übermittelt.',
 
@@ -118,9 +120,9 @@ return [
 
     'document_max' => 'Die Dokumentgröße darf 10 MB nicht überschreiten.',
     'new_group_request' => 'Neue Gruppenanfrage',
-    'user_joined_group' => ':name ist Ihrer Gruppe „:group“ beigetreten.',
-    'sent_you_a_group_request' => ':name möchte Ihrer Gruppe :group beitreten',
-    'you_have_a_new_group_request' => 'möchte Ihrer Gruppe :group beitreten',
+    'user_joined_group' => ':name ist Deiner Gruppe „:group“ beigetreten.',
+    'sent_you_a_group_request' => ':name möchte Deiner Gruppe :group beitreten',
+    'you_have_a_new_group_request' => 'möchte Deiner Gruppe :group beitreten',
 
     'document_mimes' => 'Nur PDF-, DOC-, DOCX-, XLS-, XLSX-, PPT-, PPTX-, TXT-, JPG-, JPEG- und PNG-Dateien sind erlaubt.',
 
@@ -160,7 +162,7 @@ return [
 
     'failed_to_delete_group' => 'Gruppe konnte nicht gelöscht werden.',
 
-    'failed_to_delete_group_chat_for_user' => 'Gruppenchat für Ihr Konto konnte nicht gelöscht werden.',
+    'failed_to_delete_group_chat_for_user' => 'Gruppenchat für Dein Konto konnte nicht gelöscht werden.',
 
     'failed_to_delete_message' => 'Nachricht konnte nicht gelöscht werden.',
 
@@ -276,7 +278,7 @@ return [
 
     'greeting_message' => 'Hallo, :name',
 
-    'group_chat_deleted_for_user' => 'Gruppenchat wurde nur für Ihr Konto gelöscht.',
+    'group_chat_deleted_for_user' => 'Gruppenchat wurde nur für Dein Konto gelöscht.',
 
     'group_chat_history_failed' => 'Gruppen-Chatverlauf konnte nicht abgerufen werden.',
 
@@ -468,7 +470,7 @@ return [
 
     'otp_expired_request_new' => 'Der OTP-Code ist abgelaufen. Bitte fordern du einen neuen OTP an.',
 
-    'otp_login_registration' => 'Ihr OTP für Login/Registrierung lautet :otp. Er ist 10 Minuten gültig. Teilen du diesen Code mit niemandem.',
+    'otp_login_registration' => 'Dein OTP für Login/Registrierung lautet :otp. Er ist 10 Minuten gültig. Teilen du diesen Code mit niemandem.',
 
     'otp_sent_to_phone' => 'Der OTP-Code wurde an deine Telefonnummer gesendet.',
 
@@ -546,9 +548,9 @@ return [
 
     'subinterests_fetched_successfully' => 'Unterinteressen erfolgreich abgerufen.',
 
-    'temporary_password_label' => 'Ihr neues temporäres Passwort:',
+    'temporary_password_label' => 'Dein neues temporäres Passwort:',
 
-    'temporary_password_message' => 'Dies ist Ihr neues temporäres Passwort <span style="font-size: 16px;color: #000;padding: 5px;">:password</span>. Bitte melden du sich an und ändern du das Passwort umgehend.',
+    'temporary_password_message' => 'Dies ist Dein neues temporäres Passwort <span style="font-size: 16px;color: #000;padding: 5px;">:password</span>. Bitte melde dich an und ändere das Passwort umgehend.',
 
     'temporary_password_note' => 'Wichtig: Bitte ändern du dieses temporäre Passwort nach dem Login.',
 
@@ -596,9 +598,9 @@ return [
 
     'validation_failed' => 'Validierung fehlgeschlagen.',
 
-    'verification_code_message' => 'Ihr Bestätigungscode lautet: :otp',
+    'verification_code_message' => 'Dein Bestätigungscode lautet: :otp',
 
-    'you_are_already_friends' => 'Ihr seid bereits befreundet.',
+    'you_are_already_friends' => 'Dein seid bereits befreundet.',
 
     'you_are_not_member_of_group' => 'du sind kein Mitglied dieser Gruppe.',
 

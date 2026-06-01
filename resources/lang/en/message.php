@@ -2,7 +2,8 @@
 
 return [
     //new added text start 
-    
+    'new_pin_title' => 'New Pin',
+    'friend_posted_new_pin' => ':name posted a new Pin',
     'only_group_creator_can_delete' => 'Only group creator can delete this group.',
     'message_cannot_be_sent_due_to_block' => 'Message cannot be sent because one of the users has blocked the other.',
 
@@ -80,8 +81,8 @@ return [
     'chat_history_failed' => 'Failed to retrieve chat history.',
     'chat_history_retrieved_successfully' => 'Chat history retrieved successfully.',
     'checkEmail' => 'Please check your registered mail id. We have sent you a temporary password.',
-    'commented_on_post' => 'Someone commented on your post.',
-    'commented_on_post_by_user' => ':name commented on your post.',
+    'commented_on_post' => 'Someone commented on your pin.',
+    'commented_on_post_by_user' => ':name commented on your pin.',
     'commission_added_body' => 'Congratulations! You have received a Commission of HTG:amount in your wallet.',
     'commission_added_title' => 'Commission Added!',
     'contact_message_submitted_successfully' => 'Contact message submitted successfully.',
