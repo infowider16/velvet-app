@@ -34,6 +34,7 @@ class PinMarkService
     public function storePinMark(array $requestDatas)
         {
         try {
+
             $this->validateRequiredKeys($requestDatas);
 
             $userId = (int) $requestDatas['user_id'];
@@ -60,44 +61,14 @@ class PinMarkService
             $friendIds  = $this->friendshipRepo->getFriendsIds($userId);
             if (!empty($friendIds)) {
 
-        // Attach only user_info
-        $pinMark->user = $userResponse['data']['user_info'] ?? null;
-        $receiverData = Friendship::where('user_id', $userId)
-            ->where('status', 'accepted')
-            ->pluck('friend_id')
-            ->toArray();
-        $sender   = $this->userRepo->find($userId);
-        $title = __('message.new_like_title', [], 'en');
-        $body = $sender ? __('message.user_new_post', ['name' => $sender->name], 'en') : __('message.new_pin_title', [], 'en');
-         $other = [
-            'pin_id'        => $pinMark->id,
-            'pin_user_id'     => $pinMark->user_id,
-            'screen_name' => 'pin_detail', 
-        ];
-        foreach ($receiverData as $receiverId) {
-            $receiver = $this->userRepo->find($receiverId);
-                if (!empty($receiver?->device_token)) {
+                $friends = User::whereIn('id', $friendIds)
+                    ->whereNotNull('device_token')
+                    ->get();
 
-                sendPushNotification(
-
-                    [$receiver->device_token],
-
-                    $title,
-
-                    $body,
-
-                    $other,
-
-                    [$receiver->id],
-                    'likes_on_pins'
-                );
-            }
-        }
-        
-        return $pinMark;
+                $senderName = $sender->name ?? 'Someone';
 
                 $title = __('message.new_pin_title');
-                $body  = __('message.friend_posted_new_pin', ['name' => $senderName]);
+                $body  = __('message.new_pin_body', ['name' => $senderName]);
 
                 $other = [
                     'pin_id'        => $pinMark->id,

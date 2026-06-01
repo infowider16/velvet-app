@@ -173,7 +173,7 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
             $data =  $this->groupMemberModel
                 ->where('group_id', $groupId)
                 ->where('user_id', $userId)
-                ->update(['status' => $status]);
+                ->update(['status' => $status,'accepted_at' => now()]);
             log::info('Membership status updated', ['group_id' => $groupId, 'user_id' => $userId, 'status' => $status]);
             return $data;
         } catch (\Exception $e) {
