@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\Eloquent\{ PinMarkRepository , PinMarkLikeRepository , FriendshipRepository};
 use App\Contracts\Repositories\UserRepositoryInterface;
+use App\Models\Friendship;
 use App\Models\GhostManagement;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
@@ -59,11 +60,41 @@ class PinMarkService
             $friendIds  = $this->friendshipRepo->getFriendsIds($userId);
             if (!empty($friendIds)) {
 
-                $friends = User::whereIn('id', $friendIds)
-                    ->whereNotNull('device_token')
-                    ->get();
+        // Attach only user_info
+        $pinMark->user = $userResponse['data']['user_info'] ?? null;
+        $receiverData = Friendship::where('user_id', $userId)
+            ->where('status', 'accepted')
+            ->pluck('friend_id')
+            ->toArray();
+        $sender   = $this->userRepo->find($userId);
+        $title = __('message.new_like_title', [], 'en');
+        $body = $sender ? __('message.user_new_post', ['name' => $sender->name], 'en') : __('message.new_pin_title', [], 'en');
+         $other = [
+            'pin_id'        => $pinMark->id,
+            'pin_user_id'     => $pinMark->user_id,
+            'screen_name' => 'pin_detail', 
+        ];
+        foreach ($receiverData as $receiverId) {
+            $receiver = $this->userRepo->find($receiverId);
+                if (!empty($receiver?->device_token)) {
 
-                $senderName = $sender->name ?? 'Someone';
+                sendPushNotification(
+
+                    [$receiver->device_token],
+
+                    $title,
+
+                    $body,
+
+                    $other,
+
+                    [$receiver->id],
+                    'likes_on_pins'
+                );
+            }
+        }
+        
+        return $pinMark;
 
                 $title = __('message.new_pin_title');
                 $body  = __('message.friend_posted_new_pin', ['name' => $senderName]);

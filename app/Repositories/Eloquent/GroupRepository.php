@@ -166,7 +166,8 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
 
     // Update status (block/unblock) for a group member
     public function updateGroupMemberStatus($groupId, $userId, $status)
-    {
+    { 
+        // status: 0 = active, 1 = blocked, 2 = removed
         try {
             
             $data =  $this->groupMemberModel

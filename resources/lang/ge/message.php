@@ -120,9 +120,9 @@ return [
 
     'document_max' => 'Die Dokumentgröße darf 10 MB nicht überschreiten.',
     'new_group_request' => 'Neue Gruppenanfrage',
-    'user_joined_group' => ':name ist Deiner Gruppe „:group“ beigetreten.',
-    'sent_you_a_group_request' => ':name möchte Deiner Gruppe :group beitreten',
-    'you_have_a_new_group_request' => 'möchte Deiner Gruppe :group beitreten',
+    'user_joined_group' => ':name ist Ihrer Gruppe „:group“ beigetreten.',
+    'sent_you_a_group_request' => ':name möchte Ihrer Gruppe :group beitreten',
+    'you_have_a_new_group_request' => 'möchte Ihrer Gruppe :group beitreten',
 
     'document_mimes' => 'Nur PDF-, DOC-, DOCX-, XLS-, XLSX-, PPT-, PPTX-, TXT-, JPG-, JPEG- und PNG-Dateien sind erlaubt.',
 
@@ -384,6 +384,8 @@ return [
 
     'liked_post_by_user' => ':name hat deinen Beitrag geliked.',
 
+    'user_new_post' => ':name hat einen neuen Pin gepostet.',
+
     'liked_users_fetched_successfully' => 'Liste der Benutzer, denen dies gefällt, erfolgreich abgerufen.',
 
     'link_list_fetched' => 'Linkliste erfolgreich abgerufen.',
@@ -421,6 +423,8 @@ return [
     'new_friend_request' => 'Neue Freundschaftsanfrage',
 
     'new_like_title' => 'Neues Like',
+
+    'new_pin_title' => 'Neues Pin',
 
     'new_message_body' => 'Du hast eine neue Nachricht.',
 

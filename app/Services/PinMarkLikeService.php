@@ -118,13 +118,9 @@ class PinMarkLikeService
                 // Extra payload for app handling
 
                 $other = [
-
                     'pin_id'        => $pinMark->id,
-
                     'pin_user_id'     => $pinMark->user_id,
-
                     'screen_name' => 'post_detail', 
-
                 ];
 
                 // Send push

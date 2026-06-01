@@ -1179,11 +1179,11 @@ class MessageService
                     $receiver = $this->userRepo->find($group->created_by);
 
                     $bodyEn = $receiver
-                        ? ($receiver->name . ' ' . __('message.user_joined_group', ['name' => $receiver->name,'group' => $group->name], 'en'))
+                        ? (__('message.user_joined_group', ['name' => $receiver->name,'group' => $group->name], 'en'))
                         : __('message.user_joined_group', [], 'en');
 
                     $bodyGe = $receiver
-                        ? ($receiver->name . ' ' . __('message.user_joined_group', ['name' => $receiver->name,'group' => $group->name], 'ge'))
+                        ? (__('message.user_joined_group', ['name' => $receiver->name,'group' => $group->name], 'ge'))
                         : __('message.user_joined_group', [], 'ge');
 
                     $title = $titleEn;
@@ -1510,7 +1510,6 @@ class MessageService
                     ->whereIN('status', [1,2])
                     ->pluck('group_id')
                     ->toArray();
-                
                 if (!empty($removedGroupIds)) {
                     
                     $filtered = $groups->getCollection()->filter(function ($group) use ($removedGroupIds) {
@@ -2041,6 +2040,11 @@ class MessageService
                 'is_member_permission' => $member->is_member_permission  == 1 ? true : false,
                 'is_delete' => $user->is_delete ?? 0
             ];
+            $payload = [
+                'group_id' => $groupId,
+                'message' => __('message.group_deleted_successfully'),
+            ];
+            
         }
         return $result;
     }
@@ -2401,7 +2405,7 @@ class MessageService
             // Members: Exclude pending members
             $members = [];
             foreach ($group->members as $member) {
-                if ($member->group_status === 'pending') {
+                if ($member->group_status === 'pending'  || $member->status == 1) {
                     continue; // skip pending members
                 }
                 $userObj = $member->user;
