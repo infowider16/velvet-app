@@ -482,6 +482,7 @@ class HomeService
      */
     private function determineFriendStatus($user, $currentUserId)
     {
+        
         // Check if they are friends (accepted friendship in EITHER direction)
         // Check in acceptedFriendships where this user is user_id
         $isFriendAsUser = $user->acceptedFriendships && $user->acceptedFriendships->contains(function ($friendship) use ($currentUserId, $user) {

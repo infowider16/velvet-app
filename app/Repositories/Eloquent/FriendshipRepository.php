@@ -119,4 +119,31 @@ class FriendshipRepository extends BaseRepository implements FriendshipRepositor
             return false;
         }
     }
+
+    public function getFriendsIds($userId)
+    {
+        try {
+            $friendships = $this->model
+                ->where(function ($query) use ($userId) {
+                    $query->where('user_id', $userId)
+                        ->orWhere('friend_id', $userId);
+                })
+                ->where('status', 'accepted')
+                ->get();
+
+            $friendIds = [];
+
+            foreach ($friendships as $friendship) {
+                $friendIds[] = ($friendship->user_id == $userId)
+                    ? $friendship->friend_id
+                    : $friendship->user_id;
+            }
+
+            return $friendIds;
+
+        } catch (\Exception $e) {
+            $this->logError(__FUNCTION__, $e);
+            return [];
+        }
+    }
 }

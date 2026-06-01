@@ -137,30 +137,16 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
         }
         
         $userId = auth()->id();
-        if ($userId) {
-            // Get group IDs where user has status=2 (removed)
-            $removedGroupIds = $this->groupMemberModel
-                ->where('user_id', $userId)
-                ->where('status', 2)
-                ->pluck('group_id')
-                ->toArray();
+        $blockedGroupIds = $this->groupMemberModel
+            ->where('user_id', $userId)
+            ->where('status', 1)
+            ->pluck('group_id')
+            ->toArray();
 
-            if (!empty($removedGroupIds)) {
-                // Exclude private groups where user is removed
-                $privateGroupIds = $this->model
-                    ->whereIn('id', $removedGroupIds)
-                    ->where('group_type', 1) // 1 = private
-                    ->pluck('id')
-                    ->toArray();
-                if (!empty($privateGroupIds)) {
-                    $query->whereNotIn('id', $privateGroupIds);
-                }
-                // For public groups, do NOT exclude
-            }
+        if (!empty($blockedGroupIds)) {
+            $query->whereNotIn('id', $blockedGroupIds);
         }
-        // $query->with(['members' => function ($q) {
-        //     $q->where('status','!=', 1)->where('is_delete', 0);
-        // }]);
+
         return $query->orderBy('id', 'desc')->paginate($perPage, ['*'], 'page', $page);
     }
 
@@ -183,6 +169,7 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
     { 
         // status: 0 = active, 1 = blocked, 2 = removed
         try {
+            
             $data =  $this->groupMemberModel
                 ->where('group_id', $groupId)
                 ->where('user_id', $userId)

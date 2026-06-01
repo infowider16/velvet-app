@@ -2,7 +2,8 @@
 
 return [
     //new added text start 
-    
+    'new_pin_title' => 'New Pin',
+    'friend_posted_new_pin' => ':name posted a new Pin',
     'only_group_creator_can_delete' => 'Only group creator can delete this group.',
     'message_cannot_be_sent_due_to_block' => 'Message cannot be sent because one of the users has blocked the other.',
 

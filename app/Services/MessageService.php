@@ -869,7 +869,7 @@ class MessageService
                 return strtotime($latestMessageTimes[$b->id]) <=> strtotime($latestMessageTimes[$a->id]);
             });
             
-           
+         
             $uniqueUsers = array_filter($uniqueUsers, function ($otherUser) use ($userId) {
                 // Hide users whom I blocked
                 return !Block::where('blocker_id', $userId)
@@ -1503,7 +1503,7 @@ class MessageService
         try {
             $userId = auth()->id();
             $groups = $this->groupRepo->searchGroups($keyword, $perPage, $page);
-
+        
             if ($userId && $groups instanceof LengthAwarePaginator) {
                 $removedGroupIds = $this->groupRepo->groupMemberModel
                     ->where('user_id', $userId)
@@ -1511,14 +1511,12 @@ class MessageService
                     ->pluck('group_id')
                     ->toArray();
                 if (!empty($removedGroupIds)) {
+                    
                     $filtered = $groups->getCollection()->filter(function ($group) use ($removedGroupIds) {
-                        return !(
-                            in_array($group->id, $removedGroupIds) &&
-                            $group->group_type == 1 // private group remove
-                        );
+                        return !in_array($group->id, $removedGroupIds);
                     })->values();
-
                     $groups->setCollection($filtered);
+
                 }
             }
 
@@ -1725,6 +1723,18 @@ class MessageService
                     'code' => 500,
                 ];
             }
+            
+            $payload = [
+                'group_id' => $groupId,
+                'message' => __('message.group_deleted_successfully'),
+            ];
+            
+            $this->chatSocketService->trigger(
+                'chat-user-' . $memberId,
+                 'group.deleted',
+                $payload
+            );
+
             $this->chatSocketService->groupUpdatesocket($data['group_id']);
             return [
                 'error' => false,
@@ -1807,6 +1817,19 @@ class MessageService
                         'blocked_id' => $memberId
                     ]);
                 }
+                
+               
+                $payload = [
+                    'group_id' => $groupId,
+                    'message' => __('message.group_deleted_successfully'),
+                ];
+
+                $this->chatSocketService->trigger(
+                    'chat-user-' . $memberId,
+                    'group.deleted',
+                    $payload
+                );
+
             } else {
                 // Unblock globally using FriendshipRepository
                 if ($this->friendshipRepo) {
@@ -1818,6 +1841,7 @@ class MessageService
             }
             // --- END GLOBAL BLOCK/UNBLOCK LOGIC ---
             $this->chatSocketService->groupUpdatesocket($groupId);
+           
             return [
                 'error' => false,
                 'data' => ['member_id' => $memberId, 'status' => $status],
@@ -1835,7 +1859,7 @@ class MessageService
 
     /**
      * Update permission for all members in a group (admin only).
-     */
+    */
     public function updateGroupPermissionForAll($adminId, $data)
     {
         try {

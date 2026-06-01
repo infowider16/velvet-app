@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Repositories\Eloquent\{ PinMarkRepository , PinMarkLikeRepository };
+use App\Repositories\Eloquent\{ PinMarkRepository , PinMarkLikeRepository , FriendshipRepository};
 use App\Contracts\Repositories\UserRepositoryInterface;
 use App\Models\Friendship;
 use App\Models\GhostManagement;
@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
+use App\Models\User;
 
 use App\Services\UserRegisterService;
 
@@ -18,45 +19,46 @@ class PinMarkService
     protected PinMarkLikeRepository $pinMarkLikeRepo;
     protected PinMarkRepository $pinMarkRepo;
     protected UserRepositoryInterface $userRepo;
-     protected $userRegisterService;
+    protected FriendshipRepository $friendshipRepo;
+    protected UserRegisterService $userRegisterService;
 
-    public function __construct(PinMarkLikeRepository $pinMarkLikeRepo,PinMarkRepository $pinMarkRepo, UserRepositoryInterface $userRepo,UserRegisterService $userRegisterService)
-        {
-              $this->pinMarkLikeRepo = $pinMarkLikeRepo;
+    public function __construct(PinMarkLikeRepository $pinMarkLikeRepo,PinMarkRepository $pinMarkRepo, UserRepositoryInterface $userRepo,UserRegisterService $userRegisterService,FriendshipRepository $friendshipRepo)
+    {
+        $this->pinMarkLikeRepo = $pinMarkLikeRepo;
         $this->pinMarkRepo = $pinMarkRepo;
         $this->userRepo = $userRepo;
         $this->userRegisterService = $userRegisterService;
-        
+        $this->friendshipRepo = $friendshipRepo;
     }
 
-   public function storePinMark(array $requestDatas)
+    public function storePinMark(array $requestDatas)
         {
-    try {
-        $this->validateRequiredKeys($requestDatas);
+        try {
+            $this->validateRequiredKeys($requestDatas);
 
-        $userId = (int) $requestDatas['user_id'];
+            $userId = (int) $requestDatas['user_id'];
 
-        $swissNowFormatted = convertTimezone(
-            Carbon::now(),
-            null,
-            'Y-m-d H:i:s'
-        );
+            $swissNowFormatted = convertTimezone(
+                Carbon::now(),
+                null,
+                'Y-m-d H:i:s'
+            );
 
-        $requestDatas['created_at']   = $swissNowFormatted;
-        $requestDatas['commented_on'] = $swissNowFormatted;
-        $requestDatas['total_like'] = 0;
+            $requestDatas['created_at']   = $swissNowFormatted;
+            $requestDatas['commented_on'] = $swissNowFormatted;
+            $requestDatas['total_like'] = 0;
 
-        // Validate pin availability
-        $this->validatePinCount($userId);
+            // Validate pin availability
+            $this->validatePinCount($userId);
 
-        // Create Mark
-        $pinMark = $this->pinMarkRepo->create($requestDatas);
+            // Create Mark
+            $pinMark = $this->pinMarkRepo->create($requestDatas);
 
-        // Deduct pin count
-        $this->updateDeductPinCount($userId);
+            // Deduct pin count
+            $this->updateDeductPinCount($userId);
 
-        // Fetch user detail ONCE
-        $userResponse = $this->userRegisterService->getUserDetail($userId);
+            $friendIds  = $this->friendshipRepo->getFriendsIds($userId);
+            if (!empty($friendIds)) {
 
         // Attach only user_info
         $pinMark->user = $userResponse['data']['user_info'] ?? null;
@@ -94,22 +96,64 @@ class PinMarkService
         
         return $pinMark;
 
-    } catch (ValidationException $e) {
-        throw $e;
+                $title = __('message.new_pin_title');
+                $body  = __('message.friend_posted_new_pin', ['name' => $senderName]);
 
-    } catch (\Throwable $e) {
-        Log::error(
-            __CLASS__ . '::' . __FUNCTION__,
-            [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'data'  => $requestDatas
-            ]
-        );
+                $other = [
+                    'pin_id'        => $pinMark->id,
+                    'pin_user_id'   => $pinMark->user_id,
+                    'screen_name'   => 'friend_pin',
+                ];
 
-        return null;
+                foreach ($friends as $friend) {
+
+                    if ((int) $friend->id === $userId) {
+                        continue;
+                    }
+
+                    $deviceTokens = is_array($friend->device_token)
+                        ? $friend->device_token
+                        : json_decode($friend->device_token, true);
+
+                    if (empty($deviceTokens)) {
+                        continue;
+                    }
+
+                    sendPushNotification(
+                        $deviceTokens,
+                        $title,
+                        $body,
+                        $other,
+                        [$friend->id],
+                        'pin_screen'
+                    );
+                }
+            }
+
+            // Fetch user detail ONCE
+            $userResponse = $this->userRegisterService->getUserDetail($userId);
+
+            // Attach only user_info
+            $pinMark->user = $userResponse['data']['user_info'] ?? null;
+
+            return $pinMark;
+
+        } catch (ValidationException $e) {
+            throw $e;
+
+        } catch (\Throwable $e) {
+            Log::error(
+                __CLASS__ . '::' . __FUNCTION__,
+                [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                    'data'  => $requestDatas
+                ]
+            );
+
+            return null;
+        }
     }
-}
 
     /**
      * -----------------------
