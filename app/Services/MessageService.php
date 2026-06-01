@@ -1128,6 +1128,7 @@ class MessageService
     public function joinGroup($userId, $data)
     {
         try {
+           
             if (empty($data['group_id'])) {
                 return [
                     'data' => null,
@@ -1177,13 +1178,14 @@ class MessageService
                     $titleEn = __('message.joined_group_successfully', [], 'en');
                     $titleGe = __('message.joined_group_successfully', [], 'ge');
                     $receiver = $this->userRepo->find($group->created_by);
+                    $senderName = $this->userRepo->find($userId)->name ?? '';
 
-                    $bodyEn = $receiver
-                        ? (__('message.user_joined_group', ['name' => $receiver->name,'group' => $group->name], 'en'))
+                    $bodyEn = $senderName
+                        ? (__('message.user_joined_group', ['name' => $senderName,'group' => $group->name], 'en'))
                         : __('message.user_joined_group', [], 'en');
 
-                    $bodyGe = $receiver
-                        ? (__('message.user_joined_group', ['name' => $receiver->name,'group' => $group->name], 'ge'))
+                    $bodyGe = $senderName
+                        ? (__('message.user_joined_group', ['name' => $senderName,'group' => $group->name], 'ge'))
                         : __('message.user_joined_group', [], 'ge');
 
                     $title = $titleEn;
@@ -1199,6 +1201,7 @@ class MessageService
                     ];
                     $other = [
                         'type' => 'group_request',
+                        'group_type' => 0,
                         'group_id' => $group->id,
                         'user_id' => $userId,
                         'screen_name' => 'group_request'
@@ -1234,12 +1237,14 @@ class MessageService
                     $titleGe = __('message.new_group_request', [], 'ge');
                     $receiver = $this->userRepo->find($group->created_by);
 
+                    $senderName = $this->userRepo->find($userId)->name ?? '';
+
                     $bodyEn = $receiver
-                        ? ($receiver->name . ' ' . __('message.you_have_a_new_group_request', ['name' => $receiver->name,'group' => $group->name], 'en'))
+                        ? ($senderName . ' ' . __('message.you_have_a_new_group_request', ['name' => $senderName,'group' => $group->name], 'en'))
                         : __('message.you_have_a_new_group_request', [], 'en');
 
                     $bodyGe = $receiver
-                        ? ($receiver->name . ' ' . __('message.you_have_a_new_group_request', ['name' => $receiver->name,'group' => $group->name], 'ge'))
+                        ? ($senderName . ' ' . __('message.you_have_a_new_group_request', ['name' => $senderName,'group' => $group->name], 'ge'))
                         : __('message.you_have_a_new_group_request', [], 'ge');
 
                     $title = $titleEn;
@@ -1256,6 +1261,7 @@ class MessageService
                     $other = [
                         'type' => 'group_request',
                         'user_id' => $userId,
+                        'group_type' => 1,
                         'screen_name' => 'group_request'
                     ];
                     $this->userRepo->createMobileNotification(
