@@ -1801,10 +1801,10 @@ class MessageService
                 ];
             }
             $updated = $this->groupRepo->updateGroupMemberStatus($groupId, $memberId, $status);
-            if($status==0){
-                $this->friendshipRepo->friendDelete(['user_id' => $adminId, 'friend_id' => $memberId]);
-                $this->groupRepo->delete(['group_id' => $groupId, 'user_id' => $memberId]);
-            }
+            // if($status==0){
+            //     // $this->friendshipRepo->friendDelete(['user_id' => $adminId, 'friend_id' => $memberId]);
+            //     $this->groupRepo->delete(['group_id' => $groupId, 'user_id' => $memberId]);
+            // }
             if (!$updated) {
                 
                 return [
@@ -1817,12 +1817,12 @@ class MessageService
             // --- GLOBAL BLOCK/UNBLOCK LOGIC ---
             if ($status == 1) {
                 // Block globally using FriendshipRepository
-                if ($this->friendshipRepo && !$this->friendshipRepo->isBlocked($adminId, $memberId)) {
-                    $this->friendshipRepo->createBlock([
-                        'blocker_id' => $adminId,
-                        'blocked_id' => $memberId
-                    ]);
-                }
+                // if ($this->friendshipRepo && !$this->friendshipRepo->isBlocked($adminId, $memberId)) {
+                //     $this->friendshipRepo->createBlock([
+                //         'blocker_id' => $adminId,
+                //         'blocked_id' => $memberId
+                //     ]);
+                // }
                 
                
                 $payload = [
