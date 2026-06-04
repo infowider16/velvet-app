@@ -6,6 +6,7 @@ return [
     'friend_posted_new_pin' => ':name posted a new Pin',
     'only_group_creator_can_delete' => 'Only group creator can delete this group.',
     'message_cannot_be_sent_due_to_block' => 'Message cannot be sent because one of the users has blocked the other.',
+    'new_pin_body' => ':name posted a new pin. Check it out.',
 
     //Active chat related messages
     'active_chat_set_failed' => 'Failed to set active chat.',
@@ -501,7 +502,7 @@ return [
     'phone_verified_successfully' => 'Phone number verified successfully.',
     'pin_id_required' => 'Pin ID and report type are required.',
     'pin_like_updated_successfully' => 'Pin like updated successfully.',
-    'pin_mark_comment_deleted_successfully' => 'Pin MarkComment deleted successfully.',
+    'pin_mark_comment_deleted_successfully' => 'Pin comment deleted successfully.',
     'pin_mark_comment_fetched_successfully' => 'Pin MarkComment fetched successfully.',
     'pin_mark_comment_not_found' => 'Pin MarkComment not found.',
     'pin_mark_comments_fetched_successfully' => 'Pin markComments fetched successfully.',

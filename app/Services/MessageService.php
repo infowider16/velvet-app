@@ -330,11 +330,19 @@ class MessageService
                             $payload
                         );
 
-                        $title = __('message.new_message_title');
+                        if($receiver && $receiver->lang_key == 'ge') {
 
-                        $body = $sender
-                            ? __('message.new_message_body_by_user', ['name' => $sender->name])
-                            : __('message.new_message_body');
+                            $title = __('message.new_message_title', [], 'ge');
+                            $body = $sender
+                                ? __('message.new_message_body_by_user', ['name' => $sender->name], 'ge')
+                                : __('message.new_message_body', [], 'ge');
+                        } else {
+                        
+                            $title = __('message.new_message_title', [], 'en');
+                            $body = $sender
+                                ? __('message.new_message_body_by_user', ['name' => $sender->name], 'en')
+                                : __('message.new_message_body', [], 'en');
+                        }
 
                         $other = [
                             'type' => 'first_message',
@@ -1187,9 +1195,15 @@ class MessageService
                     $bodyGe = $senderName
                         ? (__('message.user_joined_group', ['name' => $senderName,'group' => $group->name], 'ge'))
                         : __('message.user_joined_group', [], 'ge');
+                    
+                    if($receiver && $receiver->lang_key == 'ge'){
+                        $title = $titleGe;
+                        $body = $bodyGe;
+                    } else {
+                        $title = $titleEn;
+                        $body = $bodyEn;
+                    }
 
-                    $title = $titleEn;
-                    $body = $bodyEn;
                     $titleTranslation = [
                         'en' => $titleEn,
                         'ge' => $titleGe,
@@ -1246,10 +1260,16 @@ class MessageService
                     $bodyGe = $receiver
                         ? ($senderName . ' ' . __('message.you_have_a_new_group_request', ['name' => $senderName,'group' => $group->name], 'ge'))
                         : __('message.you_have_a_new_group_request', [], 'ge');
-
-                    $title = $titleEn;
-                    $body = $bodyEn;
-                            $titleTranslation = [
+                        
+                    if($receiver && $receiver->lang_key == 'ge'){
+                        $title = $titleGe;
+                        $body = $bodyGe;
+                    } else {
+                        $title = $titleEn;
+                        $body = $bodyEn;
+                    }
+                            
+                    $titleTranslation = [
                         'en' => $titleEn,
                         'ge' => $titleGe,
                     ];
@@ -1280,7 +1300,7 @@ class MessageService
                 } catch (\Throwable $e) {
                     Log::error('Error in sendPushNotification (sendGroupRequest): ' . $e->getMessage());
                 }
-                $this->chatSocketService->groupUpdatesocket($group->id);
+                // $this->chatSocketService->groupUpdatesocket($group->id);
                 return [
                     'data' => [
                         'group' => $this->formatGroupInfo($group, $userId),
@@ -1760,7 +1780,7 @@ class MessageService
     /**
      * Block or unblock a group member (admin only).
      * $status: 1 = block, 0 = unblock
-     */
+    */
     public function blockOrUnblockGroupMember($adminId, $data, $status)
     {
         try {
@@ -1772,8 +1792,10 @@ class MessageService
                     'code' => 422,
                 ];
             }
+
             $groupId = $data['group_id'];
             $memberId = $data['user_id'];
+            
             // Only group admin can block/unblock
             if (!$this->groupRepo->isAdmin($groupId, $adminId)) {
                 return [
@@ -1801,10 +1823,7 @@ class MessageService
                 ];
             }
             $updated = $this->groupRepo->updateGroupMemberStatus($groupId, $memberId, $status);
-            // if($status==0){
-            //     // $this->friendshipRepo->friendDelete(['user_id' => $adminId, 'friend_id' => $memberId]);
-            //     $this->groupRepo->delete(['group_id' => $groupId, 'user_id' => $memberId]);
-            // }
+            
             if (!$updated) {
                 
                 return [
@@ -1815,15 +1834,29 @@ class MessageService
             }
 
             // --- GLOBAL BLOCK/UNBLOCK LOGIC ---
-            if ($status == 1) {
-                // Block globally using FriendshipRepository
-                // if ($this->friendshipRepo && !$this->friendshipRepo->isBlocked($adminId, $memberId)) {
-                //     $this->friendshipRepo->createBlock([
-                //         'blocker_id' => $adminId,
-                //         'blocked_id' => $memberId
-                //     ]);
-                // }
+            if($status == 0){
                 
+                if ($this->friendshipRepo) {
+                    $this->friendshipRepo->friendDelete(['user_id' => $adminId, 'friend_id' => $memberId]);
+                    
+                    $block = $this->friendshipRepo->findBlockByUsers($adminId, $memberId);
+                    if ($block) {
+                        $this->friendshipRepo->deleteBlock($block->id);
+                    }
+
+                }
+
+                $this->messageRepo->deleteChat($adminId, $memberId);
+                $this->groupRepo->delete(['group_id' => $groupId, 'user_id' => $memberId]);
+               
+            } else {
+                // Block globally using FriendshipRepository
+                if ($this->friendshipRepo && !$this->friendshipRepo->isBlocked($adminId, $memberId)) {
+                    $this->friendshipRepo->createBlock([
+                        'blocker_id' => $adminId,
+                        'blocked_id' => $memberId
+                    ]);
+                }
                
                 $payload = [
                     'group_id' => $groupId,
@@ -1836,15 +1869,8 @@ class MessageService
                     $payload
                 );
 
-            } else {
-                // Unblock globally using FriendshipRepository
-                if ($this->friendshipRepo) {
-                    $block = $this->friendshipRepo->findBlockByUsers($adminId, $memberId);
-                    if ($block) {
-                        $this->friendshipRepo->deleteBlock($block->id);
-                    }
-                }
-            }
+            } 
+
             // --- END GLOBAL BLOCK/UNBLOCK LOGIC ---
             $this->chatSocketService->groupUpdatesocket($groupId);
            
@@ -2629,6 +2655,7 @@ class MessageService
         $subscriberCount = $this->groupRepo->groupMemberModel
             ->where('group_id', $group->id)
             ->whereNotIn('status', [1, 2])
+            ->where('group_status', 'accept')
             ->where('is_delete', 0)
             ->count();
 

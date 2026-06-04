@@ -126,9 +126,11 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
             ->withCount([
                 'members' => function ($q) {
                     $q->whereNotIn('status', [1, 2])
-                    ->where('is_delete', 0);
+                    ->where('is_delete', 0)
+                    ->where('group_status', 'accept');
                 }
             ]);
+            
         if ($keyword !== '') {
             $query->where(function ($q) use ($keyword) {
                 $q->where('name', 'like', '%' . $keyword . '%')
@@ -173,8 +175,8 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
             $data =  $this->groupMemberModel
                 ->where('group_id', $groupId)
                 ->where('user_id', $userId)
-                ->update(['status' => $status,'accepted_at' => now()]);
-            log::info('Membership status updated', ['group_id' => $groupId, 'user_id' => $userId, 'status' => $status]);
+                ->update(['status' => $status]);
+            \Log::info('Membership status updated', ['group_id' => $groupId, 'user_id' => $userId, 'status' => $status]);
             return $data;
         } catch (\Exception $e) {
             \Log::error('Error in updateGroupMemberStatus: ' . $e->getMessage());

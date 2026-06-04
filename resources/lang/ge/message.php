@@ -9,7 +9,7 @@ return [
     'friend_posted_new_pin' => ':name hat einen neuen Pin gepostet',
     'only_group_creator_can_delete' => 'Nur der Gruppen-Ersteller kann diese Gruppe löschen.',
     'message_cannot_be_sent_due_to_block' => 'Nachricht kann nicht gesendet werden, da einer der Benutzer den anderen blockiert hat.',
-    
+    'new_pin_body' => ':name hat einen neuen Pin gepostet. Schau ihn dir an.',
     //Active chat related messages
     'active_chat_set_failed' => 'Fehler beim Setzen des aktiven Chats.',
     'active_chat_set_successfully' => 'Aktiver Chat erfolgreich gesetzt.',
@@ -494,7 +494,7 @@ return [
 
     'pin_like_updated_successfully' => 'Pin-Like erfolgreich aktualidurt.',
 
-    'pin_mark_comment_deleted_successfully' => 'Pin-Markierungskommentar erfolgreich gelöscht.',
+    'pin_mark_comment_deleted_successfully' => 'Pin-Kommentar erfolgreich gelöscht.',
 
     'pin_mark_comment_fetched_successfully' => 'Pin-Markierungskommentar erfolgreich abgerufen.',
 
@@ -520,7 +520,7 @@ return [
 
     'profile_completion_failed' => 'Profilvervollständigung fehlgeschlagen.',
 
-    'profile_updated_successfully' => 'Profil erfolgreich aktualidurt.',
+    'profile_updated_successfully' => 'Profil erfolgreich aktualisiert.',
 
     'receiver_user_does_not_exist' => 'Der Empfänger existiert nicht.',
 

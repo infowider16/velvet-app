@@ -67,9 +67,6 @@ class PinMarkService
 
                 $senderName = $sender->name ?? 'Someone';
 
-                $title = __('message.new_pin_title');
-                $body  = __('message.new_pin_body', ['name' => $senderName]);
-
                 $other = [
                     'pin_id'        => $pinMark->id,
                     'pin_user_id'   => $pinMark->user_id,
@@ -77,6 +74,18 @@ class PinMarkService
                 ];
 
                 foreach ($friends as $friend) {
+
+
+                    $lang = $friend->lang_key ?? 'en';
+
+                    $title = trans('message.new_pin_title', [], $lang);
+
+                    $body = trans(
+                        'message.new_pin_body',
+                        ['name' => $senderName],
+                        $lang
+                    );
+
 
                     if ((int) $friend->id === $userId) {
                         continue;
