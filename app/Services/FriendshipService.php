@@ -102,9 +102,14 @@ class FriendshipService
             $bodyGe = $sender
                 ? ($sender->name . ' ' . __('message.sent_you_a_friend_request', [], 'ge'))
                 : __('message.you_have_a_new_friend_request', [], 'ge');
-
-            $title = $titleEn;
-            $body = $bodyEn;
+            
+            if($receiver && $receiver->lang_key == 'ge') {
+                $title = $titleGe;
+                $body = $bodyGe;
+            } else {
+                $title = $titleEn;
+                $body = $bodyEn;
+            }
 
             $titleTranslation = [
                 'en' => $titleEn,
@@ -200,9 +205,13 @@ class FriendshipService
             $bodyDe = $receiver
                 ? ($receiver->name . ' ' . $acceptedTextDe)
                 : $fallbackBodyDe;
-    
-            $title = $titleEn;
-            $body = $bodyEn;
+            if($sender && $sender->lang_key == 'ge') {
+                $title = $titleDe;
+                $body = $bodyDe;
+            } else {
+                $title = $titleEn;
+                $body = $bodyEn;
+            }
     
             $titleTranslation = [
                 'en' => $titleEn,

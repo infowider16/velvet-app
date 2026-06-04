@@ -80,10 +80,7 @@ class GroupService
             $subscriberCount = $this->groupRepo->groupMemberModel
             ->where('group_id', $groupId)
             ->whereNotIn('status', [1, 2])
-            ->where(function ($query) {
-                $query->whereNull('group_status')
-                    ->orWhere('group_status', 'accept');
-            })
+            ->where('group_status', 'accept')
             ->where('is_delete', 0)
             ->count();
 

@@ -583,9 +583,11 @@ class UserRegisterService implements UserRegisterServiceInterface
                 'location',
                 'lat',
                 'lng',
+                'lang_key',
             ];
             // Filter out only the fields that are actually sent in the request
             $updateData = Arr::only($data, $allowedFields);
+           
             $user = $this->updateUser($userId, $updateData);
             $userInfo = $user->toArray();
             $userInfo['is_profile_completed'] = ((int)$user->is_active >= 7);

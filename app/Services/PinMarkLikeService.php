@@ -111,10 +111,14 @@ class PinMarkLikeService
 
                 $receiver = $this->userRepo->find($pinMark->user_id);    // post owner
 
-
-                $title = __('message.new_like_title', [], 'en');
-                $body = $sender ? __('message.liked_post_by_user', ['name' => $sender->name], 'en') : __('message.liked_post', [], 'en');
-
+                if($receiver && $receiver->lang_key == 'ge') {
+                    $title = __('message.new_like_title', [], 'ge');
+                    $body = $sender ? __('message.liked_post_by_user', ['name' => $sender->name], 'ge') : __('message.liked_post', [], 'ge');
+                } else {
+                    $title = __('message.new_like_title', [], 'en');
+                    $body = $sender ? __('message.liked_post_by_user', ['name' => $sender->name], 'en') : __('message.liked_post', [], 'en');
+                }
+                
                 // Extra payload for app handling
 
                 $other = [
