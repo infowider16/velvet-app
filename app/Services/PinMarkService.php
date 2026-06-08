@@ -65,6 +65,8 @@ class PinMarkService
                     ->whereNotNull('device_token')
                     ->get();
 
+                $sender = $this->userRepo->getOneData(['id' => $userId]);
+                dd($sender);
                 $senderName = $sender->name ?? 'Someone';
 
                 $other = [

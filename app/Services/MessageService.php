@@ -1837,26 +1837,59 @@ class MessageService
             if($status == 0){
                 
                 if ($this->friendshipRepo) {
-                    $this->friendshipRepo->friendDelete(['user_id' => $adminId, 'friend_id' => $memberId]);
-                    
                     $block = $this->friendshipRepo->findBlockByUsers($adminId, $memberId);
                     if ($block) {
                         $this->friendshipRepo->deleteBlock($block->id);
                     }
 
                 }
-
-                $this->messageRepo->deleteChat($adminId, $memberId);
                 $this->groupRepo->delete(['group_id' => $groupId, 'user_id' => $memberId]);
                
             } else {
+
                 // Block globally using FriendshipRepository
                 if ($this->friendshipRepo && !$this->friendshipRepo->isBlocked($adminId, $memberId)) {
+                    $this->friendshipRepo->friendDelete([
+                        'user_id' => $adminId,
+                        'friend_id' => $memberId
+                    ]);
+
+                    $this->friendshipRepo->friendDelete([
+                        'user_id' => $memberId,
+                        'friend_id' => $adminId
+                    ]);
+
                     $this->friendshipRepo->createBlock([
                         'blocker_id' => $adminId,
                         'blocked_id' => $memberId
                     ]);
                 }
+
+                $this->messageRepo->deleteChat($adminId, $memberId);
+
+                $this->chatSocketService->trigger(
+                    'chat-user-' . $adminId,
+                    'chat.block.updated',
+                    [
+                        'type' => 'single',
+                        'action' => 'remove',
+                        'user_id' => $memberId,
+                        'blocked_by_me' => true,
+                        'blocked_me' => false,
+                    ]
+                );
+
+                $this->chatSocketService->trigger(
+                    'chat-user-' . $memberId,
+                    'chat.block.updated',
+                    [
+                        'type' => 'single',
+                        'action' => 'remove',
+                        'user_id' => $adminId,
+                        'blocked_by_me' => false,
+                        'blocked_me' => true,
+                    ]
+                );
                
                 $payload = [
                     'group_id' => $groupId,
