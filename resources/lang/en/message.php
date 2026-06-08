@@ -1,14 +1,12 @@
 <?php
 
 return [
-    //new added text start 
+  
     'new_pin_title' => 'New Pin',
     'friend_posted_new_pin' => ':name posted a new Pin',
     'only_group_creator_can_delete' => 'Only group creator can delete this group.',
     'message_cannot_be_sent_due_to_block' => 'Message cannot be sent because one of the users has blocked the other.',
     'new_pin_body' => ':name posted a new pin. Check it out.',
-
-    //Active chat related messages
     'active_chat_set_failed' => 'Failed to set active chat.',
     'active_chat_set_successfully' => 'Active chat set successfully.',
     'active_chat_clear_failed' => 'Failed to clear active chat.',
@@ -17,7 +15,6 @@ return [
     'user_set_online_failed' => 'Failed to set user online.',
     'user_set_offline' => 'User set to offline successfully.',
     'user_set_offline_failed' => 'Failed to set user offline.',
-    ///old text start
     'group_requests_fetched_successfully' => 'Group join requests fetched successfully.',
     'failed_to_fetch_group_requests' => 'Failed to fetch group join requests.',
     'group_details_fetched_successfully' => 'Group details fetched successfully.',
@@ -33,9 +30,8 @@ return [
     'sent_you_a_group_request' => 'sent you a group request',
     'you_have_a_new_group_request' => 'requested to join your group :group.',
     'user_joined_group' => ':name joined your group :group.',
-
-    //new added text end
     'validation_error' => 'validation error',
+
     'Resend' => 'Resend',
     'Sending' => 'Sending',
     'Team' => 'Team',
@@ -67,10 +63,12 @@ return [
     'approved' => 'User has been approved successfully.',
     'authentication_check_failed' => 'Authentication check failed.',
     'bloc_user_not_found' => 'Bloc user not found.',
-    'block' => 'User has been blocked successfully. ',
+    'block' => 'User has been blocked successfully.',
     'block_member_failed' => 'Failed to block group member.',
     'blocked_group_members_failed' => 'Failed to fetch blocked group members.',
-    'blocked_group_members_fetched' => 'Blocked group members fetched successfully.',
+
+
+   'blocked_group_members_fetched' => 'Blocked group members fetched successfully.',
     'blocked_users_fetched_successfully' => 'Blocked users fetched successfully.',
     'bonus_added_body' => 'Congratulations! You have received a bonus of HTG:amount in your wallet.',
     'bonus_added_title' => 'Bonus Added!',
@@ -103,7 +101,8 @@ return [
     'database_error_updating_group' => 'Database error occurred while updating group.',
     'dear' => 'Dear',
     'dear_admin' => 'Dear Admin,',
-    'delete_all_admin_group_messages_failed' => 'Failed to delete all group messages.',
+    
+   'delete_all_admin_group_messages_failed' => 'Failed to delete all group messages.',
     'delete_all_conversation_failed' => 'Failed to delete all conversation messages.',
     'delete_all_group_messages_failed' => 'Failed to delete all group messages.',
     'delete_group_failed' => 'Failed to delete group.',
@@ -149,6 +148,7 @@ return [
     'error_msgs8' => 'Moncash Transaction not found, payment not completed.',
     'error_payment' => 'Something went wrong, transaction not saved',
     'errormessage1' => 'Something went wrong, Status not 202 in gateway.',
+   
     'f_a_q_list_fetched_successfully' => 'FAQ list fetched successfully.',
     'failed_to_accept_friend_request' => 'Failed to accept friend request.',
     'failed_to_activate_booster' => 'Failed to activate booster.',
@@ -161,18 +161,6 @@ return [
     'failed_to_delete_group' => 'Failed to delete group.',
     'failed_to_delete_group_chat_for_user' => 'Failed to delete group chat for your account.',
     'failed_to_delete_message' => 'Failed to delete message.',
-    'failed_to_delete_user_details_eget_message0_e_private_function_update_plan_expir' => 'Failed to delete user details: \' . $e->getMessage(), 0, $e);
-        }
-    }
-        
-
-    private function updatePlanExpiryStatuses()
-    {
-        try {
-            $swissNowFormatted = convertTimezone(
-                Carbon::now(),
-                null,
-                \'Y-m-d H:i:s',
     'failed_to_fetch_boost_plans' => 'Failed to fetch boost plans.',
     'failed_to_fetch_friends_list' => 'Failed to fetch friends list.',
     'failed_to_fetch_ghost_plans' => 'Failed to fetch ghost plans.',
@@ -190,119 +178,6 @@ return [
     'failed_to_fetch_pin_plans' => 'Failed to fetch pin plans.',
     'failed_to_fetch_sent_message_users' => 'Failed to fetch sent message users.',
     'failed_to_fetch_sent_requests' => 'Failed to fetch sent requests.',
-    'failed_to_fetch_user_details_eget_message_public_function_delete_user_detailint_' => 'Failed to fetch user details: \' . $e->getMessage());
-        }
-    }
-    
-    public function deleteUserDetail(int $userId)
-    {
-        try {
-            return DB::transaction(function () use ($userId) {
-    
-                $updated = DB::table(\'users',
-    'failed_to_fetch_user_details_eget_message_public_function_edit_profileuser_id_ar' => 'Failed to fetch user details: \' . $e->getMessage());
-        }
-    }
-    public function editProfile($userId, array $data)
-    {
-        try {
-
-
-            $allowedFields = [
-                \'date_of_birth\',
-                \'name\',
-                \'gender\',
-                \'interest_id\',
-                \'about_me\',
-                \'images\',
-                \'push_notification_status\',
-                \'phone_code\',
-                \'phone_number\',
-                \'country_code\',
-                \'location\',
-                \'lat\',
-                \'lng\',
-            ];
-
-            // Filter out only the fields that are actually sent in the request
-            $updateData = Arr::only($data, $allowedFields);
-            $user = $this->updateUser($userId, $updateData);
-
-            $userInfo = $user->toArray();
-
-
-
-            $userInfo[\'is_profile_completed\'] = ((int)$user->is_active >= 7);
-
-            return [
-
-                \'data\' => [
-
-                    \'user_id\' => $user->id,
-                    \'is_active\' => $user->is_active,
-                    \'user_info\' => $userInfo
-                ],
-                \'message\' => \'Profile updated successfully.\'
-
-            ];
-        } catch (Exception $e) {
-
-            throw new Exception(\'editProfile failed: \' . $e->getMessage());
-        }
-    }
-
-    public function storeDeviceToken($userId, $deviceToken)
-    {
-        try {
-            $user = $this->updateUser($userId, [
-                \'device_token\' => $deviceToken
-            ]);
-
-            return [
-                \'user_id\' => $user->id,
-                \'device_token\' => $user->device_token
-            ];
-        } catch (Exception $e) {
-            throw new Exception(\'Storing device token failed: \' . $e->getMessage());
-        }
-    }
-
-    public function updateLatLng($userId, $latitude, $longitude, $country_code, $city)
-    {
-        try {
-            $user = $this->updateUser($userId, [
-                \'lat\' => $latitude,
-                \'lng\' => $longitude,
-                \'country_code\' => $country_code,
-                \'city\' => $city,
-            ]);
-
-            return [
-                \'user_id\' => $user->id,
-                \'lat\' => $user->lat,
-                \'lng\' => $user->lng,
-                \'city\' => $user->city,
-                \'country_code\' => $user->country_code,
-            ];
-        } catch (Exception $e) {
-            throw new Exception(\'Updating latitude and longitude failed: \' . $e->getMessage());
-        }
-    }
-
-    public function getIntervalSettings($userId)
-    {
-        try {
-            // $user = $this->userRepo->getOneData(
-            //     [\'id\' => $userId]
-            // );
-
-            $user = $this->userRepo->getByWhere(
-                [\'id\' => $userId],
-                [],
-                [\'*\'],
-                [\'pendingSentRequests\', \'pendingReceivedRequests\', \'acceptedFriendships\', \'sentFriendRequests\', \'receivedFriendRequests\', \'blocks\', \'blockedBy\'],
-                [],
-                \'first',
     'failed_to_fetch_users' => 'Failed to fetch users',
     'failed_to_leave_group' => 'Failed to leave group.',
     'failed_to_remove_member_from_group' => 'Failed to remove member from group.',
@@ -330,6 +205,7 @@ return [
     'forget_pass_success_msg_email' => 'please check your email.',
     'forget_pass_success_msg_sms' => 'please check sms.',
     'forgotPassword' => 'Forget Password',
+
     'forgot_password_admin_sms' => 'Dear admin, New temporary password to login is :password.',
     'forgot_password_message' => 'You have initiated the Forgot Password process.',
     'forgot_password_subject' => 'Forget Password',
@@ -375,16 +251,6 @@ return [
     'groups_fetched_successfully' => 'Groups fetched successfully.',
     'groups_retrieved_successfully' => 'Groups retrieved successfully.',
     'handle_join_request_failed' => 'Failed to handle join request.',
-    'image_upload_failed_eget_message_public_function_upload_single_imageimage_try_ca' => 'Image upload failed: \' . $e->getMessage());
-        }
-    }
-
-    public function uploadSingleImage($image)
-    {
-        try {
-
-            // call trait method uploadImage($image, $path)
-            $imagePath = $this->uploadImage($image, \'user_images',
     'image_uploaded_successfully' => 'Image uploaded successfully.',
     'images_uploaded_successfully' => 'Images uploaded successfully.',
     'important_field' => 'Important fields are required.',
@@ -395,7 +261,8 @@ return [
     'interval_settings_retrieved_successfully' => 'Interval settings retrieved successfully.',
     'invalidLink' => 'Invalid verification Link..',
     'invalid_action' => 'Invalid action.',
-    'invalid_field' => 'Invalid field: :field',
+
+   'invalid_field' => 'Invalid field: :field',
     'invalid_file_upload' => 'Invalid file upload.',
     'invalid_group_field_value' => 'Invalid value for one or more fields. Please check your input.',
     'invalid_login' => 'Invalid login credentials.',
@@ -443,7 +310,8 @@ return [
     'members_added_successfully' => 'Members added to group successfully.',
     'message_deleted_successfully' => 'Message deleted successfully.',
     'message_not_found' => 'Message not found.',
-    'message_sent_successfully' => 'Message sent successfully.',
+
+   'message_sent_successfully' => 'Message sent successfully.',
     'monthly_luckydraw_body' => ':user Won Monthly Lucky Draw, click here to view details !!',
     'monthly_luckydraw_title' => 'Monthly Lucky Draw Winner',
     'new_comment_title' => 'New Comment',
@@ -515,20 +383,8 @@ return [
     'plans_updated_successfully' => 'plans Updated successfully.',
     'prizeStatus_name' => 'Winner',
     'profileUpdate' => 'Profile has been updated successfully.',
+    
     'profile_completed_successfully' => 'Profile completed successfully.',
-    'profile_completion_failed_eget_message_public_function_upload_imagesarray_images' => 'Profile completion failed: \' . $e->getMessage());
-        }
-    }
-
-
-
-    public function uploadImages(array $images)
-
-    {
-
-        try {
-
-            // $user = $this->userRepo->getByWhere([\'id\' => $userId], [], [\'*\'], [], [], \'first',
     'profile_updated_successfully' => 'Profile updated successfully.',
     'receiver_user_does_not_exist' => 'Receiver user does not exist.',
     'referal_trans_message' => 'Earned HTG :amount from referral code',
@@ -549,83 +405,6 @@ return [
     'sent_you_a_friend_request' => 'has sent you a friend request.',
     'signin_block' => 'Your account is currently blocked. Please contact support for further assistance.',
     'signin_inactive' => 'Your account is currently inactive. Admin will check your documents and back to you in 3-4 business days.',
-    'single_image_upload_failed_eget_message_public_function_update_location_consentu' => 'Single image upload failed: \' . $e->getMessage());
-        }
-    }
-
-
-    public function updateLocationConsent($userId, $locationConsent)
-
-    {
-
-        try {
-
-            $user = $this->updateUser($userId, [
-
-                \'location_consent\' => $locationConsent
-
-            ], 4);
-
-
-
-            return [
-
-                \'user_id\' => $user->id,
-
-                \'location_consent\' => $user->location_consent,
-
-                \'is_active\' => $user->is_active
-
-            ];
-        } catch (Exception $e) {
-
-            throw new Exception(\'Location consent update failed: \' . $e->getMessage());
-        }
-    }
-
-
-
-    public function addLocation($userId, $location, $latitude, $longitude)
-
-    {
-
-        try {
-
-            $user = $this->updateUser($userId, [
-
-                \'location\' => $location,
-
-                \'lat\' => $latitude,
-
-                \'lng\' => $longitude
-
-            ], 5);
-
-
-
-            return [
-
-                \'user_id\' => $user->id,
-
-                \'location\' => $user->location,
-
-                \'lat\' => $user->lat,
-
-                \'lng\' => $user->lng,
-
-                \'is_active\' => $user->is_active
-
-            ];
-        } catch (Exception $e) {
-
-            throw new Exception(\'Location update failed: \' . $e->getMessage());
-        }
-    }
-
-    private function sendOtpWithTwilio($phoneNumber, $otp)
-    {
-        try {
-            $sid = env(\'TWILIO_SID',
     'singup_success' => 'Signup Successfully.',
     'slug_is_required' => 'Slug is required',
     'social_login_successful' => 'Social login successful.',
@@ -702,4 +481,7 @@ return [
     'you_have_a_new_friend_request' => 'You have a new friend request.',
     'your_friend_request_was_accepted' => 'Your friend request was accepted.',
     'your_price' => 'Your Prize',
+    'profile_completion_failed' => 'Profile completion failed.',
+    'single_image_upload_failed' => 'Single image upload failed.',
+
 ];

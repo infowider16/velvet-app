@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Support\Facades\Log;
 use App\Models\GroupMember;
 use App\Services\ChatSocketService;
+use App\Models\Block;
 
 class GroupService
 {
@@ -239,114 +240,11 @@ class GroupService
      * @param array $request
      * @return array
      */
-    // public function getGroupMessages(int $userId, int $groupId, array $request = []): array
-    // {
-    //     try {
-    //         $group = $this->groupRepo->find($groupId);
-
-    //         $accessCheck = $this->validateGroupAccess($group, $groupId, $userId);
-    //         if (!empty($accessCheck['error'])) {
-    //             return $accessCheck;
-    //         }
-
-    //         $groupMember = $this->groupRepo->groupMemberModel
-    //             ->where('group_id', $groupId)
-    //             ->where('user_id', $userId)
-    //             ->first();
-
-    //         $deletedAt = $groupMember && !empty($groupMember->group_deleted_at)
-    //             ? $groupMember->group_deleted_at
-    //             : null;
-
-    //         $perPage = max((int)($request['per_page'] ?? 20), 1);
-    //         $page = max((int)($request['page'] ?? 1), 1);
-
-    //         $whereConditions = [
-    //             ['group_id', '=', $groupId],
-    //         ];
-
-    //         if ($deletedAt) {
-    //             $whereConditions[] = ['created_at', '>', $deletedAt];
-    //         }
-
-    //         $messages = $this->messageRepo->getDataWithPagination(
-    //             $whereConditions,
-    //             ['sender:id,name,images,is_delete'],
-    //             ['*'],
-    //             [],
-    //             ['created_at' => 'desc'],
-    //             $perPage,
-    //             $page
-    //         );
-
-    //         if (!$messages) {
-    //             return $this->errorResponse(__('message.fetch_group_messages_failed'), 500);
-    //         }
-
-    //         $messagesData = [];
-    //         foreach ($messages->items() as $msg) {
-    //             if (!$msg->sender || (int)($msg->sender->is_delete ?? 0) === 1) {
-    //                 continue;
-    //             }
-               
-    //             $messagesData[] = $this->formatMessage($msg);
-    //         }
-            
-    //         $this->groupRepo->membersDataUpdate(['group_id'=>$groupId,'user_id'=>$userId],['unread_count'=>0]);
-
-    //         try {
-    //             $lastMessage = $this->messageRepo->model
-    //                 ->where('group_id', $groupId)
-    //                 ->latest('created_at')
-    //                 ->first();
-
-    //             $this->chatSocketService->trigger(
-    //                 'chat-user-' . $userId,
-    //                 'group.list.updated',
-    //                 [
-    //                     'type' => 'group',
-    //                     'group' => [
-    //                         'id' => $group->id,
-    //                         'name' => $group->name,
-    //                         'image' => getImageUrl($group->image),
-    //                         'created_by' => $group->created_by,
-    //                         'sender_id' => $lastMessage ? $lastMessage->sender_id : null,
-    //                         'last_message' => $lastMessage ? $lastMessage->message_text : null,
-    //                         'last_message_time' => $lastMessage ? $lastMessage->created_at : null,
-    //                         'media_type' => $lastMessage ? $lastMessage->media_type : null,
-    //                         'unread_count' => 0,
-    //                     ]
-    //                 ]
-    //             );
-    //         } catch (\Throwable $e) {
-    //             Log::error('Group messages unread reset socket failed', [
-    //                 'user_id' => $userId,
-    //                 'group_id' => $groupId,
-    //                 'error' => $e->getMessage(),
-    //             ]);
-    //         }
-
-
-    //         return $this->successResponse([
-    //             'messages' => $messagesData,
-    //             'pagination' => [
-    //                 'current_page' => $messages->currentPage(),
-    //                 'per_page' => $messages->perPage(),
-    //                 'total' => $messages->total(),
-    //                 'last_page' => $messages->lastPage(),
-    //                 'has_more' => $messages->currentPage() < $messages->lastPage(),
-    //             ],
-    //         ], __('message.group_messages_fetched_successfully'));
-    //     } catch (Exception $e) {
-    //         Log::error('Error in ' . __METHOD__ . ': ' . $e->getMessage());
-    //         return $this->errorResponse(__('message.fetch_group_messages_failed'), 500);
-    //     }
-    // }
 
     public function getGroupMessages(int $userId, int $groupId, array $request = []): array
     {
         try {
-       
+            
             $group = $this->groupRepo->find($groupId);
 
             $accessCheck = $this->validateGroupAccess($group, $groupId, $userId);
@@ -408,7 +306,7 @@ class GroupService
                     continue;
                 }
 
-                $messagesData[] = $this->formatMessage($msg);
+                $messagesData[] = $this->formatMessage($userId,$msg);
             }
 
             $this->groupRepo->membersDataUpdate(
@@ -588,10 +486,9 @@ class GroupService
      * @param mixed $msg
      * @return array
      */
-    private function formatMessage($msg): array
+    private function formatMessage($userId, $msg): array
     {
         $sender = $msg->sender;
-
         $mediaUrl = null;
         if (!empty($msg->media_url)) {
             $mediaUrl = asset('storage/' . ltrim($msg->media_url, '/'));
@@ -609,6 +506,16 @@ class GroupService
         ->where('group_id', $msg->group_id)
         ->where('user_id', $msg->sender_id)
         ->first();
+
+        $isBlocked = Block::where(function ($query) use ($msg, $userId) {
+            $query->where('blocker_id', $msg->sender_id)
+                ->where('blocked_id', $userId);
+        })
+        ->orWhere(function ($query) use ($msg, $userId) {
+            $query->where('blocker_id', $userId)
+                ->where('blocked_id', $msg->sender_id);
+        })
+        ->exists() ? 1 : 0;
 
         return [
             'id' => $msg->id,
@@ -633,6 +540,7 @@ class GroupService
                 'status' => $senderGroupMember->status ?? 0,
                 'is_member_permission' => (int) ($senderGroupMember->is_member_permission ?? 1) === 1 ? true : false,
                 'is_delete' => $sender->is_delete ?? 0,
+                'is_blocked' => $isBlocked,
             ],
         ];
     }

@@ -1,619 +1,486 @@
 <?php
 
-
-
 return [
-    
-    // new added text start 
-    'new_pin_title' => 'Neuer Pin',
-    'friend_posted_new_pin' => ':name hat einen neuen Pin gepostet',
-    'only_group_creator_can_delete' => 'Nur der Gruppen-Ersteller kann diese Gruppe löschen.',
-    'message_cannot_be_sent_due_to_block' => 'Nachricht kann nicht gesendet werden, da einer der Benutzer den anderen blockiert hat.',
+  
+   'new_pin_title' => 'Neuer Pin',
+    'friend_posted_new_pin' => ':name hat einen neuen Pin gepostet.',
+    'only_group_creator_can_delete' => 'Nur der Admin kann diese Gruppe löschen.',
+    'message_cannot_be_sent_due_to_block' => 'Nachricht konnte nicht gesendet werden, da eine Person die andere blockiert hat.',
     'new_pin_body' => ':name hat einen neuen Pin gepostet. Schau ihn dir an.',
-    //Active chat related messages
-    'active_chat_set_failed' => 'Fehler beim Setzen des aktiven Chats.',
-    'active_chat_set_successfully' => 'Aktiver Chat erfolgreich gesetzt.',
-    'active_chat_clear_failed' => 'Fehler beim Löschen des aktiven Chats.',
-    'active_chat_cleared_successfully' => 'Aktiver Chat erfolgreich gelöscht.',
-    'user_set_online' => 'Benutzer erfolgreich online gesetzt.',
-    'user_set_online_failed' => 'Fehler beim Setzen des Benutzers auf online.',
-    'user_set_offline' => 'Benutzer erfolgreich offline gesetzt.',
-    'user_set_offline_failed' => 'Fehler beim Setzen des Benutzers auf offline.',
-    //old text start
-    'group_requests_fetched_successfully' => 'Beitrittsanfragen zur Gruppe wurden erfolgreich abgerufen.',
-    'failed_to_fetch_group_requests' => 'Beitrittsanfragen zur Gruppe konnten nicht abgerufen werden.',
-    'group_details_fetched_successfully' => 'Gruppendetails wurden erfolgreich abgerufen.',
-    'group_members_fetched_successfully' => 'Gruppenmitglieder wurden erfolgreich abgerufen.',
-    'fetch_group_members_failed' => 'Gruppenmitglieder konnten nicht abgerufen werden.',
-    'group_messages_fetched_successfully' => 'Gruppennachrichten wurden erfolgreich abgerufen.',
-    'fetch_group_messages_failed' => 'Gruppennachrichten konnten nicht abgerufen werden.',
-    'failed_to_fetch_blocked_users' => 'Gesperrte Benutzer konnten nicht abgerufen werden.',
-    'no_access_to_private_group' => 'Du haben keinen Zugriff auf diese private Gruppe.',
+    'active_chat_set_failed' => 'Aktiver Chat konnte nicht gesetzt werden.',
+    'active_chat_set_successfully' => 'Active chat erfolgreich gesetzt.',
+    'active_chat_clear_failed' => 'Aktiver Chat konnte nicht entfernt werden.',
+    'active_chat_cleared_successfully' => 'Aktiver Chat erfolgreich entfernt.',
+    'user_set_online' => 'Online-Status erfolgreich aktiviert.',
+    'user_set_online_failed' => 'Online-Status konnte nicht aktiviert werden.',
+    'user_set_offline' => 'Online-Status erfolgreich aktiviert.',
+    'user_set_offline_failed' => 'Online-Status konnte nicht aktiviert werden.',
+    'group_requests_fetched_successfully' => 'Gruppenanfragen erfolgreich geladen.',
+    'failed_to_fetch_group_requests' => 'Gruppenanfragen konnten nicht geladen werden.',
+    'group_details_fetched_successfully' => 'Gruppendetails erfolgreich geladen.',
+    'group_members_fetched_successfully' => 'Gruppenmitglieder erfolgreich geladen.',
+    'fetch_group_members_failed' => 'Gruppenmitglieder konnten nicht geladen werden.',
+    'group_messages_fetched_successfully' => 'Gruppennachrichten erfolgreich geladen.',
+    'fetch_group_messages_failed' => 'Gruppennachrichten konnten nicht geladen werden.',
+    'failed_to_fetch_blocked_users' => 'Blockierte Nutzer konnten nicht geladen werden.',
+    'no_access_to_private_group' => 'Du hast keinen Zugriff auf diese private Gruppe.',
     'not_a_member_of_group' => 'Du bist kein Mitglied dieser Gruppe.',
-    'failed_to_validate_group_access' => 'Zugriff auf die Gruppe konnte nicht überprüft werden.',
-    // new added text end
-
-    'validation_error' => 'Validierungsfehler',
-    'accepted_your_friend_request' => 'hat deine Freundschaftsanfrage akzeptiert.',
-
-    'account_blocked_contact_admin' => 'Dein Konto wurde gesperrt. Bitte kontaktieren du den Administrator.',
-
-    'account_rejected_message' => 'Wir bedauern, dir mitteilen zu müssen, dass Dein Konto abgelehnt wurde. Bitte kontaktieren du den Support für weitere Informationen.',
-
-    'add_member_failed' => 'Mitglied konnte nicht zur Gruppe hinzugefügt werden.',
-
-    'admin_cannot_block_self' => 'Der Administrator kann sich nicht selbst blockieren oder entsperren.',
-
-    'admin_cannot_leave_group' => 'Der Administrator kann die Gruppe nicht verlassen. Bitte weisen du vorher einen anderen Administrator zu.',
-
-    'admin_cannot_remove_self' => 'Der Administrator kann sich nicht selbst aus der Gruppe entfernen.',
-
-    'all_notification' => 'Alle Benachrichtigungen.',
-
-    'all_rights_reserved' => 'Alle Rechte vorbehalten.',
-
-    'already_member_group' => 'Bereits Mitglied dieser Gruppe.',
-
-    'already_reported_group' => 'Du hast diese Gruppe bereits gemeldet.',
-
-    'already_reported_pin' => 'du haben diesen Pin bereits gemeldet.',
-
-    'already_reported_user' => 'Du hast diesen Nutzer bereits gemeldet.',
-
-    'authentication_check_failed' => 'Authentifizierungsprüfung fehlgeschlagen.',
-
-    'bloc_user_not_found' => 'Blockierter Benutzer nicht gefunden.',
-
-    'block_member_failed' => 'Gruppenmitglied konnte nicht blockiert werden.',
-
-    'blocked_group_members_failed' => 'Blockierte Gruppenmitglieder konnten nicht abgerufen werden.',
-
-    'blocked_group_members_fetched' => 'Blockierte Gruppenmitglieder wurden erfolgreich abgerufen.',
-
-    'blocked_users_fetched_successfully' => 'Blockierte Benutzer erfolgreich abgerufen.',
-
-    'boost_plans_retrieved_successfully' => 'Boost-Pläne erfolgreich abgerufen.',
-
-    'booster_activated_successfully' => 'Booster erfolgreich aktiviert.',
-
-    'booster_deactivated_successfully' => 'Booster erfolgreich deaktiviert.',
-
-    'cannot_rejoin_private_group' => 'du können dieser privaten Gruppe nicht erneut beitreten. Nur ein Administrator kann du erneut einladen.',
-
-    'chat_history_failed' => 'Chatverlauf konnte nicht abgerufen werden.',
-
-    'chat_history_retrieved_successfully' => 'Chat-Verlauf erfolgreich abgerufen.',
-
-    'commented_on_post' => 'Jemand hat deinen Pin kommentiert.',
-
-    'commented_on_post_by_user' => ':name hat deinen Pin kommentiert.',
-
-    'contact_message_submitted_successfully' => 'Kontaktnachricht erfolgreich übermittelt.',
-
-    'content_fetched_successfully' => 'Inhalt erfolgreich abgerufen.',
-
-    'content_not_found' => 'Inhalt nicht gefunden.',
-
-    'conversation_deleted_successfully' => 'Alle Konversationsnachrichten erfolgreich gelöscht.',
-
-    'create_group_failed' => 'Gruppe konnte nicht erstellt werden.',
-
-    'data' => 'Daten',
-
-    'database_error_updating_group' => 'Beim Aktualiduren der Gruppe ist ein Datenbankfehler aufgetreten.',
-
-    'delete_all_admin_group_messages_failed' => 'Alle Gruppennachrichten konnten nicht gelöscht werden.',
-
-    'delete_all_conversation_failed' => 'Alle Konversationsnachrichten konnten nicht gelöscht werden.',
-
-    'delete_all_group_messages_failed' => 'Alle Gruppennachrichten konnten nicht gelöscht werden.',
-
-    'delete_group_failed' => 'Gruppe konnte nicht gelöscht werden.',
-
-    'delete_message_failed' => 'Nachricht konnte nicht gelöscht werden.',
-
-    'delete_only_own_message' => 'du können nur deine eigenen Nachrichten löschen.',
-
-    'device_token_stored_successfully' => 'Geräte-Token erfolgreich gespeichert.',
-
-    'document_list_fetched' => 'Dokumentenliste erfolgreich abgerufen.',
-
-    'document_max' => 'Die Dokumentgröße darf 10 MB nicht überschreiten.',
+    'failed_to_validate_group_access' => 'Gruppenzugriff konnte nicht überprüft werden.',
     'new_group_request' => 'Neue Gruppenanfrage',
-    'user_joined_group' => ':name ist Deiner Gruppe „:group“ beigetreten.',
-    'sent_you_a_group_request' => ':name möchte Deiner Gruppe :group beitreten',
-    'you_have_a_new_group_request' => 'möchte Deiner Gruppe :group beitreten',
+    'sent_you_a_group_request' => 'hat dir eine Gruppenanfrage gesendet.',
+    'you_have_a_new_group_request' => 'möchte deiner Gruppe „:group“ beitreten.',
+    'user_joined_group' => ':name ist deiner Gruppe „:group“ beigetreten.',
+    'validation_error' => 'Validierungsfehler',
 
-    'document_mimes' => 'Nur PDF-, DOC-, DOCX-, XLS-, XLSX-, PPT-, PPTX-, TXT-, JPG-, JPEG- und PNG-Dateien sind erlaubt.',
+   'Resend' => 'erneut senden',
+    'Sending' => 'Wird gesendet',
+    'Team' => 'Team',
+    'UserDetails' => 'Nutzer Details.',
+    'accepted_your_friend_request' => 'hat deine Freundschaftsanfrage akzeptiert!',
+    'account_accepted' => 'Dein Konto wurde freigegeben!',
+    'account_blocked_contact_admin' => 'Dein Konto wurde gesperrt. Bitte kontaktiere den Support.',
+    'account_email_message' => 'Die E-Mail-Adresse :email wurde für dein Konto hinterlegt.',
+    'account_rejected' => 'Dein Kontoantrag wurde abgelehnt. Grund: :param',
+    'account_rejected_message' => 'Dein Konto konnte leider nicht freigegeben werden. Bitte kontaktiere den Support.',
+    'add_bonus_sms' => 'Glückwunsch! Du hast einen Bonus von :bonus_amount erhalten.',
+    'add_member_failed' => 'Mitglied konnte nicht zur Gruppe hinzugefügt werden.',
+    'add_message' => ':amount :currency wurden deinem Wallet gutgeschrieben.',
+    'add_sub_store' => 'Not used in Velvet. Please remove this string if it is not required by the app.',
+    'admin_bonus' => 'Glückwunsch! Dir wurde ein Bonus von HTG :amount auf dein Guthaben gutgeschrieben.',
+    'admin_cannot_block_self' => 'Admins können sich nicht selbst blockieren oder entsperren.',
+    'admin_cannot_leave_group' => 'Bevor du die Gruppe verlassen kannst, musst du einen anderen Admin bestimmen.',
+    'admin_cannot_remove_self' => 'Admins können sich nicht selbst aus der Gruppe entfernen.',
+    'admin_success' => 'Registrierung erfolgreich',
+    'all_notification' => 'Alle Benachrichtigungen',
+    'all_rights_reserved' => 'Alle Rechte vorbehalten.',
+    'already_member_group' => 'Du bist bereits Mitglied dieser Gruppe.',
+    'already_reported_group' => 'Du hast diese Gruppe bereits gemeldet.',
+    'already_reported_pin' => 'Du hast diesen Pin bereits gemeldet.',
+    'already_reported_user' => 'Du hast dieses Profil bereits gemeldet.',
+    'an_error_occured' => 'Ein Fehler ist aufgetreten.',
+    'approve_mail_text' => 'Dein Profil wurde erfolgreich freigegeben. Du kannst Velvet jetzt nutzen.',
+    'approve_user_sms' => 'Hallo :store_owner_name, dein Profil wurde erfolgreich freigegeben.',
+    'approved' => 'Nutzer erfolgreich freigegeben.',
+    'authentication_check_failed' => 'Authentifizierung fehlgeschlagen.',
+    'bloc_user_not_found' => 'Blockierter Nutzer nicht gefunden.',
+    'block' => 'Nutzer erfolgreich blockiert.',
+    'block_member_failed' => 'Gruppenmitglied konnte nicht blockiert werden.',
+    'blocked_group_members_failed' => 'Blockierte Gruppenmitglieder konnten nicht geladen werden.',
 
-    'document_not_uploaded' => 'Keine Dokumentdatei hochgeladen.',
-
-    'document_required' => 'Dokumentdatei ist erforderlich.',
-
+   'blocked_group_members_fetched' => 'Blockierte Gruppenmitglieder erfolgreich geladen.',
+    'blocked_users_fetched_successfully' => 'Blockierte Nutzer erfolgreich geladen.',
+    'bonus_added_body' => 'Glückwunsch! Dir wurde ein Bonus von HTG :amount auf dein Guthaben gutgeschrieben.',
+    'bonus_added_title' => 'Bonus hinzugefügt!',
+    'boost_plans_retrieved_successfully' => 'Boost-Pakete erfolgreich geladen.',
+    'booster_activated_successfully' => 'Boost wurde aktiviert.',
+    'booster_deactivated_successfully' => 'Boost erfolgreich deaktiviert.',
+    'cannot_rejoin_private_group' => 'Du kannst dieser privaten Gruppe nicht erneut beitreten. Nur der Admin kann dich erneut einladen.',
+    'change_text' => 'Bitte melde dich mit diesem Passwort an und ändere es danach.',
+    'chat_history_failed' => 'Chatverlauf konnte nicht geladen werden.',
+    'chat_history_retrieved_successfully' => 'Chatverlauf erfolgreich geladen.',
+    'checkEmail' => 'Bitte prüfe deine E-Mail. Wir haben dir ein temporäres Passwort gesendet.',
+    'commented_on_post' => 'Jemand hat deinen Pin kommentiert.',
+    'commented_on_post_by_user' => ':name hat deinen Pin kommentiert.',
+    'commission_added_body' => 'Glückwunsch! Dir wurde eine Provision von HTG :amount auf dein Guthaben gutgeschrieben.',
+    'commission_added_title' => 'Herzlichen Glückwunsch! Du wurdest ausgewählt als ...',
+    'contact_message_submitted_successfully' => 'Nachricht erfolgreich gesendet.',
+    'contact_save' => 'Nachricht erfolgreich gesendet. Wir melden uns so schnell wie möglich bei dir.',
+    'contact_success' => 'Deine Nachricht wurde erfolgreich an unser Support-Team gesendet. Wir melden uns in Kürze bei dir.',
+    'content_fetched_successfully' => 'Inhalte erfolgreich geladen.',
+    'content_not_found' => 'Inhalte nicht gefunden.',
+    'conversation_deleted_successfully' => 'Alle Nachrichten wurden erfolgreich gelöscht.',
+    'create_group_failed' => 'Gruppe konnte nicht erstellt werden.',
+    'daily_luckdraw_mail_txt_1' => 'Gruppe konnte nicht erstellt werden.',
+    'daily_lucky_text2' => 'Not used in Velvet. Please remove this string if it is not required by the app. We dont have a store',
+    'daily_lucky_text3' => 'Der Gewinn wurde deinem Guthaben gutgeschrieben.',
+    'daily_lucky_text4' => 'Bitte melde dich in der App an, um die Details anzusehen.',
+    'daily_luckydraw_body' => ':user hat die tägliche Verlosung gewonnen. Tippe hier für weitere Details.',
+    'daily_luckydraw_title' => 'Gewinner der täglichen Verlosung',
+    'data' => 'Daten',
+    'database_error_updating_group' => 'Beim Aktualisieren der Gruppe ist ein Datenbankfehler aufgetreten.',
+    'dear' => 'Hallo',
+    'dear_admin' => 'Hallo Admin,',
+    
+   'delete_all_admin_group_messages_failed' => 'Gruppennachrichten konnten nicht gelöscht werden.',
+    'delete_all_conversation_failed' => 'Nachrichten konnten nicht gelöscht werden.',
+    'delete_all_group_messages_failed' => 'Gruppennachrichten konnten nicht gelöscht werden.',
+    'delete_group_failed' => 'Gruppe konnte nicht gelöscht werden.',
+    'delete_message_failed' => 'Nachricht konnte nicht gelöscht werden.',
+    'delete_only_own_message' => 'Du kannst nur deine eigenen Nachrichten löschen.',
+    'deposit_transaction_success' => 'Dein Guthaben wurde erfolgreich aufgeladen.',
+    'deposit_w_bal_low' => 'Dein Guthaben reicht nicht aus, um diesen Kauf abzuschließen.',
+    'details' => 'Details',
+    'details_not_found' => 'Die angegebenen Daten wurden nicht gefunden. Bitte versuche es erneut.',
+    'device_token_stored_successfully' => 'Gerätetoken erfolgreich gespeichert.',
+    'document_list_fetched' => 'Dokumente erfolgreich geladen.',
+    'document_max' => 'Die Datei darf maximal 10 MB gross sein.',
+    'document_mimes' => 'Erlaubte Dateiformate: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, JPG, JPEG, PNG.',
+    'document_not_uploaded' => 'Keine Datei hochgeladen.',
+    'document_required' => 'Bitte wähle eine Datei aus.',
     'document_upload_failed' => 'Dokument konnte nicht hochgeladen werden.',
-
-    'document_uploaded' => 'Dokument wurde erfolgreich hochgeladen.',
-
-    'either_group_or_user_required' => 'Entweder group_id oder user_id ist erforderlich.',
-
-    'email_dear_user' => 'Sehr geehrte/r :name,',
-
-    'email_sent_from' => 'Diese E-Mail wurde von :app gesendet',
-
+    'document_uploaded' => 'Dokument erfolgreich hochgeladen.',
+    'either_group_or_user_required' => 'Gruppen-ID oder Nutzer-ID erforderlich.',
+    'emailResendStatus' => 'E-Mail erneut gesendet.',
+    'emailSent' => 'E-Mail erfolgreich gesendet.',
+    'email_dear_user' => 'Hallo :name,',
+    'email_doesnt_exists' => 'Diese E-Mail-Adresse existiert nicht.',
+    'email_msgs' => 'E-Mail erfolgreich bestätigt. Du kannst mit deiner Anmeldung fortfahren.',
+    'email_msgs1' => 'Deine E-Mail-Adresse wurde noch nicht bestätigt. Bitte versuche es erneut.',
+    'email_msgs2' => 'Der Bestätigungslink ist abgelaufen. Bitte fordere einen neuen an.',
+    'email_msgs3' => 'Bestätige deine E-Mail-Adresse.',
+    'email_msgs4' => 'Bitte bestätige deine E-Mail-Adresse über den Button unten.',
+    'email_msgs5' => 'Bestätigungs-E-Mail erneut senden',
+    'email_msgs6' => 'Nach deiner Registrierung wird dein Profil von unserem Team geprüft.',
+    'email_msgs7' => 'Mobilnummer bestätigen',
+    'email_msgs8' => 'Bitte gib den Bestätigungscode ein, der an deine Mobilnummer gesendet wurde.',
+    'email_not_found' => 'E-Mail-Adresse nicht gefunden.',
+    'email_sent_from' => 'Diese E-Mail wurde von :app versendet.',
     'email_thank_you' => 'Vielen Dank!',
+    'email_verified' => 'E-Mail-Adresse bestätigt.',
+    'email_verified_success' => 'E-Mail-Adresse erfolgreich bestätigt.',
+    'email_verify_status_msg' => 'E-Mail-Adresse nicht bestätigt.',
+    'error_mesgs4' => 'Etwas ist schiefgelaufen. Token nicht gefunden.',
+    'error_msgs3' => 'Etwas ist schiefgelaufen.',
+    'error_msgs5' => 'Transaktion nicht gefunden. Zahlung nicht abgeschlossen.',
+    'error_msgs6' => 'Pflichtfelder fehlen. Bitte versuche es erneut.',
+    'error_msgs7' => 'Pflichtfelder fehlen. Bitte versuche es erneut.',
+    'error_msgs8' => 'Deine Zahlung konnte nicht verarbeitet werden. Bitte versuche es erneut.',
+    'error_payment' => 'Etwas ist schiefgelaufen. Transaktion wurde nicht gespeichert.',
+    'errormessage1' => 'Etwas ist schiefgelaufen. Ungültige Gateway-Antwort.',
 
-    'f_a_q_list_fetched_successfully' => 'FAQ-Liste erfolgreich abgerufen.',
-
-    'failed_to_accept_friend_request' => 'Fehler beim Akzeptieren der Freundschaftsanfrage.',
-
-    'failed_to_activate_booster' => 'Booster konnte nicht aktiviert werden.',
-
+   'f_a_q_list_fetched_successfully' => 'FAQ erfolgreich geladen.',
+    'failed_to_accept_friend_request' => 'Kontaktanfrage konnte nicht angenommen werden.',
+    'failed_to_activate_booster' => 'Boost konnte nicht aktiviert werden.',
     'failed_to_add_members' => 'Mitglied(er) konnten nicht zur Gruppe hinzugefügt werden.',
-
     'failed_to_block_group_member' => 'Gruppenmitglied konnte nicht blockiert werden.',
-
-    'failed_to_check_group_name_existence' => 'Überprüfung des Gruppennamens fehlgeschlagen.',
-
-    'failed_to_deactivate_booster' => 'Booster konnte nicht deaktiviert werden.',
-
-    'failed_to_delete_all_group_messages' => 'Alle Gruppennachrichten konnten nicht gelöscht werden.',
-
-    'failed_to_delete_friend_request' => 'Fehler beim Löschen der Freundschaftsanfrage.',
-
+    'failed_to_check_group_name_existence' => 'Gruppenname konnte nicht überprüft werden.',
+    'failed_to_deactivate_booster' => 'Boost konnte nicht deaktiviert werden.',
+    'failed_to_delete_all_group_messages' => 'Gruppennachrichten konnten nicht gelöscht werden.',
+    'failed_to_delete_friend_request' => 'Kontaktanfrage konnte nicht gelöscht werden.',
     'failed_to_delete_group' => 'Gruppe konnte nicht gelöscht werden.',
-
-    'failed_to_delete_group_chat_for_user' => 'Gruppenchat für Dein Konto konnte nicht gelöscht werden.',
-
+    'failed_to_delete_group_chat_for_user' => 'Gruppenchat konnte nicht gelöscht werden.',
     'failed_to_delete_message' => 'Nachricht konnte nicht gelöscht werden.',
-
-    'failed_to_delete_user_details' => 'Fehler beim Löschen der Benutzerdetails.',
-
-    'failed_to_fetch_boost_plans' => 'Boost-Pläne konnten nicht abgerufen werden.',
-
-    'failed_to_fetch_friends_list' => 'Fehler beim Abrufen der Freundesliste.',
-
-    'failed_to_fetch_ghost_plans' => 'Ghost-Pläne konnten nicht abgerufen werden.',
-
-    'failed_to_fetch_group_conversation_detail' => 'Gruppenkonversationsdetails konnten nicht abgerufen werden.',
-
-    'failed_to_fetch_group_media_list' => 'Gruppenmedienliste konnte nicht abgerufen werden.',
-
-    'failed_to_fetch_individual_media_list' => 'Individuelle Medienliste konnte nicht abgerufen werden.',
-
-    'failed_to_fetch_interests' => 'Fehler beim Abrufen der Interessen.',
-
-    'failed_to_fetch_latest_group_messages' => 'Neueste Gruppennachrichten konnten nicht abgerufen werden.',
-
-    'failed_to_fetch_latest_individual_messages' => 'Neueste Einzelnachrichten konnten nicht abgerufen werden.',
-
-    'failed_to_fetch_map_users' => 'Kartenbenutzer konnten nicht abgerufen werden.',
-
-    'failed_to_fetch_member_permission' => 'Berechtigung für Mitglied konnte nicht abgerufen werden.',
-
-    'failed_to_fetch_notifications' => 'Fehler beim Abrufen der Benachrichtigungen.',
-
-    'failed_to_fetch_pending_requests' => 'Ausstehende Anfragen konnten nicht abgerufen werden.',
-
-    'failed_to_fetch_pin_plans' => 'Die PIN-Pläne konnten nicht abgerufen werden.',
-
-    'failed_to_fetch_sent_message_users' => 'Fehler beim Abrufen der Benutzer mit gesendeten Nachrichten.',
-
-    'failed_to_fetch_sent_requests' => 'Gesendete Anfragen konnten nicht abgerufen werden.',
-
-    'failed_to_fetch_user_details' => 'Benutzerdetails konnten nicht abgerufen werden.',
-
-    'failed_to_fetch_users' => 'Benutzer konnten nicht abgerufen werden.',
-
+    'failed_to_fetch_boost_plans' => 'Boost-Pakete konnten nicht geladen werden.',
+    'failed_to_fetch_friends_list' => 'Kontakte konnten nicht geladen werden.',
+    'failed_to_fetch_ghost_plans' => 'Ghost-Mode-Pakete konnten nicht geladen werden.',
+    'failed_to_fetch_ghost_plans_1' => 'Ghost-Mode-Pakete konnten nicht geladen werden.',
+    'failed_to_fetch_group_conversation_detail' => 'Gruppenunterhaltung konnte nicht geladen werden.',
+    'failed_to_fetch_group_media_list' => 'Gruppenmedien konnten nicht geladen werden.',
+    'failed_to_fetch_individual_media_list' => 'Medien konnten nicht geladen werden.',
+    'failed_to_fetch_interests' => 'Interessen konnten nicht geladen werden.',
+    'failed_to_fetch_latest_group_messages' => 'Neueste Gruppennachrichten konnten nicht geladen werden.',
+    'failed_to_fetch_latest_individual_messages' => 'Neueste Nachrichten konnten nicht geladen werden.',
+    'failed_to_fetch_map_users' => 'Nutzer auf der Map konnten nicht geladen werden.',
+    'failed_to_fetch_member_permission' => 'Mitgliederberechtigungen konnten nicht geladen werden.',
+    'failed_to_fetch_notifications' => 'Benachrichtigungen konnten nicht geladen werden.',
+    'failed_to_fetch_pending_requests' => 'Offene Anfragen konnten nicht geladen werden.',
+    'failed_to_fetch_pin_plans' => 'Pin-Pakete konnten nicht geladen werden.',
+    'failed_to_fetch_sent_message_users' => 'Nutzer mit gesendeten Nachrichten konnten nicht geladen werden.',
+    'failed_to_fetch_sent_requests' => 'Gesendete Anfragen konnten nicht geladen werden.',
+    'failed_to_fetch_users' => 'Nutzer konnten nicht geladen werden.',
     'failed_to_leave_group' => 'Gruppe konnte nicht verlassen werden.',
-
     'failed_to_remove_member_from_group' => 'Mitglied konnte nicht aus der Gruppe entfernt werden.',
-
     'failed_to_report_group' => 'Gruppe konnte nicht gemeldet werden.',
-
     'failed_to_report_pin' => 'Pin konnte nicht gemeldet werden.',
-
-    'failed_to_retrieve_chat_history' => 'Fehler beim Abrufen des Chat-Verlaufs.',
-
-    'failed_to_retrieve_group_chat_history' => 'Fehler beim Abrufen des Gruppenchat-Verlaufs.',
-
-    'failed_to_retrieve_groups' => 'Gruppen konnten nicht abgerufen werden.',
-
-    'failed_to_send_friend_request' => 'Fehler beim Senden der Freundschaftsanfrage.',
-
+    'failed_to_retrieve_chat_history' => 'Chatverlauf konnte nicht geladen werden.',
+    'failed_to_retrieve_group_chat_history' => 'Gruppenchat-Verlauf konnte nicht geladen werden.',
+    'failed_to_retrieve_groups' => 'Gruppen konnten nicht geladen werden.',
+    'failed_to_send_friend_request' => 'Anfrage konnte nicht gesendet werden.',
     'failed_to_send_message' => 'Nachricht konnte nicht gesendet werden.',
-
-    'failed_to_send_otp' => 'OTP konnte nicht gesendet werden. Bitte versuchen du es später erneut.',
-
-    'failed_to_submit_contact_message' => 'Kontaktnachricht konnte nicht übermittelt werden.',
-
+    'failed_to_send_otp' => 'Bestätigungscode konnte nicht gesendet werden. Bitte versuche es später erneut.',
+    'failed_to_submit_contact_message' => 'Nachricht konnte nicht gesendet werden.',
     'failed_to_unblock_group_member' => 'Gruppenmitglied konnte nicht entsperrt werden.',
+    'failed_to_unblock_user' => 'Nutzer konnte nicht entsperrt werden.',
+    'failed_to_update_group' => 'Gruppe konnte nicht aktualisiert werden.',
+    'failed_to_update_group_member_status' => 'Mitgliedsstatus konnte nicht aktualisiert werden.',
+    'failed_to_update_member_permission' => 'Mitgliederberechtigung konnte nicht aktualisiert werden.',
+    'failed_to_update_permissions_for_all' => 'Berechtigungen konnten nicht aktualisiert werden.',
+    'failed_to_update_user_data' => 'Nutzerdaten konnten nicht aktualisiert werden.',
+    'fetch_group_conversations_failed' => 'Gruppenunterhaltungen konnten nicht geladen werden.',
+    'fetch_group_details_failed' => 'Gruppendetails konnten nicht geladen werden.',
+    'fetch_group_member_permission_failed' => 'Mitgliederberechtigung konnte nicht geladen werden.',
+    'fetch_notification_status_failed' => 'Benachrichtigungsstatus konnte nicht geladen werden.',
+    'forget_pass_success_msg' => 'Wir haben dir ein temporäres Passwort per E-Mail gesendet. Bitte prüfe dein Postfach.',
+    'forget_pass_success_msg_email' => 'Bitte prüfe deine E-Mails.',
+    'forget_pass_success_msg_sms' => 'Bitte prüfe deine SMS.',
+    'forgotPassword' => 'Passwort vergessen',
 
-    'failed_to_unblock_user' => 'Benutzer konnte nicht entsperrt werden.',
-
-    'failed_to_update_group' => 'Gruppe konnte nicht aktualidurt werden.',
-
-    'failed_to_update_group_member_status' => 'Status des Gruppenmitglieds konnte nicht aktualidurt werden.',
-
-    'failed_to_update_member_permission' => 'Berechtigung für Mitglied konnte nicht aktualidurt werden.',
-
-    'failed_to_update_permissions_for_all' => 'Berechtigungen für alle Mitglieder konnten nicht aktualidurt werden.',
-
-    'failed_to_update_user_data' => 'Benutzerdaten konnten nicht aktualidurt werden.',
-
-    'fetch_group_conversations_failed' => 'Gruppenkonversationen konnten nicht abgerufen werden.',
-
-    'fetch_group_details_failed' => 'Gruppendetails konnten nicht abgerufen werden.',
-
-    'fetch_group_member_permission_failed' => 'Gruppenmitglied-Berechtigung konnte nicht abgerufen werden.',
-
-    'fetch_notification_status_failed' => 'Benachrichtigungsstatus konnte nicht abgerufen werden.',
-
-    'forgot_password_message' => 'du haben den Prozess zum Zurücksetzen des Passworts gestartet.',
-
+   'forgot_password_admin_sms' => 'Hallo Admin, dein neues temporäres Passwort lautet: :password.',
+    'forgot_password_message' => 'Du hast den Vorgang „Passwort vergessen“ gestartet.',
     'forgot_password_subject' => 'Passwort vergessen',
-
-    'friend_request_accepted' => 'Freundschaftsanfrage angenommen.',
-
-    'friend_request_accepted_successfully' => 'Freundschaftsanfrage erfolgreich angenommen.',
-
-    'friend_request_already_sent' => 'Freundschaftsanfrage bereits gesendet.',
-
-    'friend_request_cancelled' => 'Freundschaftsanfrage abgebrochen.',
-
-    'friend_request_deleted_successfully' => 'Freundschaftsanfrage erfolgreich gelöscht.',
-
-    'friend_request_not_found_or_already_processed' => 'Freundschaftsanfrage nicht gefunden oder bereits bearbeitet.',
-
-    'friend_request_rejected' => 'Eine Freundschaftsanfrage wurde abgelehnt.',
-
-    'friend_request_rejected_by_user' => ':name hat die Freundschaftsanfrage abgelehnt.',
-
-    'friend_request_sent_successfully' => 'Freundschaftsanfrage erfolgreich gesendet.',
-
-    'friends_list_fetched_successfully' => 'Freundesliste erfolgreich abgerufen.',
-
-    'friendship_not_found' => 'Freundschaft nicht gefunden.',
-
-    'ghost_plans_retrieved_successfully' => 'Ghost-Pläne erfolgreich abgerufen.',
-
-    'greeting_message' => 'Hallo, :name',
-
-    'group_chat_deleted_for_user' => 'Gruppenchat wurde nur für Dein Konto gelöscht.',
-
-    'group_chat_history_failed' => 'Gruppen-Chatverlauf konnte nicht abgerufen werden.',
-
-    'group_chat_history_retrieved_successfully' => 'Gruppenchat-Verlauf erfolgreich abgerufen.',
-
+    'friend_request_accepted' => 'Anfrage angenommen.',
+    'friend_request_accepted_successfully' => 'Anfrage erfolgreich angenommen.',
+    'friend_request_already_sent' => 'Anfrage wurde bereits gesendet.',
+    'friend_request_cancelled' => 'Anfrage gelöscht.',
+    'friend_request_deleted_successfully' => 'Anfrage erfolgreich gelöscht.',
+    'friend_request_not_found_or_already_processed' => 'Anfrage nicht gefunden oder bereits bearbeitet.',
+    'friend_request_rejected' => 'Anfrage wurde abgelehnt.',
+    'friend_request_rejected_by_user' => ':name hat deine Anfrage abgelehnt.',
+    'friend_request_sent_successfully' => 'Anfrage erfolgreich gesendet.',
+    'friends_list_fetched_successfully' => 'Kontakte erfolgreich geladen.',
+    'friendship_not_found' => 'Verbindung nicht gefunden.',
+    'game_not_found' => 'Spiel nicht gefunden.',
+    'get_back_to_website' => 'Zur Website zurückkehren.',
+    'ghost_plans_retrieved_successfully' => 'Ghost-Mode-Pakete erfolgreich geladen.',
+    'greeting_message' => 'Hallo :name',
+    'group_chat_deleted_for_user' => 'Der Gruppenchat wurde nur für dein Konto gelöscht.',
+    'group_chat_history_failed' => 'Gruppenchat-Verlauf konnte nicht geladen werden.',
+    'group_chat_history_retrieved_successfully' => 'Gruppenchat-Verlauf erfolgreich geladen.',
     'group_created_successfully' => 'Gruppe erfolgreich erstellt.',
-
     'group_deleted_successfully' => 'Gruppe erfolgreich gelöscht.',
-
-    'group_details_fetched' => 'Gruppendetails erfolgreich abgerufen.',
-
-    'group_id_and_permission_required' => 'Gruppen-ID und is_member_permission sind erforderlich.',
-
-    'group_id_and_user_id_required' => 'Gruppen-ID und Benutzer-ID sind erforderlich.',
-
-    'group_id_and_user_ids_required' => 'Gruppen-ID und user_ids-Array sind erforderlich.',
-
+    'group_details_fetched' => 'Gruppendetails erfolgreich geladen.',
+    'group_id_and_permission_required' => 'Gruppen-ID und Mitgliederberechtigung sind erforderlich.',
+    'group_id_and_user_id_required' => 'Gruppen-ID und Nutzer-ID sind erforderlich.',
+    'group_id_and_user_ids_required' => 'Gruppen-ID und Nutzer-IDs sind erforderlich.',
     'group_id_required' => 'Gruppen-ID ist erforderlich.',
-
-    'group_media_list_failed' => 'Gruppenmedienliste konnte nicht abgerufen werden.',
-
-    'group_messages_deleted_by_admin' => 'Alle Nachrichten in dieser Gruppe wurden vom Administrator dauerhaft gelöscht.',
-
-    'group_messages_members_fetched' => 'Gruppennachrichten und Mitglieder erfolgreich abgerufen.',
-
+    'group_media_list_failed' => 'Gruppenmedien konnten nicht geladen werden.',
+    'group_messages_deleted_by_admin' => 'Alle Nachrichten in dieser Gruppe wurden vom Admin dauerhaft gelöscht.',
+    'group_messages_members_fetched' => 'Gruppennachrichten und Mitglieder erfolgreich geladen.',
     'group_name_and_member_ids_required' => 'Gruppenname und Mitglieder-IDs sind erforderlich.',
-
-    'group_name_available' => 'Der Gruppenname ist verfügbar.',
-
-    'group_name_checked' => 'Gruppenname erfolgreich geprüft.',
-
-    'group_name_taken' => 'Der Gruppenname ist bereits vergeben.',
-
+    'group_name_available' => 'Gruppenname ist verfügbar.',
+    'group_name_checked' => 'Verfügbarkeit des Gruppennamens erfolgreich geprüft.',
+    'group_name_taken' => 'Gruppenname ist bereits vergeben.',
     'group_not_found' => 'Gruppe nicht gefunden.',
-
-    'group_permissions_updated' => 'Berechtigungen für alle Gruppenmitglieder erfolgreich aktualidurt.',
-
+    'group_permissions_updated' => 'Berechtigungen für alle Gruppenmitglieder erfolgreich aktualisiert.',
     'group_reason_report_type_required' => 'Gruppen-ID, Grund und Meldungstyp sind erforderlich.',
-
     'group_reported_successfully' => 'Gruppe erfolgreich gemeldet.',
-
-    'group_updated_successfully' => 'Gruppe erfolgreich aktualidurt.',
-
-    'group_user_action_required' => 'Gruppen-ID, Benutzer-ID und Aktion sind erforderlich.',
-
-    'group_user_permission_required' => 'Gruppen-ID, Benutzer-ID und is_member_permission sind erforderlich.',
-
-    'groups_fetched_successfully' => 'Gruppen erfolgreich abgerufen.',
-
+    'group_updated_successfully' => 'Gruppe erfolgreich aktualisiert.',
+    'group_user_action_required' => 'Gruppen-ID, Nutzer-ID und Aktion sind erforderlich.',
+    'group_user_permission_required' => 'Gruppen-ID, Nutzer-ID und Mitgliederberechtigung sind erforderlich.',
+    'groups_fetched_successfully' => 'Gruppen erfolgreich geladen.',
     'groups_retrieved_successfully' => 'Gruppen erfolgreich abgerufen.',
-
     'handle_join_request_failed' => 'Beitrittsanfrage konnte nicht verarbeitet werden.',
-
-    'image_upload_failed' => 'Bild-Upload fehlgeschlagen.',
-
     'image_uploaded_successfully' => 'Bild erfolgreich hochgeladen.',
-
     'images_uploaded_successfully' => 'Bilder erfolgreich hochgeladen.',
-
-    'individual_media_list_failed' => 'Individuelle Medienliste konnte nicht abgerufen werden.',
-
-    'interests_fetched_successfully' => 'Interessen erfolgreich abgerufen.',
-
+    'important_field' => 'Pflichtfelder fehlen.',
+    'individual_media_list_failed' => 'Medien konnten nicht geladen werden.',
+    'insufficient_balance' => 'Ungültiger Betrag. Das Auszahlungslimit beträgt :amount.',
+    'interests_fetched_successfully' => 'Interessen erfolgreich geladen.',
     'internal_server_error' => 'Interner Serverfehler.',
-
-    'interval_settings_retrieved_successfully' => 'Intervalleinstellungen erfolgreich abgerufen.',
-
+    'interval_settings_retrieved_successfully' => 'Intervalleinstellungen erfolgreich geladen.',
+    'invalidLink' => 'Ungültiger Bestätigungslink.',
     'invalid_action' => 'Ungültige Aktion.',
 
-    'invalid_field' => 'Ungültiges Feld: :field',
-
-    'invalid_file_upload' => 'Ungültiger Datei-Upload.',
-
-    'invalid_group_field_value' => 'Ungültiger Wert für ein oder mehrere Felder. Bitte Eingabe prüfen.',
-
-    'invalid_otp_or_user_not_found' => 'Ungültiges OTP oder Benutzer nicht gefunden.',
-
-    'invalid_phone_number' => 'Ungültige Telefonnummer. Bitte geben du eine gültige Mobilnummer mit Ländervorwahl ein.',
-
-    'invalid_type_parameter' => 'Ungültiger Typ-Parameter.',
-
+  'invalid_field' => 'Ungültiges Feld: :field',
+    'invalid_file_upload' => 'Ungültiger Dateiupload.',
+    'invalid_group_field_value' => 'Mindestens ein Feld enthält ungültige Werte. Bitte überprüfe deine Eingaben.',
+    'invalid_login' => 'Ungültige Anmeldedaten.',
+    'invalid_otp' => 'Ungültiger Bestätigungscode.',
+    'invalid_otp_or_user_not_found' => 'Ungültiger Bestätigungscode oder Nutzer nicht gefunden.',
+    'invalid_phone' => 'Ungültige Mobilnummer.',
+    'invalid_phone_number' => 'Ungültige Telefonnummer. Bitte gib eine gültige Mobilnummer mit Ländervorwahl ein.',
+    'invalid_round' => 'Not used in Velvet. Please remove this string if it is not required by the app.',
+    'invalid_storepin' => 'Ungültige Store-PIN.',
+    'invalid_type_parameter' => 'Ungültiger Parametertyp.',
     'join_group_failed' => 'Beitritt zur Gruppe fehlgeschlagen.',
-
-    'join_request_accepted' => 'Beitrittsanfrage akzeptiert.',
-
+    'join_request_accepted' => 'Beitrittsanfrage angenommen.',
     'join_request_rejected' => 'Beitrittsanfrage abgelehnt.',
-
-    'join_request_sent' => 'Beitrittsanfrage an den Gruppenadministrator gesendet.',
-
+    'join_request_sent' => 'Beitrittsanfrage an den Gruppenadmin gesendet.',
     'joined_group_successfully' => 'Gruppe erfolgreich beigetreten.',
-
-    'latest_group_messages_fetched' => 'Neueste Gruppennachrichten erfolgreich abgerufen.',
-
-    'latest_individual_messages_fetched' => 'Neueste Einzelnachrichten erfolgreich abgerufen.',
-
-    'latest_message_failed' => 'Neueste Nachricht konnte nicht abgerufen werden.',
-
-    'leave_group_failed' => 'Gruppe konnte nicht verlassen werden.',
-
+    'kindly' => 'Liebe Grüsse',
+    'latest_group_messages_fetched' => 'Neueste Gruppennachrichten erfolgreich geladen.',
+    'latest_individual_messages_fetched' => 'Neueste Nachrichten erfolgreich geladen.',
+    'latest_message_failed' => 'Neueste Nachricht konnte nicht geladen werden.',
+    'leave_group_failed' => 'Neueste Nachricht konnte nicht geladen werden.',
     'left_group_successfully' => 'Gruppe erfolgreich verlassen.',
-
-    'liked_post' => 'Jemand hat deinen Beitrag geliked.',
-
-    'liked_post_by_user' => ':name hat deinen Beitrag geliked.',
-
-    'user_new_post' => ':name hat einen neuen Pin gepostet.',
-
-    'liked_users_fetched_successfully' => 'Liste der Benutzer, denen dies gefällt, erfolgreich abgerufen.',
-
-    'link_list_fetched' => 'Linkliste erfolgreich abgerufen.',
-
-    'location_consent_updated_successfully' => 'Standort-Einwilligung erfolgreich aktualidurt.',
-
-    'location_updated_successfully' => 'Standort erfolgreich aktualidurt.',
-
-    'login_admin_panel' => 'Im Admin-Panel anmelden',
-
-    'map_users_fetched_successfully' => 'Kartenbenutzer erfolgreich abgerufen.',
-
-    'media_list_fetched' => 'Medienliste erfolgreich abgerufen.',
-
+    'liked_post' => 'Jemandem gefällt dein Pin.',
+    'liked_post_by_user' => ':name gefällt dein Pin.',
+    'user_new_post' => ':name hat einen neuen Pin erstellt.',
+    'liked_users_fetched_successfully' => 'Nutzern, denen Pins gefallen, erfolgreich geladen.',
+    'linkExpiredStatus' => 'Dieser Link ist abgelaufen.',
+    'link_list_fetched' => 'Links erfolgreich geladen.',
+    'location_consent_updated_successfully' => 'Standortfreigabe erfolgreich aktualisiert.',
+    'location_updated_successfully' => 'Standort erfolgreich aktualisiert.',
+    'login_admin_panel' => 'Zum Admin-Bereich anmelden.',
+    'login_success' => 'Erfolgreich angemeldet.',
+    'logout' => 'Abmelden.',
+    'low_bal_to_play_mainstore' => 'Dein Guthaben reicht nicht aus, um teilzunehmen.',
+    'low_bal_to_play_substore' => 'Dein Guthaben reicht nicht aus. Bitte lade es auf.',
+    'lucky_draw_sms' => 'Hallo :store_owner_name, du hast den Gewinner der Verlosung bei :app_name ausgewählt.',
+    'lucky_draw_sms_solo' => 'Der Gewinn wurde deinem Guthaben gutgeschrieben. Melde dich in der App an, um die Details anzusehen.',
+    'lucky_draw_sms_store' => 'Not used in Velvet. Please remove this string if it is not required by the app. We dont have a store.',
+    'map_users_fetched_successfully' => 'Nutzer auf der Karte erfolgreich geladen.',
+    'media_list_fetched' => 'Medien erfolgreich geladen.',
     'member_blocked_successfully' => 'Gruppenmitglied erfolgreich blockiert.',
-
-    'member_permission_fetched' => 'Berechtigung für Gruppenmitglied erfolgreich abgerufen.',
-
-    'member_permission_updated' => 'Berechtigung für Gruppenmitglied erfolgreich aktualidurt.',
-
+    'member_permission_fetched' => 'Berechtigungen für Gruppenmitglied erfolgreich geladen.',
+    'member_permission_updated' => 'Berechtigungen für Gruppenmitglied erfolgreich aktualisiert.',
     'member_removed_successfully' => 'Mitglied erfolgreich aus der Gruppe entfernt.',
-
     'member_unblocked_successfully' => 'Gruppenmitglied erfolgreich entsperrt.',
-
     'members_added_successfully' => 'Mitglieder erfolgreich zur Gruppe hinzugefügt.',
-
     'message_deleted_successfully' => 'Nachricht erfolgreich gelöscht.',
-
     'message_not_found' => 'Nachricht nicht gefunden.',
 
-    'message_sent_successfully' => 'Nachricht erfolgreich gesendet.',
-
+   'message_sent_successfully' => 'Nachricht erfolgreich gesendet.',
+    'monthly_luckydraw_body' => ':user hat die monatliche Verlosung gewonnen. Tippe hier, um die Details anzusehen!',
+    'monthly_luckydraw_title' => 'Gewinner der monatlichen Verlosung',
     'new_comment_title' => 'Neuer Kommentar',
-
-    'new_friend_request' => 'Neue Freundschaftsanfrage',
-
+    'new_friend_request' => 'Neue Anfrage',
     'new_like_title' => 'Neues Like',
-
-    'new_pin_title' => 'Neues Pin',
-
+    'new_pin_title' => 'Neuer Pin',
     'new_message_body' => 'Du hast eine neue Nachricht.',
-
     'new_message_body_by_user' => ':name hat dir eine Nachricht gesendet.',
-
     'new_message_title' => 'Neue Nachricht',
-
-    'no_access_private_group' => 'du haben keinen Zugriff auf diese private Gruppe.',
-
-    'no_chat_found_for_notification' => 'Kein Chat zum Aktualiduren des Benachrichtigungsstatus gefunden.',
-
-    'no_new_members_added' => 'Keine neuen Mitglieder wurden hinzugefügt. Alle Benutzer sind bereits Mitglieder.',
-
+    'no_access_private_group' => 'Du hast keinen Zugriff auf diese private Gruppe.',
+    'no_chat_found_for_notification' => 'Kein Chat gefunden, um den Benachrichtigungsstatus zu aktualisieren.',
+    'no_data_found' => 'Keine Daten gefunden.',
+    'no_images_uploaded' => 'Keine Bilder hochgeladen.',
+    'no_new_members_added' => 'Es wurden keine neuen Mitglieder hinzugefügt. Alle Nutzer sind bereits Mitglieder.',
     'no_notifications_found_to_delete' => 'Keine Benachrichtigungen zum Löschen gefunden.',
-
-    'no_subinterests_available_for_the_selected_interest' => 'Keine Unterinteressen für das ausgewählte Interesse verfügbar.',
-
-    'no_valid_fields_for_update' => 'Keine gültigen Felder zur Aktualidurung angegeben.',
-
+    'no_subinterests_available_for_the_selected_interest' => 'Für dieses Interesse sind keine Unterinteressen verfügbar.',
+    'no_valid_fields_for_update' => 'Keine gültigen Felder zur Aktualisierung angegeben.',
+    'notExist' => 'Diese E-Mail-Adresse ist nicht registriert. Bitte erstelle ein Konto.',
+    'nothing_to_update' => 'Keine Änderungen vorhanden.',
+    'notification_not_found' => 'Keine Benachrichtigungen gefunden.',
+    'notification_not_sent' => 'Benachrichtigung konnte nicht gesendet werden.',
     'notification_settings_saved' => 'Benachrichtigungseinstellungen gespeichert.',
-
-    'notification_status_fetched' => 'Benachrichtigungsstatus erfolgreich abgerufen.',
-
-    'notification_status_updated' => 'Benachrichtigungsstatus erfolgreich aktualidurt.',
-
+    'notification_status_fetched' => 'Benachrichtigungsstatus erfolgreich geladen.',
+    'notification_status_updated' => 'Benachrichtigungsstatus erfolgreich aktualisiert.',
+    'notification_success' => 'Benachrichtigung erfolgreich entfernt.',
     'notifications_deleted_successfully' => 'Benachrichtigungen erfolgreich gelöscht.',
-
-    'notifications_fetched_successfully' => 'Benachrichtigungen erfolgreich abgerufen.',
-
-    'only_admin_add_members' => 'Nur der Gruppenadministrator kann Mitglieder hinzufügen.',
-
-    'only_admin_delete_all_group_messages' => 'Nur der Gruppenadministrator kann alle Gruppennachrichten löschen.',
-
-    'only_admin_delete_group' => 'Nur der Gruppenadministrator kann die Gruppe löschen.',
-
-    'only_admin_edit_group' => 'Nur der Gruppenadministrator kann die Gruppe bearbeiten.',
-
-    'only_admin_handle_requests' => 'Nur der Gruppenadministrator kann Beitrittsanfragen bearbeiten.',
-
-    'only_admin_perform_action' => 'Nur der Gruppenadministrator kann diese Aktion ausführen.',
-
-    'only_admin_remove_members' => 'Nur der Gruppenadministrator kann Mitglieder entfernen.',
-
-    'only_admin_update_permissions' => 'Nur der Gruppenadministrator kann Berechtigungen aktualiduren.',
-
-    'only_admin_view_permissions' => 'Nur der Gruppenadministrator kann Berechtigungen anzeigen.',
-
-    'otp_expired_request_new' => 'Der OTP-Code ist abgelaufen. Bitte fordern du einen neuen OTP an.',
-
-    'otp_login_registration' => 'Dein OTP für Login/Registrierung lautet :otp. Er ist 10 Minuten gültig. Teilen du diesen Code mit niemandem.',
-
-    'otp_sent_to_phone' => 'Der OTP-Code wurde an deine Telefonnummer gesendet.',
-
-    'password_reset_email_content' => 'Inhalt der E-Mail zum Zurücksetzen des Passworts.',
-
-    'password_reset_not_requested' => 'Wenn du diese Passwortzurücksetzung nicht angefordert haben, kontaktieren du bitte sofort den Support.',
-
-    'password_reset_request' => 'Anfrage zum Zurücksetzen des Passworts',
-
-    'pending_requests_fetched_successfully' => 'Ausstehende Anfragen wurden erfolgreich abgerufen.',
-
+    'notifications_fetched_successfully' => 'Benachrichtigungen erfolgreich geladen.',
+    'old_pass_not_match' => 'Das eingegebene aktuelle Passwort ist falsch. Bitte überprüfe deine Eingabe.',
+    'only_admin_add_members' => 'Nur der Gruppenadmin kann Mitglieder hinzufügen.',
+    'only_admin_delete_all_group_messages' => 'Nur der Gruppenadmin kann alle Gruppennachrichten löschen.',
+    'only_admin_delete_group' => 'Nur der Gruppenadmin kann die Gruppe löschen.',
+    'only_admin_edit_group' => 'Nur der Gruppenadmin kann die Gruppe bearbeiten.',
+    'only_admin_handle_requests' => 'Nur der Gruppenadmin kann Beitrittsanfragen verwalten.',
+    'only_admin_perform_action' => 'Nur der Gruppenadmin kann diese Aktion ausführen.',
+    'only_admin_remove_members' => 'Nur der Gruppenadmin kann Mitglieder entfernen.',
+    'only_admin_update_permissions' => 'Nur der Gruppenadmin kann Berechtigungen aktualisieren.',
+    'only_admin_view_permissions' => 'Nur der Gruppenadmin kann Berechtigungen einsehen.',
+    'otp_expired_request_new' => 'Der Bestätigungscode ist abgelaufen. Bitte fordere einen neuen an.',
+    'otp_login_registration' => 'Dein Bestätigungscode für die Anmeldung/Registrierung lautet: :otp. Er ist 10 Minuten gültig. Teile ihn mit niemandem.',
+    'otp_sent_to_phone' => 'Der Bestätigungscode wurde an deine Mobilnummer gesendet.',
+    'otp_success' => 'Otp sent successfully.',
+    'otp_verified' => 'Bestätigungscode erfolgreich verifiziert.',
+    'password_changed' => 'Dein Passwort wurde erfolgreich geändert. Du kannst dich jetzt mit deinem neuen Passwort anmelden.',
+    'password_reset_email_content' => 'Inhalt der Passwort-Zurücksetzen-E-Mail.',
+    'password_reset_not_requested' => 'Falls du diese Passwortzurücksetzung nicht angefordert hast, kontaktiere bitte umgehend den Support.',
+    'password_reset_request' => 'Passwort zurücksetzen',
+    'payment_error' => 'Fehler bei der Zahlung: :message',
+    'payout_already_exists' => 'Eine Auszahlung wird bereits bearbeitet. Du kannst derzeit keine weitere Auszahlung anfordern.',
+    'payout_bank_success' => 'Auszahlung erfolgreich erstellt. Wir benachrichtigen dich, sobald sie bearbeitet wurde.',
+    'payout_message' => 'Bankauszahlung HTG: :amount',
+    'payout_rejected_body' => 'Deine Auszahlung von HTG :amount wurde abgelehnt. Grund: :reason',
+    'payout_rejected_title' => 'Auszahlung abgelehnt',
+    'pending_requests_fetched_successfully' => 'Offene Anfragen erfolgreich geladen.',
+    'phone_not_verify_status' => 'Mobilnummer nicht verifiziert.',
     'phone_number_cannot_receive_sms' => 'Diese Telefonnummer kann keine SMS empfangen.',
-
     'phone_verified_successfully' => 'Telefonnummer erfolgreich verifiziert.',
-
     'pin_id_required' => 'Pin-ID und Meldungstyp sind erforderlich.',
-
-    'pin_like_updated_successfully' => 'Pin-Like erfolgreich aktualidurt.',
-
+    'pin_like_updated_successfully' => 'Pin-Like erfolgreich aktualisiert.',
     'pin_mark_comment_deleted_successfully' => 'Pin-Kommentar erfolgreich gelöscht.',
-
-    'pin_mark_comment_fetched_successfully' => 'Pin-Markierungskommentar erfolgreich abgerufen.',
-
-    'pin_mark_comment_not_found' => 'Pin-Markierungskommentar nicht gefunden.',
-
-    'pin_mark_comments_fetched_successfully' => 'Pin-Markierungskommentare erfolgreich abgerufen.',
-
+    'pin_mark_comment_fetched_successfully' => 'Pin-Kommentare erfolgreich geladen.',
+    'pin_mark_comment_not_found' => 'Pin-Kommentar nicht gefunden.',
+    'pin_mark_comments_fetched_successfully' => 'Pin-Kommentare erfolgreich geladen.',
     'pin_mark_deleted_successfully' => 'Pin-Markierung erfolgreich gelöscht.',
-
-    'pin_mark_fetched_successfully' => 'Pin-Markierung erfolgreich abgerufen.',
-
+    'pin_mark_fetched_successfully' => 'Pin-Markierungen erfolgreich geladen.',
     'pin_mark_not_found' => 'Pin-Markierung nicht gefunden.',
-
-    'pin_marks_fetched_successfully' => 'Pin-Markierungen erfolgreich abgerufen.',
-
-    'pin_plans_retrieved_successfully' => 'Die Pin-Pläne wurden erfolgreich abgerufen.',
-
+    'pin_marks_fetched_successfully' => 'Pin-Markierungen erfolgreich geladen.',
+    'pin_plans_retrieved_successfully' => 'Pin-Pakete erfolgreich geladen.',
     'pin_reported_successfully' => 'Pin erfolgreich gemeldet.',
+    'plans_updated_successfully' => 'Pakete erfolgreich aktualisiert.',
+    'prizeStatus_name' => 'Gewinner',
+    'profileUpdate' => 'Profil erfolgreich aktualisiert.',
 
-    'plans_updated_successfully' => 'Pläne erfolgreich aktualidurt.',
-
-    'profile_completed_successfully' => 'Profil erfolgreich vervollständigt.',
-
-    'profile_completion_failed' => 'Profilvervollständigung fehlgeschlagen.',
-
+   'profile_completed_successfully' => 'Profil erfolgreich vervollständigt.',
     'profile_updated_successfully' => 'Profil erfolgreich aktualisiert.',
-
-    'receiver_user_does_not_exist' => 'Der Empfänger existiert nicht.',
-
-    'registration_failed_try_later' => 'Registrierung fehlgeschlagen. Bitte versuchen du es später erneut.',
-
+    'receiver_user_does_not_exist' => 'Empfänger existiert nicht.',
+    'referal_trans_message' => 'HTG :amount durch Empfehlungscode erhalten.',
+    'registration_failed_try_later' => 'Registrierung fehlgeschlagen. Bitte versuche es später erneut.',
+    'reject' => 'Nutzer erfolgreich abgelehnt.',
+    'reject_text1' => 'Wir bedauern, dir mitteilen zu müssen, dass dein Profil abgelehnt wurde.',
+    'reject_text2' => 'Ablehnungsgrund',
+    'reject_text3' => 'Falls du Fragen hast oder Einspruch gegen diese Entscheidung einlegen möchtest, kontaktiere bitte unseren Support.',
+    'reject_text4' => 'Vielen Dank für dein Verständnis.',
+    'reject_user_sms' => 'Hallo :store_owner_name, dein Profil wurde aufgrund von :reason abgelehnt. Bitte kontaktiere den Support für weitere Informationen.',
     'remove_member_failed' => 'Mitglied konnte nicht aus der Gruppe entfernt werden.',
-
     'report_group_failed' => 'Gruppe konnte nicht gemeldet werden.',
-
-    'search_groups_failed' => 'Gruppen konnten nicht gesucht werden.',
-
+    'search_groups_failed' => 'Gruppen konnten nicht durchsucht werden.',
     'send_message_failed' => 'Nachricht konnte nicht gesendet werden.',
-
-    'sent_message_users_failed' => 'Benutzer mit gesendeten Nachrichten konnten nicht abgerufen werden.',
-
-    'sent_message_users_fetched_successfully' => 'Benutzer mit gesendeten Nachrichten erfolgreich abgerufen.',
-
-    'sent_requests_fetched_successfully' => 'Gesendete Anfragen wurden erfolgreich abgerufen.',
-
-    'sent_you_a_friend_request' => 'hat dir eine Freundschaftsanfrage gesendet.',
-
-    'single_image_upload_failed' => 'Upload des Einzelbildes fehlgeschlagen.',
-
+    'sent_message_users_failed' => 'Nutzer mit gesendeten Nachrichten konnten nicht geladen werden.',
+    'sent_message_users_fetched_successfully' => 'Nutzer mit gesendeten Nachrichten erfolgreich geladen.',
+    'sent_requests_fetched_successfully' => 'Gesendete Anfragen erfolgreich geladen.',
+    'sent_you_a_friend_request' => 'hat dir eine Anfrage gesendet.',
+    'signin_block' => 'Dein Konto ist derzeit gesperrt. Bitte kontaktiere den Support.',
+    'signin_inactive' => 'Dein Konto ist derzeit inaktiv. Unser Team prüft deine Unterlagen und meldet sich innerhalb von 3–4 Werktagen bei dir.',
+    'singup_success' => 'Registrierung erfolgreich.',
     'slug_is_required' => 'Slug ist erforderlich.',
-
     'social_login_successful' => 'Social Login erfolgreich.',
-
+    'some_thing_went_wrong' => 'Etwas ist schiefgelaufen. Bitte versuche es später erneut.',
+    'something_went_wrong' => 'Etwas ist schiefgelaufen. Bitte versuche es später erneut.',
     'something_went_wrong_1' => 'Etwas ist schiefgelaufen.',
-
-    'subinterests_fetched_successfully' => 'Unterinteressen erfolgreich abgerufen.',
-
+    'statusFive' => ':parameter nicht gefunden.',
+    'statusInvalid' => 'Die angegebenen Anmeldedaten sind nicht korrekt. Bitte versuche es erneut.',
+    'statusLogin' => 'Erfolgreich angemeldet.',
+    'statusLoginBlocked' => 'Dein Konto wurde vorübergehend gesperrt. Bitte kontaktiere den Support für weitere Informationen.',
+    'statusOne' => ':parameter erfolgreich erstellt.',
+    'statusThree' => ':parameter erfolgreich gelöscht.',
+    'statusTwo' => ':parameter erfolgreich aktualisiert.',
+    'statusZero' => 'Etwas ist schiefgelaufen.',
+    'store_loctaion' => '❌ Not needed for Velvet',
+    'store_name' => 'Nachname ist erforderlich.',
+    'store_owner_name' => 'Vorname ist erforderlich.',
+    'storepin_set_success' => 'Pin erfolgreich gesetzt.',
+    'subinterests_fetched_successfully' => 'Unterinteressen erfolgreich geladen.',
+    'substore_list' => '❌ Not needed for Velvet',
+    'succesfully' => 'Erfolgreich.',
+    'success' => 'Erfolgreich.',
+    'success_card' => '❌ Not needed for Velvet',
+    'success_msg' => 'Erfolgreich.',
     'temporary_password_label' => 'Dein neues temporäres Passwort:',
-
-    'temporary_password_message' => 'Dies ist Dein neues temporäres Passwort <span style="font-size: 16px;color: #000;padding: 5px;">:password</span>. Bitte melde dich an und ändere das Passwort umgehend.',
-
-    'temporary_password_note' => 'Wichtig: Bitte ändern du dieses temporäre Passwort nach dem Login.',
-
-    'the_field_field_cannot_be_null_or_empty' => 'Das Feld :field darf nicht leer sein.',
-
-    'the_userid_field_is_required' => 'Das Feld user_id ist erforderlich.',
-
-    'this_user_has_already_sent_you_a_friend_request' => 'Dieser Benutzer hat dir bereits eine Freundschaftsanfrage gesendet. Bitte akzeptieren du diese.',
-
-    'transaction_fetched_successfully' => 'Transaktion erfolgreich abgerufen.',
-
+    'temporary_password_message' => 'Dies ist dein neues temporäres Passwort: :password',
+    'temporary_password_note' => 'Wichtig: Bitte ändere dieses temporäre Passwort nach der Anmeldung.',
+    'temporary_password_sms' => 'Dein temporäres Anmeldepasswort lautet: :password.',
+    'tempory' => 'Wie angefordert, hier ist dein temporäres Passwort:',
+    'thank_you' => 'Vielen Dank!',
+    'the' => 'Der',
+    'the_field_field_cannot_be_null_or_empty' => 'Das Feld $field darf nicht leer sein.',
+    'the_userid_field_is_required' => 'Die Nutzer-ID ist erforderlich.',
+    'this_user_has_already_sent_you_a_friend_request' => 'Dieser Nutzer hat dir bereits eine Anfrage gesendet. Bitte nimm sie an.',
+    'trans_error' => 'Etwas ist schiefgelaufen. Die Transaktions-ID wurde im Zahlungsgateway nicht gefunden.',
+    'trans_error1' => 'Etwas ist schiefgelaufen. Ungültige Antwort vom Zahlungsgateway.',
+    'transaction_fetched_successfully' => 'Transaktion erfolgreich geladen.',
+    'unable_upload_image' => 'Bild konnte nicht hochgeladen werden. Bitte versuche es erneut.',
+    'unblock' => 'Nutzer erfolgreich entsperrt.',
     'unblock_member_failed' => 'Gruppenmitglied konnte nicht entsperrt werden.',
-
-    'update_group_failed' => 'Gruppe konnte nicht aktualidurt werden.',
-
-    'update_notification_status_failed' => 'Benachrichtigungsstatus konnte nicht aktualidurt werden.',
-
-    'update_permission_all_failed' => 'Gruppenberechtigung für alle konnte nicht aktualidurt werden.',
-
-    'update_permission_member_failed' => 'Gruppenberechtigung für das Mitglied konnte nicht aktualidurt werden.',
-
-    'user_blocked_successfully' => 'Benutzer erfolgreich blockiert.',
-
-    'user_details_deleted_successfully' => 'Benutzerdetails erfolgreich gelöscht.',
-
-    'user_details_fetched_successfully' => 'Benutzerdetails erfolgreich abgerufen.',
-
-    'user_is_already_blocked' => 'Benutzer ist bereits blockiert.',
-
-    'user_not_authenticated' => 'Benutzer nicht authentifiziert.',
-
-    'user_not_found' => 'Benutzer nicht gefunden.',
-
-    'user_not_found_or_already_deleted' => 'Benutzer nicht gefunden oder bereits gelöscht.',
-
-    'user_not_member_of_group' => 'Benutzer ist kein Mitglied dieser Gruppe.',
-
-    'user_reason_report_type_required' => 'Benutzer-ID, Grund und Meldungstyp sind erforderlich.',
-
-    'user_reported_successfully' => 'Benutzer erfolgreich gemeldet.',
-
-    'user_unblocked_successfully' => 'Benutzer erfolgreich entsperrt.',
-
-    'users_fetched_successfully' => 'Benutzer erfolgreich abgerufen.',
-
+    'update_failed' => ':parameter konnte nicht aktualisiert werden.',
+    'update_group_failed' => 'Gruppe konnte nicht aktualisiert werden.',
+    'update_notification_status_failed' => 'Benachrichtigungsstatus konnte nicht aktualisiert werden.',
+    'update_permission_all_failed' => 'Gruppenberechtigungen konnten nicht für alle Mitglieder aktualisiert werden.',
+    'update_permission_member_failed' => 'Gruppenberechtigungen konnten nicht für das Mitglied aktualisiert werden.',
+    'user_accepted' => 'Nutzer erfolgreich freigegeben.',
+    'user_blocked' => 'Nutzer blockiert.',
+    'user_blocked_successfully' => 'Nutzer erfolgreich blockiert.',
+    'user_details_deleted_successfully' => 'Nutzerdaten erfolgreich gelöscht.',
+    'user_details_fetched_successfully' => 'Nutzerdaten erfolgreich geladen.',
+    'user_is_already_blocked' => 'Nutzer ist bereits blockiert.',
+    'user_not_authenticated' => 'Nutzer nicht authentifiziert.',
+    'user_not_found' => 'Nutzer nicht gefunden.',
+    'user_not_found_or_already_deleted' => 'Nutzer nicht gefunden oder bereits gelöscht.',
+    'user_not_member_of_group' => 'Nutzer ist kein Mitglied dieser Gruppe.',
+    'user_reason_report_type_required' => 'Nutzer-ID, Grund und Meldungstyp sind erforderlich.',
+    'user_rejected' => 'Nutzer erfolgreich abgelehnt.',
+    'user_reported_successfully' => 'Nutzer erfolgreich gemeldet.',
+    'user_unblocked' => 'Nutzer erfolgreich entsperrt.',
+    'user_unblocked_successfully' => 'Nutzer erfolgreich entsperrt.',
+    'users_fetched_successfully' => 'Nutzer erfolgreich geladen.',
     'validation_failed' => 'Validierung fehlgeschlagen.',
-
     'verification_code_message' => 'Dein Bestätigungscode lautet: :otp',
-
-    'you_are_already_friends' => 'Dein seid bereits befreundet.',
-
-    'you_are_not_member_of_group' => 'du sind kein Mitglied dieser Gruppe.',
-
-    'you_cannot_block_yourself' => 'du können sich nicht selbst blockieren.',
-
-    'you_cannot_send_a_friend_request_to_yourself' => 'Du kannst dir selbst keine Freundschaftsanfrage senden.',
-
-    'you_have_a_new_friend_request' => 'Du hast eine neue Freundschaftsanfrage.',
-
-    'your_friend_request_was_accepted' => 'deine Freundschaftsanfrage wurde akzeptiert.',
+    'weekly_luckydraw_body' => ':user hat die wöchentliche Verlosung gewonnen. Tippe hier, um die Details anzusehen!',
+    'weekly_luckydraw_title' => 'Gewinner der wöchentlichen Verlosung',
+    'welcome' => 'Willkommen auf unserer Website!',
+    'widthdrawal_success' => 'Auszahlung erfolgreich erstellt.',
+    'withdraw_bank_message' => 'Auszahlung von :amount :currency erfolgreich verarbeitet.',
+    'withdraw_message' => 'Du hast :amount :currency von deinem Guthaben ausgezahlt.',
+    'you_are_already_friends' => 'Ihr seid bereits verbunden.',
+    'you_are_not_member_of_group' => 'Du bist kein Mitglied dieser Gruppe.',
+    'you_cannot_block_yourself' => 'Du kannst dich nicht selbst blockieren.',
+    'you_cannot_send_a_friend_request_to_yourself' => 'Du kannst dir nicht selbst eine Anfrage senden.',
+    'you_have_a_new_friend_request' => 'Du hast eine neue Anfrage erhalten.',
+    'your_friend_request_was_accepted' => 'Deine Anfrage wurde angenommen.',
+    'your_price' => 'Dein Gewinn',
+    'profile_completion_failed' => 'Profilvervollständigung fehlgeschlagen.',
+    'single_image_upload_failed' => 'Upload des Einzelbildes fehlgeschlagen.',
 
 ];

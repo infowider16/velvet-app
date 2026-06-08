@@ -213,7 +213,7 @@ class HomeController extends BaseController
                 $plans = [];
 
             }
-            return $this->sendResponse($plans, __('message.boost_plans_retrieved_successfully'));
+            return $this->sendResponse($plans, __('message.failed_to_fetch_boost_plans'));
 
         } catch (Exception $e) {
 
