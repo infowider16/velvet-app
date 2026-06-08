@@ -680,7 +680,7 @@ class UserRegisterService implements UserRegisterServiceInterface
             ->whereNotNull('message_text')
             ->whereNull('group_id')
             ->count();
-            $unreadGroupMessageCount = GroupMember::where('user_id', $userId)->sum('unread_count');
+            $unreadGroupMessageCount = GroupMember::where('user_id', $userId)->where('status', 0)->sum('unread_count');
             return [
                 'unread_notification' => $unreadNotificationCount,
                 'unread_message'         => $unreadMessageCount,
