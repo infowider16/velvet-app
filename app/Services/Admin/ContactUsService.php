@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Log;
 
 use Illuminate\Support\Str; 
 
-use Illuminate\Support\Facades\URL; // optional helper for building URLs
+use Illuminate\Support\Facades\URL; 
 
 
 
@@ -57,9 +57,15 @@ class ContactUsService extends BaseService implements AdminContactUsServiceInter
                     ->addIndexColumn()
 
                     ->addColumn('name', function ($row) {
+                        if (!empty($row->user_id)) {
+                            return '<a href="' . route('admin.user.show', $row->user_id) . '" class="text-primary">
+                                        ' . e($row->name ?: '-') . '
+                                    </a>';
+                        }
 
-                        return $row->name ?: '-';
-
+                        return '<span class="text-muted" data-bs-toggle="tooltip" title="User not found">
+                                    ' . e($row->name ?: '-') . '
+                                </span>';
                     })
 
                     ->addColumn('email', function ($row) {
@@ -128,29 +134,29 @@ class ContactUsService extends BaseService implements AdminContactUsServiceInter
 
                     ->addColumn('message', function ($row) {
 
-                        if (!$row->message) return '-';
-
-                        
-
-                        $message = $row->message;
-
-                        if (strlen($message) > 50) {
-
-                            $shortText = Str::limit($message, 50, '');
-
-                            return '<span class="short-text">' . $shortText . '...</span>
-
-                                    <span class="full-text" style="display:none;">' . $message . '</span>
-
-                                    <br><button class="btn btn-link btn-sm p-0 toggle-text" data-type="message">Read More</button>';
-
+                        if (!$row->message) {
+                            return '-';
                         }
 
-                        return $message;
+                        $message = $row->message;
+                        $words = preg_split('/\s+/', strip_tags($message));
+                        $shortMessage = implode(' ', array_slice($words, 0, 20));
 
+                        $html = '<div class="message-content">' . e($shortMessage);
+
+                        if (count($words) > 20) {
+                            $html .= '...</div>
+                                <button type="button"
+                                    class="btn btn-primary btn-sm view-message-btn mt-2"
+                                    data-message="' . e($message) . '">
+                                    View More
+                                </button>';
+                        } else {
+                            $html .= '</div>';
+                        }
+
+                        return $html;
                     })
-
-                  
 
                     ->addColumn('created_at', function ($row) {
 
@@ -160,7 +166,7 @@ class ContactUsService extends BaseService implements AdminContactUsServiceInter
 
                    
 
-                    ->rawColumns(['subject', 'message', 'image'])
+                    ->rawColumns(['subject', 'message', 'image' ,'name'])
 
                     ->make(true);
 

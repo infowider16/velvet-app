@@ -205,6 +205,7 @@ class FriendshipService
             $bodyDe = $receiver
                 ? ($receiver->name . ' ' . $acceptedTextDe)
                 : $fallbackBodyDe;
+                
             if($sender && $sender->lang_key == 'ge') {
                 $title = $titleDe;
                 $body = $bodyDe;

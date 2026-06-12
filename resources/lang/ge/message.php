@@ -45,7 +45,6 @@ return [
     'add_bonus_sms' => 'Glückwunsch! Du hast einen Bonus von :bonus_amount erhalten.',
     'add_member_failed' => 'Mitglied konnte nicht zur Gruppe hinzugefügt werden.',
     'add_message' => ':amount :currency wurden deinem Wallet gutgeschrieben.',
-    'add_sub_store' => 'Not used in Velvet. Please remove this string if it is not required by the app.',
     'admin_bonus' => 'Glückwunsch! Dir wurde ein Bonus von HTG :amount auf dein Guthaben gutgeschrieben.',
     'admin_cannot_block_self' => 'Admins können sich nicht selbst blockieren oder entsperren.',
     'admin_cannot_leave_group' => 'Bevor du die Gruppe verlassen kannst, musst du einen anderen Admin bestimmen.',
