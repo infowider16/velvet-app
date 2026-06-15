@@ -184,8 +184,7 @@ class HomeController extends BaseController
     {
 
         try {
-          
-            $plans = $this->planRepository->getByWhere();
+
             $plans = $this->planRepository->getByWhere();
             if(empty($plans)){
                 $plans = [];
