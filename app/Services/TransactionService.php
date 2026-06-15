@@ -443,6 +443,7 @@ class TransactionService
      */
     public function getTransactionListByType(\Illuminate\Http\Request $request, int $type)
     {
+       
         $query = $this->transactionRepo->getForDataTable();
         
         // Apply type filter
@@ -459,10 +460,15 @@ class TransactionService
         if ($request->has('search_term') && !empty($request->get('search_term'))) {
             $filters['search_term'] = $request->get('search_term');
         }
-        if ($request->has('date_range') && !empty($request->get('date_range'))) {
-            $filters['date_range'] = $request->get('date_range');
+
+        if ($request->filled('from_date')) {
+            $filters['from_date'] = $request->from_date;
         }
-        
+
+        if ($request->filled('to_date')) {
+            $filters['to_date'] = $request->to_date;
+        }
+
         if (!empty($filters)) {
             // Clone query with relations preserved
             $tempQuery = clone $query;

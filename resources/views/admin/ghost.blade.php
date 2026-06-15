@@ -38,7 +38,7 @@
                             <table id="ghost-table" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Sr No</th>
+                                        <th>#</th>
                                         <th>Tag</th>
                                         <th>Title</th>
                                         <th>Duration</th>

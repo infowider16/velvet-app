@@ -134,8 +134,17 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="filterDateRange" class="form-label">Date Range</label>
-                                    <input type="text" id="filterDateRange" class="form-control" placeholder="Select date range" autocomplete="off">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="fromDate" class="form-label">From Date</label>
+                                            <input type="date" id="fromDate" class="form-control">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="toDate" class="form-label">To Date</label>
+                                            <input type="date" id="toDate" class="form-control">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row mt-3">
@@ -230,7 +239,8 @@
                 d.payment_status = $('#filterPaymentStatus').val();
                 d.platform = $('#filterPlatform').val();
                 d.search_term = $('#filterSearch').val();
-                d.date_range = $('#filterDateRange').val();
+                d.from_date = $('#fromDate').val();
+                d.to_date = $('#toDate').val();
             }
         },
         columns: [
@@ -323,5 +333,11 @@
     $('#filterSearch').on('keyup change', function() {
         table.draw();
     });
+
+    // Date filter
+    $('#fromDate, #toDate').on('change', function () {
+        table.ajax.reload();
+    });
+    
 </script>
 @endsection

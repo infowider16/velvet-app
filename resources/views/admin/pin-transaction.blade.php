@@ -134,8 +134,17 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="filterDateRange" class="form-label">Date Range</label>
-                                    <input type="text" id="filterDateRange" class="form-control" placeholder="Select date range" autocomplete="off">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="fromDate" class="form-label">From Date</label>
+                                            <input type="date" id="fromDate" class="form-control">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="toDate" class="form-label">To Date</label>
+                                            <input type="date" id="toDate" class="form-control">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row mt-3">
@@ -230,98 +239,64 @@
                 d.payment_status = $('#filterPaymentStatus').val();
                 d.platform = $('#filterPlatform').val();
                 d.search_term = $('#filterSearch').val();
-                d.date_range = $('#filterDateRange').val();
+                d.from_date = $('#fromDate').val();
+                d.to_date = $('#toDate').val();
             }
         },
         columns: [
-            {
-                data: 'DT_RowIndex',
-                name: 'DT_RowIndex',
-                orderable: false,
-                searchable: false
-            },
-            {
-                data: 'payment_gateway',
-                name: 'payment_gateway',
-                defaultContent: '-'
-            },
-            {
-                data: 'transaction_id',
-                name: 'transaction_id',
-                defaultContent: '-'
-            },
-            {
-                data: 'user_id',
-                name: 'user_id',
-                defaultContent: '-'
-            },
-            {
-                data: 'name',
-                name: 'name',
-                defaultContent: '-'
-            },
-            {
-                data: 'plan_details',
-                name: 'plan_details',
-                defaultContent: '-'
-            },
-            {
-                data: 'amount',
-                name: 'amount',
-                defaultContent: '-'
-            },
-            {
-                data: 'currency',
-                name: 'currency',
-                defaultContent: '-'
-            },
-            {
-                data: 'payment_status',
-                name: 'payment_status',
-                defaultContent: '-'
-            },
-            {
-                data: 'created_at',
-                name: 'created_at',
-                defaultContent: '-'
-            },
-            // {
-            //     data: 'start_time',
-            //     name: 'start_time',
-            //     render: function(data, type) {
-            //         if (!data || data === '-') return '-';
-            //         if (type === 'display') return data;
-            //         return data;
-            //     }
-            // },
-            // {
-            //     data: 'end_time',
-            //     name: 'end_time',
-            //     render: function(data, type) {
-            //         if (!data || data === '-') return '-';
-            //         if (type === 'display') return data;
-            //         return data;
-            //     }
-            // },
-            {
-                data: 'platform',
-                name: 'platform'
-            }
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            { data: 'payment_gateway', name: 'payment_gateway', defaultContent: '-' },
+            { data: 'transaction_id', name: 'transaction_id', defaultContent: '-' },
+            { data: 'user_id', name: 'user_id', defaultContent: '-' },
+            { data: 'name', name: 'name', defaultContent: '-' },
+            { data: 'plan_details', name: 'plan_details', defaultContent: '-' },
+            { data: 'amount', name: 'amount', defaultContent: '-' },
+            { data: 'currency', name: 'currency', defaultContent: '-' },
+            { data: 'payment_status', name: 'payment_status', defaultContent: '-' },
+            { data: 'created_at', name: 'created_at', defaultContent: '-' },
+            { data: 'platform', name: 'platform' }
         ],
         pageLength: 10,
-        lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         order: [[0, 'desc']],
         responsive: true
     });
 
-    // Filter on change
-    $('#filterPaymentStatus, #filterPlatform').on('change', function() {
-        table.draw();
+    $('#filterDateRange').daterangepicker({
+        autoUpdateInput: false,
+        locale: {
+            cancelLabel: 'Clear',
+            format: 'YYYY-MM-DD'
+        }
     });
 
-    // Search on enter or change
-    $('#filterSearch').on('keyup change', function() {
-        table.draw();
+    $('#filterDateRange').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(
+            picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD')
+        );
+
+        table.ajax.reload();
+    });
+
+    $('#filterDateRange').on('cancel.daterangepicker', function() {
+        $(this).val('');
+        table.ajax.reload();
+    });
+
+    $('#filterPaymentStatus, #filterPlatform').on('change', function() {
+        table.ajax.reload();
+    });
+    
+    $('#fromDate, #toDate').on('change', function () {
+        table.ajax.reload();
+    });
+
+    let searchTimer;
+    $('#filterSearch').on('keyup', function() {
+        clearTimeout(searchTimer);
+
+        searchTimer = setTimeout(function() {
+            table.ajax.reload();
+        }, 500);
     });
 </script>
 @endsection

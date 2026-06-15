@@ -9,8 +9,7 @@
 @section('content')
 
 <style>
-
-   #contact-data-table {
+    #contact-data-table {
         width: 100% !important;
     }
 
@@ -27,7 +26,12 @@
         line-height: 1.4;
     }
 
-    .message-modal-content {
+    #messageModal .modal-dialog {
+        max-width: 760px;
+        margin: 1.75rem auto;
+    }
+
+    #messageModal .modal-content {
         border-radius: 8px;
         border: none;
     }
@@ -59,7 +63,6 @@
         line-height: 1.6;
         font-size: 14px;
     }
-
 </style>
 
 <div class="content-wrapper px-0">
