@@ -38,7 +38,7 @@
                             <table id="pin-table" class="table table-bordered table-striped table-responsive mb-2">
                                 <thead>
                                     <tr>
-                                        <th>Sr No</th>
+                                        <th>#</th>
                                         <th>Tag</th>
                                         <th>Title</th>
                                         <th>Pin Count</th>

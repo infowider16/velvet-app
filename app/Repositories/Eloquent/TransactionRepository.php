@@ -121,20 +121,12 @@ class TransactionRepository
                 $query->where('platform', (int)$filters['platform']);
             }
 
-            if (!empty($filters['date_range'])) {
-                $dateRange = $filters['date_range'];
-                // Parse date range format: "YYYY-MM-DD - YYYY-MM-DD"
-                if (strpos($dateRange, ' - ') !== false) {
-                    list($startDate, $endDate) = explode(' - ', $dateRange);
-                    $startDate = trim($startDate);
-                    $endDate = trim($endDate);
-                    
-                    // Add time to end date to include the entire day
-                    $query->whereBetween('created_at', [
-                        $startDate . ' 00:00:00',
-                        $endDate . ' 23:59:59'
-                    ]);
-                }
+            if (!empty($filters['from_date'])) {
+                $query->whereDate('transactions.created_at', '>=', $filters['from_date']);
+            }
+
+            if (!empty($filters['to_date'])) {
+                $query->whereDate('transactions.created_at', '<=', $filters['to_date']);
             }
 
             if (!empty($filters['search_term'])) {
