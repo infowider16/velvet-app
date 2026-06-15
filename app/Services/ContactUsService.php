@@ -19,8 +19,10 @@ class ContactUsService implements ContactUsServiceInterface
     public function store(array $data)
     {
         try {
-            $data['user_id'] = auth()->id();
+
+            $data['user_id'] = auth('api')->id();
             return $this->contactUsRepo->create($data);
+    
         } catch (Exception $e) {
             Log::error('Contact Us submission failed', [
                 'message' => $e->getMessage(),

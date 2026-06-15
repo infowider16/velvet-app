@@ -167,7 +167,13 @@
                                         <tr>
                                             <th class="border-0">#</th>
                                             <th class="border-0">
+                                                <i class="fas fa-key mr-1"></i>Payment Gateway
+                                            </th>
+                                            <th class="border-0">
                                                 <i class="fas fa-key mr-1"></i>Transaction ID
+                                            </th>
+                                            <th class="border-0">
+                                                <i class="fas fa-user mr-1"></i>User ID
                                             </th>
                                             <th class="border-0">
                                                 <i class="fas fa-user mr-1"></i>User Name
@@ -177,6 +183,9 @@
                                             </th>
                                             <th class="border-0">
                                                 <i class="fas fa-money-bill mr-1"></i>Amount
+                                            </th>
+                                            <th class="border-0">
+                                                <i class="fas fa-money-bill mr-1"></i>Currency
                                             </th>
                                             <th class="border-0">
                                                 <i class="fas fa-check-circle mr-1"></i>Status
@@ -232,8 +241,18 @@
                 searchable: false
             },
             {
+                data: 'payment_gateway',
+                name: 'payment_gateway',
+                defaultContent: '-'
+            },
+            {
                 data: 'transaction_id',
                 name: 'transaction_id',
+                defaultContent: '-'
+            },
+            {
+                data: 'user_id',
+                name: 'user_id',
                 defaultContent: '-'
             },
             {
@@ -249,6 +268,11 @@
             {
                 data: 'amount',
                 name: 'amount',
+                defaultContent: '-'
+            },
+            {
+                data: 'currency',
+                name: 'currency',
                 defaultContent: '-'
             },
             {

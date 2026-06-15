@@ -468,16 +468,26 @@ class TransactionService
             $tempQuery = clone $query;
             $query = $this->transactionRepo->getForDataTableWithFilters($filters, $tempQuery);
         }
-
+    
         return DataTables::of($query)
             ->addIndexColumn()
-            ->addColumn('user_id', fn($row) => $row->user_id ?? '-')
+            ->addColumn('user_id', function ($row) {
+                if (!$row->user) return '-';
+                $userId = $row->user->id;
+                $url = route('admin.user.show', ['id' => $userId]);
+                return '<a href="' . $url . '" class="text-primary text-center font-weight-bold">' .'#'. $userId . '</a>';
+            })
+
+            ->addColumn('payment_gateway', function ($row) {
+                return "Stripe"; 
+            })
+            
             ->addColumn('name', function ($row) {
                 if (!$row->user) return '-';
                 $userId = $row->user->id;
                 $userName = htmlspecialchars($row->user->name);
                 $url = route('admin.user.show', ['id' => $userId]);
-                return '<a href="' . $url . '" class="text-primary font-weight-bold">' . $userName . '</a>';
+                return '<a href="' . $url . '" class="text-primary text-center font-weight-bold">' . $userName . '</a>';
             })
             ->addColumn('plan_details', function ($row) use ($type) {
                 $planMeta = $row->plan_meta ? json_decode($row->plan_meta, true) : null;
@@ -521,6 +531,9 @@ class TransactionService
                         return '-';
                 }
             })
+            ->addColumn('currency', function ($row) {
+                return $row->currency ?? '-';
+            })
             ->addColumn('payment_status', function ($row) {
                 $statusColors = [
                     'pending' => 'warning',
@@ -559,7 +572,7 @@ class TransactionService
                 return '-';
             })
             ->addColumn('transaction_id', fn($row) => $row->transaction_id ?? '-')
-            ->rawColumns(['payment_status', 'plan_details', 'name', 'boost_duration'])
+            ->rawColumns(['payment_status', 'plan_details', 'name', 'boost_duration','user_id'])
             ->make(true);
     }
     private function updateAllPlanMetaInDb(): int
