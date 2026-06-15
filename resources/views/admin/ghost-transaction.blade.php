@@ -75,6 +75,7 @@
     div#ghost-transaction-table_filter {
         display:none;
     }
+ 
 </style>
 @endpush
 @section('content')
@@ -169,54 +170,30 @@
                                 </h3>
                             </div>
                         </div>
-                        <div class="card-body p-0">
-                            <div class="">
-                                <table class="table table-hover table-striped mb-0 table-responsive" id="ghost-transaction-table">
-                                    <thead class="bg-light">
-                                        <tr>
-                                            <th class="border-0">#</th>
-                                            <th class="border-0">
-                                                <i class="fas fa-key mr-1"></i>Payment Gateway
-                                            </th>
-                                            <th class="border-0">
-                                                <i class="fas fa-key mr-1"></i>Transaction ID
-                                            </th>
-                                            <th class="border-0">
-                                                <i class="fas fa-user mr-1"></i>User ID
-                                            </th>
-                                            <th class="border-0">
-                                                <i class="fas fa-user mr-1"></i>User Name
-                                            </th>
-                                            <th class="border-0">
-                                                <i class="fas fa-details mr-1"></i>Plan Details
-                                            </th>
-                                            <th class="border-0">
-                                                <i class="fas fa-money-bill mr-1"></i>Amount
-                                            </th>
-                                            <th class="border-0">
-                                                <i class="fas fa-money-bill mr-1"></i>Currency
-                                            </th>
-                                            <th class="border-0">
-                                                <i class="fas fa-check-circle mr-1"></i>Status
-                                            </th>
-                                            <th class="border-0">
-                                                <i class="fas fa-shopping-cart mr-1"></i>Purchased Date
-                                            </th>
-                                            <th class="border-0">
-                                                <i class="fas fa-calendar mr-1"></i>Start Date
-                                            </th>
-                                            <th class="border-0">
-                                                <i class="fas fa-calendar-check mr-1"></i>End Date
-                                            </th>
-                                            <th class="border-0">
-                                                <i class="fas fa-mobile mr-1"></i>Platform
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
+                       <div class="card-body p-0">
+    <div class="mobile-table-scroll">
+        <table class="table table-hover table-striped mb-0" id="ghost-transaction-table">
+            <thead class="bg-light">
+                <tr>
+                    <th>#</th>
+                    <th>Payment Gateway</th>
+                    <th>Transaction ID</th>
+                    <th>User ID</th>
+                    <th>User Name</th>
+                    <th>Plan Details</th>
+                    <th>Amount</th>
+                    <th>Currency</th>
+                    <th>Status</th>
+                    <th>Purchased Date</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Platform</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
                     </div>
                 </div>
             </div>

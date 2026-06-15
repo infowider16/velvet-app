@@ -63,6 +63,20 @@
         line-height: 1.6;
         font-size: 14px;
     }
+    .card-body {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+#contact-data-table {
+    width: 100% !important;
+    min-width: 1000px;
+}
+
+#contact-data-table th,
+#contact-data-table td {
+    white-space: nowrap !important;
+}
 </style>
 
 <div class="content-wrapper px-0">
