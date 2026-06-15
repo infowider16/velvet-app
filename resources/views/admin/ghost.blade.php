@@ -3,6 +3,58 @@
 @section('title', 'Ghost Plan Management')
 
 @section('content')
+<style>
+
+/* Responsive horizontal table scroll */
+/* Wrapper */
+.boost-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Desktop */
+#boost-table {
+    width: 100% !important;
+    table-layout: auto;
+}
+
+/* Cells */
+#boost-table th,
+#boost-table td {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+/* Action column */
+#boost-table td:last-child {
+    min-width: 150px;
+}
+
+/* Mobile & Tablet */
+@media (max-width: 991px) {
+    #boost-table {
+        min-width: 900px !important;
+        width: 900px !important;
+    }
+}
+
+/* Scrollbar */
+.boost-table-scroll::-webkit-scrollbar {
+    height: 8px;
+}
+
+.boost-table-scroll::-webkit-scrollbar-thumb {
+    background: #999;
+    border-radius: 10px;
+}
+
+.boost-table-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+</style>
+
 <div class="content-wrapper px-0">
     <div class="content-header">
         <div class="container-fluid">
@@ -34,69 +86,67 @@
                             </div>
                         </div>
 
-                        <div class="card-body">
-                            <table id="ghost-table" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Tag</th>
-                                        <th>Title</th>
-                                        <th>Duration</th>
-                                        <th>Unit</th>
-                                        <th>Amount</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($plans as $index => $plan)
-                                        @php
-                                            $durationRaw = $plan->getRawOriginal('duration');
-                                            $durationParts = is_string($durationRaw) ? explode('_', $durationRaw) : [];
-                                            $durationValue = $durationParts[0] ?? '';
-                                            $durationUnit = $durationParts[1] ?? '';
+                       <div class="card-body p-0">
+    <div class="ghost-table-scroll">
+        <table id="ghost-table" class="table table-bordered table-striped mb-0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Tag</th>
+                    <th>Title</th>
+                    <th>Duration</th>
+                    <th>Unit</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($plans as $index => $plan)
+                    @php
+                        $durationRaw = $plan->getRawOriginal('duration');
+                        $durationParts = is_string($durationRaw) ? explode('_', $durationRaw) : [];
+                        $durationValue = $durationParts[0] ?? '';
+                        $durationUnit = $durationParts[1] ?? '';
 
-                                            $tagTranslations = $plan->tag_translation ?? [];
-                                            $titleTranslations = $plan->title_translation ?? [];
-                                            $durationTranslations = $plan->duration_translation ?? [];
-                                        @endphp
-                                        <tr>
-                                            <td>{{ $index + 1 }}</td>
-                                            <td>{{ $plan->tag }}</td>
-                                            <td>{{ $plan->title }}</td>
-                                            <td>{{ $durationValue }}</td>
-                                            <td>{{ ucfirst($durationUnit) }}</td>
-                                            <td>{{ $plan->amount }}</td>
-                                            <td>
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-sm btn-info edit-ghost"
-                                                    data-id="{{ $plan->id }}"
-                                                    data-tag-en="{{ $tagTranslations['en'] ?? $plan->tag }}"
-                                                    data-tag-ge="{{ $tagTranslations['ge'] ?? '' }}"
-                                                    data-title-en="{{ $titleTranslations['en'] ?? $plan->title }}"
-                                                    data-title-ge="{{ $titleTranslations['ge'] ?? '' }}"
-                                                    data-duration-en="{{ $durationTranslations['en'] ?? $durationValue }}"
-                                                    data-duration-ge="{{ $durationTranslations['ge'] ?? '' }}"
-                                                    data-duration-value="{{ $durationValue }}"
-                                                    data-unit="{{ $durationUnit }}"
-                                                    data-amount="{{ $plan->amount }}"
-                                                >
-                                                    Edit
-                                                </button>
+                        $tagTranslations = $plan->tag_translation ?? [];
+                        $titleTranslations = $plan->title_translation ?? [];
+                        $durationTranslations = $plan->duration_translation ?? [];
+                    @endphp
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $plan->tag }}</td>
+                        <td>{{ $plan->title }}</td>
+                        <td>{{ $durationValue }}</td>
+                        <td>{{ ucfirst($durationUnit) }}</td>
+                        <td>{{ $plan->amount }}</td>
+                        <td>
+                            <button type="button"
+                                class="btn btn-sm btn-info edit-ghost"
+                                data-id="{{ $plan->id }}"
+                                data-tag-en="{{ $tagTranslations['en'] ?? $plan->tag }}"
+                                data-tag-ge="{{ $tagTranslations['ge'] ?? '' }}"
+                                data-title-en="{{ $titleTranslations['en'] ?? $plan->title }}"
+                                data-title-ge="{{ $titleTranslations['ge'] ?? '' }}"
+                                data-duration-en="{{ $durationTranslations['en'] ?? $durationValue }}"
+                                data-duration-ge="{{ $durationTranslations['ge'] ?? '' }}"
+                                data-duration-value="{{ $durationValue }}"
+                                data-unit="{{ $durationUnit }}"
+                                data-amount="{{ $plan->amount }}">
+                                Edit
+                            </button>
 
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-sm btn-danger delete-ghost"
-                                                    data-id="{{ $plan->id }}"
-                                                >
-                                                    Delete
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                            <button type="button"
+                                class="btn btn-sm btn-danger delete-ghost"
+                                data-id="{{ $plan->id }}">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 
                     </div>
                 </div>

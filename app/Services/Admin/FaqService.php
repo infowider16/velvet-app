@@ -61,27 +61,23 @@ class FaqService extends BaseService implements AdminFaqServiceInterface
                     })
 
                     ->addColumn('answer', function ($row) {
-
-                        if (!$row->answer) return '-';
-
-
-
-                        $answer = $row->answer;
-
-                        if (strlen($answer) > 20) {
-
-                            $shortText = Str::limit($answer, 20, '');
-
-                            return '<span class="short-text">' . $shortText . '...</span>
-
-                                <span class="full-text" style="display:none;">' . $answer . '</span>
-
-                                <br><button class="btn btn-link btn-sm p-0 toggle-text">Read More</button>';
-
+                        if (!$row->answer) {
+                            return '-';
                         }
 
-                        return $answer;
+                        $answer = $row->answer;
+                        $shortAnswer = Str::limit(strip_tags($answer), 80, '');
 
+                        if (strlen(strip_tags($answer)) > 80) {
+                            return '<div class="message-content">' . e($shortAnswer) . '...</div>
+                                <button type="button"
+                                    class="btn btn-primary btn-sm view-answer-btn mt-2"
+                                    data-answer="' . e($answer) . '">
+                                    View More
+                                </button>';
+                        }
+
+                        return e($answer);
                     })
 
                     ->addColumn('created_at', function ($row) {

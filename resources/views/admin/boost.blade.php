@@ -3,6 +3,56 @@
 @section('title', 'Boost Plan Management')
 
 @section('content')
+<style>
+   /* Responsive Table */
+.boost-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Desktop */
+#boost-table {
+    width: 100% !important;
+    table-layout: auto;
+}
+
+/* Prevent wrapping */
+#boost-table th,
+#boost-table td {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+/* Action column */
+#boost-table td:last-child {
+    min-width: 170px;
+}
+
+/* Mobile & Tablet */
+@media (max-width: 991px) {
+    #boost-table {
+        min-width: 900px !important;
+        width: 900px !important;
+    }
+}
+
+/* Scrollbar */
+.boost-table-scroll::-webkit-scrollbar {
+    height: 8px;
+}
+
+.boost-table-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.boost-table-scroll::-webkit-scrollbar-thumb {
+    background: #999;
+    border-radius: 10px;
+}
+</style>
+
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
@@ -35,7 +85,8 @@
                         </div>
 
                         <div class="card-body">
-                            <table id="boost-table" class="table table-bordered table-striped">
+                            <div class="boost-table-scroll">
+                             <table id="boost-table" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -89,6 +140,8 @@
                                 </tbody>
                             </table>
                         </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

@@ -7,7 +7,43 @@
 
 
 @section('content')
+<style>
+    .message-content {
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+}
 
+#answerModal .modal-dialog {
+    max-width: 760px;
+    margin: 1.75rem auto;
+}
+
+#answerModal .modal-content {
+    border-radius: 8px;
+    border: none;
+}
+
+#answerModal .modal-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    padding: 15px 20px;
+}
+
+.full-message-box {
+    background: #f9f9f9;
+    border: 1px solid #e1e1e1;
+    border-radius: 6px;
+    padding: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.6;
+    font-size: 14px;
+}
+</style>
 <div class="content-wrapper px-0">
 
     <div class="row">
@@ -62,6 +98,23 @@
 
     </div>
 
+</div>
+
+<div class="modal fade" id="answerModal" tabindex="-1" role="dialog" aria-labelledby="answerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content message-modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="answerModalLabel">Answer Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div id="fullAnswerText" class="full-message-box"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @endsection
@@ -296,6 +349,13 @@
 
         });
 
+    });
+
+    $(document).on('click', '.view-answer-btn', function () {
+        let answer = $(this).attr('data-answer');
+
+        $('#fullAnswerText').text(answer);
+        $('#answerModal').modal('show');
     });
 
 </script>
