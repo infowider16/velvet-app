@@ -45,7 +45,6 @@ return [
     'add_bonus_sms' => 'Dear :store_owner_name, you have received a bonus of :bonus_amount. Your new balance is :new_balance.',
     'add_member_failed' => 'Failed to add member to group.',
     'add_message' => 'You added :amount :currency to your wallet.',
-    'add_sub_store' => 'Sub Store Added Successfully!',
     'admin_bonus' => 'Admin Bonus of HTG :amount has been added',
     'admin_cannot_block_self' => 'Admin cannot block/unblock themselves.',
     'admin_cannot_leave_group' => 'Admin cannot leave the group. Please assign another admin before leaving.',

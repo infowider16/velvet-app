@@ -8,7 +8,59 @@
 
 @section('content')
 
+<style>
 
+   #contact-data-table {
+        width: 100% !important;
+    }
+
+    #contact-data-table th,
+    #contact-data-table td {
+        vertical-align: top;
+        white-space: normal !important;
+    }
+
+    .message-content {
+        white-space: normal !important;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        line-height: 1.4;
+    }
+
+    .message-modal-content {
+        border-radius: 8px;
+        border: none;
+    }
+
+    #messageModal .modal-header {
+        background: #f8f9fa;
+        border-bottom: 1px solid #ddd;
+        padding: 15px 20px;
+    }
+
+    #messageModal .modal-title {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    #messageModal .modal-body {
+        padding: 20px;
+    }
+
+    .full-message-box {
+        background: #f9f9f9;
+        border: 1px solid #e1e1e1;
+        border-radius: 6px;
+        padding: 15px;
+        max-height: 400px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+
+</style>
 
 <div class="content-wrapper px-0">
 
@@ -22,7 +74,7 @@
 
                     <h4 class="card-title">Contact Us List</h4>
 
-                    <table class="table table-responsive" id="contact-data-table">
+                    <table class="table" id="contact-data-table">
 
                         <thead>
 
@@ -64,6 +116,23 @@
 
     </div>
 
+</div>
+
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content message-modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Message Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div id="fullMessageText" class="full-message-box"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @endsection
@@ -165,50 +234,12 @@
 
 
     // Handle read more/read less toggle
+    $(document).on('click', '.view-message-btn', function () {
+        let message = $(this).attr('data-message');
 
-    $(document).on('click', '.toggle-text', function(e) {
-
-        e.preventDefault();
-
-        
-
-        let button = $(this);
-
-        let row = button.closest('td');
-
-        let shortText = row.find('.short-text');
-
-        let fullText = row.find('.full-text');
-
-        
-
-        if (shortText.is(':visible')) {
-
-            // Show full text
-
-            shortText.hide();
-
-            fullText.show();
-
-            button.text('Read Less');
-
-        } else {
-
-            // Show short text
-
-            fullText.hide();
-
-            shortText.show();
-
-            button.text('Read More');
-
-        }
-
+        $('#fullMessageText').text(message);
+        $('#messageModal').modal('show');
     });
-
-
-
-    // Handle delete user button click
 
   
 
