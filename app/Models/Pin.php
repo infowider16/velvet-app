@@ -19,6 +19,7 @@ class Pin extends Model
         'pin_count',
         'discount',
         'amount',
+        'store_product_id',
     ];
 
     protected $casts = [

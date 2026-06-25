@@ -17,6 +17,7 @@ class Boost extends Model
         'amount',
         'tag_translation',
         'title_translation',
+        'store_product_id',
     ];
 
     protected $casts = [

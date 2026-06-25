@@ -90,6 +90,7 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
+                                        <th>Store Product ID</th>
                                         <th>Tag</th>
                                         <th>Title</th>
                                         <th>Boost Count</th>
@@ -106,6 +107,7 @@
                                         @endphp
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
+                                            <td>{{ $plan->store_product_id ?? '' }}</td>
                                             <td>{{ $plan->tag }}</td>
                                             <td>{{ $plan->title }}</td>
                                             <td>{{ $plan->boost_count }}</td>
@@ -123,6 +125,7 @@
                                                     data-boost_count="{{ $plan->boost_count }}"
                                                     data-discount="{{ $plan->discount }}"
                                                     data-amount="{{ $plan->amount }}"
+                                                    data-store_product_id="{{ $plan->store_product_id ?? '' }}"
                                                 >
                                                     Edit
                                                 </button>
@@ -164,6 +167,20 @@
                 <div class="modal-body">
                     <input type="hidden" id="boost-id" name="id">
 
+                    <div class="form-group">
+                        <label for="store_product_id">
+                            Store Product ID <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="text"
+                            class="form-control"
+                            id="store_product_id"
+                            name="store_product_id"
+                            maxlength="255"
+                            required>
+
+                        <div class="invalid-feedback" id="error-store_product_id"></div>
+                    </div>
                     <div class="form-group">
                         <label for="tag_en">Tag (English)</label>
                         <input type="text" class="form-control" id="tag_en" name="tag_translation[en]" maxlength="255" placeholder="Best deal">
@@ -273,6 +290,7 @@ $(document).ready(function () {
         $('#title_ge').val($(this).data('title-ge'));
         $('#boost_count').val($(this).data('boost_count'));
         $('#discount').val($(this).data('discount'));
+        $('#store_product_id').val($(this).data('store_product_id'));
         $('#amount').val($(this).data('amount'));
 
         $('#boostModal').modal('show');
@@ -290,6 +308,7 @@ $(document).ready(function () {
         var boostCount = $('#boost_count').val().trim();
         var discount = $('#discount').val().trim();
         var amount = $('#amount').val().trim();
+        var storeProductId = $('#store_product_id').val().trim();
 
         var hasError = false;
 
@@ -340,6 +359,16 @@ $(document).ready(function () {
 
         if (id) {
             formData.append('_method', 'PUT');
+        }
+
+        if (!storeProductId) {
+            setInvalid('store_product_id', 'Store Product ID is required.');
+            hasError = true;
+        }
+
+        if (storeProductId.length > 255) {
+            setInvalid('store_product_id', 'Store Product ID must be at most 255 characters.');
+            hasError = true;
         }
 
         $.ajax({

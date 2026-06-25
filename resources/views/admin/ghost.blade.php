@@ -92,6 +92,7 @@
             <thead>
                 <tr>
                     <th>#</th>
+                    <th>Store Product ID</th>
                     <th>Tag</th>
                     <th>Title</th>
                     <th>Duration</th>
@@ -114,6 +115,7 @@
                     @endphp
                     <tr>
                         <td>{{ $index + 1 }}</td>
+                        <td>{{ $plan->store_product_id ?? '' }}</td>
                         <td>{{ $plan->tag }}</td>
                         <td>{{ $plan->title }}</td>
                         <td>{{ $durationValue }}</td>
@@ -131,7 +133,9 @@
                                 data-duration-ge="{{ $durationTranslations['ge'] ?? '' }}"
                                 data-duration-value="{{ $durationValue }}"
                                 data-unit="{{ $durationUnit }}"
-                                data-amount="{{ $plan->amount }}">
+                                data-amount="{{ $plan->amount }}"
+                                data-store_product_id="{{ $plan->store_product_id ?? '' }}"
+                                >
                                 Edit
                             </button>
 
@@ -169,6 +173,18 @@
             <form id="ghostForm">
                 <div class="modal-body">
                     <input type="hidden" id="ghost-id" name="id">
+
+                    <!-- Store Product ID -->
+                    <div class="form-group">
+                        <label for="store_product_id">Store Product ID <span class="text-danger">*</span></label>
+                        <input type="text"
+                            class="form-control"
+                            id="store_product_id"
+                            name="store_product_id"
+                            maxlength="255"
+                            required>
+                        <div class="invalid-feedback" id="error-store_product_id"></div>
+                    </div>
 
                     <div class="form-group">
                         <label for="tag_en">Tag (English) <span class="text-danger">*</span></label>
@@ -300,6 +316,7 @@ $(document).ready(function () {
         $('#duration_en').val($(this).data('duration-en'));
         $('#duration_ge').val($(this).data('duration-ge'));
         $('#amount').val($(this).data('amount'));
+        $('#store_product_id').val($(this).data('store_product_id'));
 
         $('#ghostModal').modal('show');
     });
@@ -318,6 +335,7 @@ $(document).ready(function () {
         var durationEn = $('#duration_en').val().trim();
         var durationGe = $('#duration_ge').val().trim();
         var amount = $('#amount').val().trim();
+        var storeProductId = $('#store_product_id').val().trim();
 
         var hasError = false;
 
@@ -337,6 +355,10 @@ $(document).ready(function () {
         if (!durationGe) { setInvalid('duration_ge', 'German duration text is required.'); hasError = true; }
         if (!amount || isNaN(amount) || parseFloat(amount) < 0 || parseFloat(amount) > 99999999.99) {
             setInvalid('amount', 'Amount must be between 0 and 99999999.99.');
+            hasError = true;
+        }
+        if (!storeProductId) {
+            setInvalid('store_product_id', 'Store Product ID is required.');
             hasError = true;
         }
 
@@ -397,7 +419,8 @@ $(document).ready(function () {
                             'duration_translation.ge': 'duration_ge',
                             'duration_value': 'duration_value',
                             'unit': 'unit',
-                            'amount': 'amount'
+                            'amount': 'amount',
+                            'store_product_id': 'store_product_id'
                         };
 
                         if (fieldMap[key]) {
