@@ -31,6 +31,7 @@ class PlanController extends Controller
 
     public function store(Request $request)
     {
+       
         $rules = [
             'tag_translation.en'      => 'required|string|max:255',
             'tag_translation.ge'      => 'required|string|max:255',
@@ -41,6 +42,7 @@ class PlanController extends Controller
             'duration_translation.en' => 'required|string|max:255',
             'duration_translation.ge' => 'required|string|max:255',
             'amount'                  => 'required|numeric|min:0|max:99999999.99',
+            'store_product_id'         => 'required|string|max:255',
         ];
 
         $messages = [
@@ -58,6 +60,9 @@ class PlanController extends Controller
             'duration_translation.ge.required' => 'German duration text is required.',
             'amount.required' => 'Amount is required.',
             'amount.numeric' => 'Amount must be numeric.',
+            'store_product_id.required' => 'Store Product ID is required.',
+            'store_product_id.string' => 'Store Product ID must be a string.',
+            'store_product_id.max' => 'Store Product ID may not be greater than 255 characters.',
         ];
 
         $validator = \Validator::make($request->all(), $rules, $messages);
@@ -77,6 +82,7 @@ class PlanController extends Controller
                 'duration' => $request->input('duration_value') . '_' . $request->input('unit'),
                 'amount' => $request->input('amount'),
                 'currency' => 'USD',
+                'store_product_id' => $request->input('store_product_id'),
 
                 'tag_translation' => [
                     'en' => $request->input('tag_translation.en'),
@@ -147,6 +153,7 @@ class PlanController extends Controller
                     'tag_translation' => $plan->tag_translation ?? [],
                     'title_translation' => $plan->title_translation ?? [],
                     'duration_translation' => $plan->duration_translation ?? [],
+                    'store_product_id' => $plan->store_product_id ?? '',
                 ]
             ]);
         } catch (\Exception $e) {
@@ -169,6 +176,7 @@ class PlanController extends Controller
             'duration_translation.en' => 'required|string|max:255',
             'duration_translation.ge' => 'required|string|max:255',
             'amount'                  => 'required|numeric|min:0|max:99999999.99',
+            'store_product_id'         => 'required|string|max:255',
         ];
 
         $messages = [
@@ -186,6 +194,9 @@ class PlanController extends Controller
             'duration_translation.ge.required' => 'German duration text is required.',
             'amount.required' => 'Amount is required.',
             'amount.numeric' => 'Amount must be numeric.',
+            'store_product_id.required' => 'Store Product ID is required.',
+            'store_product_id.string' => 'Store Product ID must be a string.',
+            'store_product_id.max' => 'Store Product ID may not be greater than 255 characters.',
         ];
 
         $validator = \Validator::make($request->all(), $rules, $messages);
@@ -204,6 +215,7 @@ class PlanController extends Controller
                 'title' => $request->input('title_translation.en'),
                 'duration' => $request->input('duration_value') . '_' . $request->input('unit'),
                 'amount' => $request->input('amount'),
+                'store_product_id' => $request->input('store_product_id'),
 
                 'tag_translation' => [
                     'en' => $request->input('tag_translation.en'),
@@ -249,7 +261,8 @@ class PlanController extends Controller
     public function destroy($id)
     {
         try {
-            return $this->planService->delete($id);
+            $data =  $this->planService->delete($id);
+            return response()->json(['status' => 1, 'message' => 'Plan deleted successfully.', 'data' => $data]);
         } catch (\Exception $e) {
             return response()->json(['status' => 0, 'message' => 'Error: ' . $e->getMessage()], 500);
         }
@@ -276,6 +289,7 @@ class PlanController extends Controller
             'boost_count'          => 'required|integer|min:1|max:1000',
             'discount'             => 'nullable|numeric|min:0|max:100',
             'amount'               => 'required|numeric|min:0|max:99999999.99',
+            'store_product_id'         => 'required|string|max:255'
         ];
 
         $messages = [
@@ -288,6 +302,9 @@ class PlanController extends Controller
             'discount.max'         => 'Discount may not be greater than 100.',
             'amount.required'      => 'Amount is required.',
             'amount.numeric'       => 'Amount must be numeric.',
+            'store_product_id.required' => 'Store Product ID is required.',
+            'store_product_id.string' => 'Store Product ID must be a string.',
+            'store_product_id.max' => 'Store Product ID may not be greater than 255 characters.',
         ];
 
         $validator = \Validator::make($request->all(), $rules, $messages);
@@ -318,6 +335,7 @@ class PlanController extends Controller
                 'boost_count' => $request->input('boost_count'),
                 'discount' => $discount,
                 'amount' => $request->input('amount'),
+                'store_product_id' => $request->input('store_product_id'),
             ];
 
             $plan = $this->planService->createBoost($payload);
@@ -362,6 +380,7 @@ class PlanController extends Controller
                         'boost_count' => $plan->boost_count,
                         'discount' => $plan->discount,
                         'amount' => $plan->amount,
+                        'store_product_id' => $plan->store_product_id ?? ''
                     ]
                 ]);
             }
@@ -387,6 +406,7 @@ class PlanController extends Controller
             'boost_count'          => 'required|integer|min:1|max:1000',
             'discount'             => 'nullable|numeric|min:0|max:100',
             'amount'               => 'required|numeric|min:0|max:99999999.99',
+            'store_product_id'         => 'required|string|max:255'
         ];
 
         $messages = [
@@ -399,6 +419,9 @@ class PlanController extends Controller
             'discount.max'         => 'Discount may not be greater than 100.',
             'amount.required'      => 'Amount is required.',
             'amount.numeric'       => 'Amount must be numeric.',
+            'store_product_id.required' => 'Store Product ID is required.',
+            'store_product_id.string' => 'Store Product ID must be a string.',
+            'store_product_id.max' => 'Store Product ID may not be greater than 255 characters.',
         ];
 
         $validator = \Validator::make($request->all(), $rules, $messages);
@@ -429,6 +452,7 @@ class PlanController extends Controller
                 'boost_count' => $request->input('boost_count'),
                 'discount' => $discount,
                 'amount' => $request->input('amount'),
+                'store_product_id' => $request->input('store_product_id'),
             ];
 
             $updated = $this->planService->updateBoost($id, $payload);
@@ -492,6 +516,7 @@ class PlanController extends Controller
             'pin_count'            => 'required|integer|min:1|max:1000',
             'discount'             => 'nullable|numeric|min:0|max:100',
             'amount'               => 'required|numeric|min:0|max:99999999.99',
+            'store_product_id'         => 'required|string|max:255'
         ];
 
         $messages = [
@@ -504,6 +529,9 @@ class PlanController extends Controller
             'discount.max'       => 'Discount may not be greater than 100.',
             'amount.required'    => 'Amount is required.',
             'amount.numeric'     => 'Amount must be numeric.',
+            'store_product_id.required' => 'Store Product ID is required.',
+            'store_product_id.string' => 'Store Product ID must be a string.',
+            'store_product_id.max' => 'Store Product ID may not be greater than 255 characters.',
         ];
 
         $validator = \Validator::make($request->all(), $rules, $messages);
@@ -534,6 +562,7 @@ class PlanController extends Controller
                 'pin_count' => $request->input('pin_count'),
                 'discount' => $discount,
                 'amount' => $request->input('amount'),
+                'store_product_id' => $request->input('store_product_id'),
             ];
 
             $plan = $this->planService->createPin($payload);
@@ -579,6 +608,7 @@ class PlanController extends Controller
                         'pin_count' => $plan->pin_count,
                         'discount' => $plan->discount,
                         'amount' => $plan->amount,
+                        'store_product_id' => $plan->store_product_id ?? '',
                     ]
                 ]);
             }
@@ -604,6 +634,7 @@ class PlanController extends Controller
             'pin_count'            => 'required|integer|min:1|max:1000',
             'discount'             => 'nullable|numeric|min:0|max:100',
             'amount'               => 'required|numeric|min:0|max:99999999.99',
+            'store_product_id'         => 'required|string|max:255'
         ];
 
         $messages = [
@@ -616,6 +647,9 @@ class PlanController extends Controller
             'discount.max'       => 'Discount may not be greater than 100.',
             'amount.required'    => 'Amount is required.',
             'amount.numeric'     => 'Amount must be numeric.',
+            'store_product_id.required' => 'Store Product ID is required.',
+            'store_product_id.string' => 'Store Product ID must be a string.',
+            'store_product_id.max' => 'Store Product ID may not be greater than 255 characters.',
         ];
 
         $validator = \Validator::make($request->all(), $rules, $messages);
@@ -646,6 +680,7 @@ class PlanController extends Controller
                 'pin_count' => $request->input('pin_count'),
                 'discount' => $discount,
                 'amount' => $request->input('amount'),
+                'store_product_id' => $request->input('store_product_id'),
             ];
 
             $updated = $this->planService->updatePin($id, $payload);

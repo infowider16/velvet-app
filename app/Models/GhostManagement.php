@@ -19,6 +19,7 @@ class GhostManagement extends Model
         'tag_translation',
         'title_translation',
         'duration_translation',
+        'store_product_id',
     ];
 
     protected $casts = [

@@ -39,6 +39,7 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
+                                        <th>Store Product ID</th>
                                         <th>Tag</th>
                                         <th>Title</th>
                                         <th>Pin Count</th>
@@ -55,6 +56,7 @@
                                         @endphp
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
+                                            <td>{{ $plan->store_product_id }}</td>
                                             <td>{{ $plan->tag }}</td>
                                             <td>{{ $plan->title }}</td>
                                             <td>{{ $plan->pin_count }}</td>
@@ -72,6 +74,7 @@
                                                     data-pin_count="{{ $plan->pin_count }}"
                                                     data-discount="{{ $plan->discount }}"
                                                     data-amount="{{ $plan->amount }}"
+                                                    data-store_product_id="{{ $plan->store_product_id }}"
                                                 >
                                                     Edit
                                                 </button>
@@ -110,7 +113,20 @@
             <form id="pinForm">
                 <div class="modal-body">
                     <input type="hidden" id="pin-id" name="id">
+                    <div class="form-group">
+                        <label for="store_product_id">
+                            Store Product ID <span class="text-danger">*</span>
+                        </label>
 
+                        <input type="text"
+                            class="form-control"
+                            id="store_product_id"
+                            name="store_product_id"
+                            maxlength="255"
+                            required>
+
+                        <div class="invalid-feedback" id="error-store_product_id"></div>
+                    </div>
                     <div class="form-group">
                         <label for="tag_en">Tag (English)</label>
                         <input type="text" class="form-control" id="tag_en" name="tag_translation[en]" maxlength="255" placeholder="Best deal">
@@ -220,6 +236,7 @@ $(document).ready(function () {
         $('#title_ge').val($(this).data('title-ge'));
         $('#pin_count').val($(this).data('pin_count'));
         $('#discount').val($(this).data('discount'));
+        $('#store_product_id').val($(this).data('store_product_id'));
         $('#amount').val($(this).data('amount'));
 
         $('#pinModal').modal('show');
@@ -237,7 +254,7 @@ $(document).ready(function () {
         var pinCount = $('#pin_count').val().trim();
         var discount = $('#discount').val().trim();
         var amount = $('#amount').val().trim();
-
+        var storeProductId = $('#store_product_id').val().trim();
         var hasError = false;
 
         if (tagEn.length > 255) {
@@ -277,6 +294,17 @@ $(document).ready(function () {
             setInvalid('amount', 'Amount must be between 0 and 99999999.99.');
             hasError = true;
         }
+
+        if (!storeProductId) {
+            setInvalid('store_product_id', 'Store Product ID is required.');
+            hasError = true;
+        }
+
+        if (storeProductId.length > 255) {
+            setInvalid('store_product_id', 'Store Product ID must be at most 255 characters.');
+            hasError = true;
+        }
+
 
         if (hasError) {
             return;
