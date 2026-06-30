@@ -66,7 +66,7 @@ class PinMarkService
                     ->get();
 
                 $sender = $this->userRepo->getOneData(['id' => $userId]);
-                dd($sender);
+            
                 $senderName = $sender->name ?? 'Someone';
 
                 $other = [
