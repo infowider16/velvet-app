@@ -64,8 +64,8 @@ class ReportService
                     /*
                     * Return reported user login
                     */
-                    if ($row->reportedUser?->email) {
-                        return $row->reportedUser->email;
+                    if ($row->reportedUser?->email_id) {
+                        return $row->reportedUser->email_id;
                     }
 
                     if ($row->reportedUser?->phone_number) {
@@ -99,8 +99,8 @@ class ReportService
                     /*
                     * Return reporter login
                     */
-                    if ($row->reporter?->email) {
-                        return $row->reporter->email;
+                    if ($row->reporter?->email_id) {
+                        return $row->reporter->email_id;
                     }
 
                     if ($row->reporter?->phone_number) {
@@ -342,8 +342,8 @@ class ReportService
                     /*
                     * Return reporter login
                     */
-                    if ($row->reporter?->email) {
-                        return $row->reporter->email;
+                    if ($row->reporter?->email_id) {
+                        return $row->reporter->email_id;
                     }
 
                     if ($row->reporter?->phone_number) {
@@ -608,8 +608,8 @@ class ReportService
                     /*
                     * Return reporter login
                     */
-                    if ($row->reporter?->email) {
-                        return $row->reporter->email;
+                    if ($row->reporter?->email_id) {
+                        return $row->reporter->email_id;
                     }
 
                     if ($row->reporter?->phone_number) {
