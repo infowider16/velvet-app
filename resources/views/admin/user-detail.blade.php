@@ -31,6 +31,7 @@
     margin-top: 10px;
     border: 2px solid #eee;
 }
+
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
 <!-- Bootstrap Tabs CSS (if not already included) -->
@@ -42,7 +43,47 @@
         <div class="col-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">User Details</h4>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="card-title mb-0">User Details</h4>
+                        <div class="action-buttons-box" style="margin: 0;">
+                            @php
+                                $isBlocked = $user->is_approve == 1;
+                                $toggleStatus = $isBlocked ? 0 : 1;
+                                $btnClass = $isBlocked ? 'btn-success' : 'btn-danger';
+                                $btnText = $isBlocked ? 'Unblock' : 'Block';
+                            @endphp
+                            
+                            <button type="button"
+                                class="btn {{ $btnClass }} btn-sm text-nowrap"
+                                onclick="commonStatusChange({
+                                    id: {{ $user->id }},
+                                    status: {{ $toggleStatus }},
+                                    url: '{{ route('admin.user.toggleStatus') }}',
+                                    button: this
+                                })">
+                                <i class="fa fa-ban"></i> {{ $btnText }}
+                            </button>
+                            
+                            @if($user->is_delete != 1)
+                                <button type="button"
+                                    class="btn btn-danger btn-sm text-nowrap"
+                                    onclick="commonDelete({
+                                        id: {{ $user->id }},
+                                        url: '{{ route('admin.user.destroy', ':id') }}',
+                                        button: this,
+                                        message: 'Are you sure you want to delete this user?'
+                                    })">
+                                    Delete
+                                </button>
+                            @endif
+                            <button type="button" 
+                                class="btn btn-secondary btn-sm mr-3"
+                                onclick="window.history.back()"
+                                title="Go Back">
+                                <i class="fa fa-arrow-left"></i> Back
+                            </button>
+                        </div>
+                    </div>
                     <ul class="nav nav-tabs mb-3" id="userTab" role="tablist">
                         <li class="nav-item" role="presentation">
                             <a class="nav-link active" id="basic-tab" data-toggle="tab" href="#basic" role="tab" aria-controls="basic" aria-selected="true">
@@ -72,6 +113,15 @@
                                             {{ $user->status_label }}
                                         </span>
                                     </div>
+                                    
+                                    <!-- Deleted Status Badge -->
+                                    @if($user->is_delete == 1)
+                                        <div class="mt-2">
+                                            <span class="badge badge-danger">
+                                                User Deleted
+                                            </span>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="col-md-8">
                                     <table class="table table-borderless table-responsive">
@@ -175,33 +225,79 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="tab-pane fade" id="media" role="tabpanel" aria-labelledby="media-tab">
                             <div class="row">
+
                                 <div class="col-12 text-center">
+
                                     <h6>User Images</h6>
+
                                     @php
                                         $images = [];
+
                                         if (!empty($user->images)) {
-                                            $images = is_array($user->images) ? $user->images : json_decode($user->images, true);
+                                            $images = is_array($user->images)
+                                                ? $user->images
+                                                : json_decode($user->images, true);
                                         }
                                     @endphp
+
                                     @if(!empty($images) && count($images))
-                                        @foreach($images as $img)
-                                            @php
-                                                $imgUrl = Str::startsWith($img, ['http://', 'https://', '/'])
-                                                    ? asset($img)
-                                                    : asset('storage/' . $img);
-                                            @endphp
-                                            <a href="{{ $imgUrl }}" data-lightbox="user-gallery" data-title="{{ $user->name }}">
-                                                <img src="{{ $imgUrl }}" class="user-gallery-image" alt="User Image">
-                                            </a>
-                                        @endforeach
+
+                                        <div class="d-flex flex-wrap justify-content-center">
+
+                                            @foreach($images as $key => $img)
+
+                                                @php
+                                                    $imgUrl = Str::startsWith($img, ['http://', 'https://', '/'])
+                                                        ? asset($img)
+                                                        : asset('storage/' . $img);
+                                                @endphp
+
+                                                <div class="position-relative m-2">
+
+                                                    {{-- Image --}}
+                                                    <a href="{{ $imgUrl }}"
+                                                        data-lightbox="user-gallery"
+                                                        data-title="{{ $user->name }}">
+
+                                                        <img src="{{ $imgUrl }}"
+                                                            class="user-gallery-image"
+                                                            alt="User Image">
+                                                    </a>
+
+                                                    {{-- Delete Button --}}
+                                                    <button type="button"
+                                                        class="btn btn-danger btn-sm position-absolute"
+                                                        style="top: 0; right: 0; border-radius: 50%; padding: 2px 7px;"
+                                                        onclick='deleteUserImage({
+                                                            userId: {{ $user->id }},
+                                                            image: "{{ $img }}"
+                                                        })'>
+
+                                                        x
+                                                    </button>
+
+                                                </div>
+
+                                            @endforeach
+
+                                        </div>
+
                                     @else
-                                        <div class="text-muted">No images uploaded</div>
+
+                                        <div class="text-muted">
+                                            No images uploaded
+                                        </div>
+
                                     @endif
+
                                 </div>
+
                             </div>
                         </div>
+
                     </div>
                     <a href="{{ route('admin.users.index') }}" class="btn btn-secondary mt-3">Back to List</a>
                 </div>
@@ -236,7 +332,65 @@ $(function () {
         // If you want to do something on tab change
     });
 });
+
+function deleteUserImage(data)
+{
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You want to delete this image?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+
+        if (result.isConfirmed) {
+
+            $.ajax({
+
+                url: "{{ route('admin.user.delete-image') }}",
+
+                type: "POST",
+
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    user_id: data.userId,
+                    image: data.image
+                },
+
+                success: function(response) {
+
+                    if (response.status) {
+
+                        toastr.success(
+                            response.message || 'Image deleted successfully'
+                        );
+
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+
+                    } else {
+
+                        toastr.error(
+                            response.message || 'Something went wrong'
+                        );
+                    }
+                },
+
+                error: function(xhr) {
+
+                    toastr.error(
+                        xhr.responseJSON?.message || 'Something went wrong'
+                    );
+                }
+            });
+        }
+    });
+}
 </script>
+@include('admin.include.common-scripts')
 @endsection
 
 

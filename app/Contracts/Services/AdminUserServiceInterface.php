@@ -9,4 +9,5 @@ interface AdminUserServiceInterface
     public function getUserListDataTable();
     public function toggleUserStatus(Request $request);
     public function getUserDetail($id);
+    public function deleteUserImage(Request $request);
 }

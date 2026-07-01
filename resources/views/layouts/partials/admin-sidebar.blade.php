@@ -215,15 +215,42 @@
             </div>
 
         </li>
-        <li class="nav-item {{ request()->routeIs('admin.report.index') ? 'active' : '' }}">
+        <li class="nav-item {{ request()->routeIs('admin.user-reports.*') || request()->routeIs('admin.group-reports.*') || request()->routeIs('admin.pin-reports.*') ? 'active' : '' }}">
 
-            <a class="nav-link" href="{{ route('admin.report.index') }}">
+            <a class="nav-link" data-toggle="collapse" href="#report-management" aria-expanded="false" aria-controls="report-management">
 
                 <i class="menu-icon typcn typcn-document-text"></i>
 
-                <span class="menu-title">Pin Reports</span>
+                <span class="menu-title">Report Management</span>
+
+                <i class="menu-arrow"></i>
 
             </a>
+
+            <div class="collapse" id="report-management">
+
+                <ul class="nav flex-column sub-menu">
+
+                    <li class="nav-item">
+
+                        <a class="nav-link" href="{{ route('admin.user-reports.index') }}">User Reports</a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a class="nav-link" href="{{ route('admin.group-reports.index') }}">Group Reports</a>
+
+                    </li>
+                    <li class="nav-item">
+
+                        <a class="nav-link" href="{{ route('admin.pin-reports.index') }}">Pin Reports</a>
+
+                    </li>
+
+                </ul>
+
+            </div>
 
         </li>
         

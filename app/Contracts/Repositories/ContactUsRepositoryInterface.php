@@ -8,4 +8,8 @@ interface ContactUsRepositoryInterface
     public function all();
     public function find($id);
     public function deleteData(array $modelData);
+    public function updateStatus(array $byWhere, array $data);
+    public function getAllData();
+  
+
 }

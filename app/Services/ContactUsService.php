@@ -6,6 +6,8 @@ use Exception;
 use Illuminate\Support\Facades\Log;
 use App\Contracts\Repositories\ContactUsRepositoryInterface;
 use App\Contracts\Services\ContactUsServiceInterface;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ContactUsMail;
 
 class ContactUsService implements ContactUsServiceInterface
 {
@@ -16,21 +18,47 @@ class ContactUsService implements ContactUsServiceInterface
         $this->contactUsRepo = $contactUsRepo;
     }
 
-    public function store(array $data)
+     public function store(array $data)
     {
         try {
 
             $data['user_id'] = auth('api')->id();
-            return $this->contactUsRepo->create($data);
-    
+
+           
+            $contact = $this->contactUsRepo->create($data);
+
+          
+            $mailData = [
+                'subject' => 'New Contact Us Request',
+
+                'body' => '
+                    <h3>New Contact Us Enquiry</h3>
+
+                    <p><strong>Name:</strong> '.$data['name'].'</p>
+
+                    <p><strong>Email:</strong> '.$data['email'].'</p>
+
+                    <p><strong>Message:</strong></p>
+
+                    <p>'.$data['message'].'</p>
+                ',
+            ];
+
+           
+            Mail::to('deeksha.webwiders@gmail.com')
+                ->send(new ContactUsMail($mailData));
+
+            return $contact;
+
         } catch (Exception $e) {
+
             Log::error('Contact Us submission failed', [
                 'message' => $e->getMessage(),
-                'data'    => $data,
                 'trace'   => $e->getTraceAsString(),
             ]);
 
             throw $e;
         }
     }
+
 }
