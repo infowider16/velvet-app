@@ -18,6 +18,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 use Illuminate\Support\Facades\Storage;
 
+use Illuminate\Support\Facades\DB;
+
 
 
 class UserServices extends BaseService implements AdminUserServiceInterface
@@ -48,7 +50,7 @@ class UserServices extends BaseService implements AdminUserServiceInterface
 
             return $this->handleDataTableCall(function () {
 
-                $users = $this->userRepository->All();
+                $users = $this->userRepository->getByWhere(['is_delete' => 0], ['id' => 'desc'], ['*'], [], [], 'get');
 
 
 
@@ -155,6 +157,7 @@ class UserServices extends BaseService implements AdminUserServiceInterface
             return $this->handleServiceCall(function () use ($request) {
 
                 $user = $this->userRepository->find($request->user_id);
+              
 
                 if (!$user) {
 
@@ -224,39 +227,19 @@ class UserServices extends BaseService implements AdminUserServiceInterface
 
                 $user = $this->userRepository->find($id);
 
-                if (!$user) {
-
-                    return ['status' => false, 'message' => __('message.user_not_found')];
-
+                if (!$user || $user->is_delete == 1) {
+                    return [
+                        'status' => false,
+                        'message' => __('message.user_not_found_or_already_deleted')
+                    ];
                 }
 
+                $this->userRepository->update(['id' => $id], ['is_delete' => 1]);
 
+                DB::table('groups')->where('created_by', $id)->delete();
+                DB::table('pin_marks')->where('user_id', $id)->delete();
 
-                // Delete user image from storage if exists
-
-                if ($user->image && Storage::exists('public/' . $user->image)) {
-
-                    Storage::delete('public/' . $user->image);
-
-                }
-
-
-
-                // Delete user record
-
-                $deleted = $this->userRepository->deleteData(['id' => $id]);
-
-
-
-                if ($deleted) {
-
-                    return ['status' => true, 'message' =>'User deleted successfully'];
-
-                }
-
-
-
-                return ['status' => false, 'message' => __('message.some_thing_went_wrong')];
+                return ['status' => true, 'message' => __('message.user_details_deleted_successfully')];
 
             });
 
@@ -321,6 +304,70 @@ class UserServices extends BaseService implements AdminUserServiceInterface
 
         }
 
+    }
+
+    public function deleteUserImage($data)
+    {
+        try {
+
+            $id = $data['user_id'] ?? null;
+            $image = $data['image'] ?? null;
+
+            // Find User
+            $user = $this->userRepository->find($id);
+
+            if (!$user) {
+
+                return [
+                    'status' => false,
+                    'message' => __('message.user_not_found')
+                ];
+            }
+
+            // Get Images Array
+            $images = is_array($user->images)
+                ? $user->images
+                : json_decode($user->images, true);
+
+            if (!is_array($images)) {
+                $images = [];
+            }
+
+            // Remove selected image from array
+            $updatedImages = array_values(
+                array_filter($images, function ($img) use ($image) {
+                    return $img != $image;
+                })
+            );
+
+            // Delete image from storage (use public disk and normalize path)
+            if ($image) {
+                $imagePath = ltrim($image, '/\\');
+                if (Storage::disk('public')->exists($imagePath)) {
+                    Storage::disk('public')->delete($imagePath);
+                }
+            }
+
+            // Update images column
+            $this->userRepository->update(
+                ['id' => $id],
+                ['images' => json_encode($updatedImages)]
+            );
+
+            return [
+                'status' => true,
+                'message' => 'User image deleted successfully'
+            ];
+
+        } catch (\Exception $e) {
+
+            $this->logError(__FUNCTION__, $e);
+
+            return [
+                'status' => false,
+                'message' => 'Something went wrong while deleting user image'
+            ];
+        }
     }
 
 }

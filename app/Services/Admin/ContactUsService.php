@@ -48,127 +48,221 @@ class ContactUsService extends BaseService implements AdminContactUsServiceInter
 
             return $this->handleDataTableCall(function () {
 
-                $contacts = $this->contactUsRepository->all();
+            $contacts = $this->contactUsRepository->getAllData();
+          
 
+            return DataTables::of($contacts)
 
+                ->addIndexColumn()
 
-                return DataTables::of($contacts)
+                ->addColumn('user_id', function ($row) {
+                    return $row->user_id ? '#'.$row->user_id : '-';
+                })
 
-                    ->addIndexColumn()
+                ->addColumn('name', function ($row) {
 
-                    ->addColumn('name', function ($row) {
-                        if (!empty($row->user_id)) {
-                            return '<a href="' . route('admin.user.show', $row->user_id) . '" class="text-primary">
-                                        ' . e($row->name ?: '-') . '
-                                    </a>';
-                        }
+                    if (!empty($row->user_id)) {
 
-                        return '<span class="text-muted" data-bs-toggle="tooltip" title="User not found">
+                        return '<a href="' . route('admin.user.show', $row->user_id) . '" class="text-primary">
                                     ' . e($row->name ?: '-') . '
-                                </span>';
-                    })
+                                </a>';
+                    }
 
-                    ->addColumn('email', function ($row) {
+                    return e($row->name ?: '-');
+                })
 
-                        return $row->email ?: '-';
+                ->addColumn('login_account', function ($row) {
 
-                    })
+                    if ($row->user?->email) {
+                        return $row->user->email;
+                    }
 
-                    ->addColumn('image', function ($row) {
+                    if ($row->user?->phone_number) {
+                        return ($row->user->phone_code ?? '') . $row->user->phone_number;
+                    }
 
-                        // Show image if available in database
+                    return '-';
+                })
 
-                        if (empty($row->image)) {
+                ->addColumn('email', function ($row) {
 
-                            return '-';
+                    return $row->email ?: '-';
+                })
 
-                        }
+                ->addColumn('subject', function ($row) {
 
-                        $img = $row->image;
+                    return $row->subject ?: '-';
+                })
 
-                        // If already full URL, use it
+                ->addColumn('message', function ($row) {
 
-                        if (strpos($img, 'http://') === 0 || strpos($img, 'https://') === 0) {
+                    if (!$row->message) {
+                        return '-';
+                    }
 
-                            $src = $img;
+                    $message = strip_tags($row->message);
 
-                        } elseif (strpos($img, '/storage/') === 0) {
+                    $words = preg_split('/\s+/', $message);
 
-                            $src = $img;
+                    $shortMessage = implode(' ', array_slice($words, 0, 20));
 
-                        } else {
+                    $html = '<div class="message-content">' . e($shortMessage);
 
-                            // assume storage path like "user_images/filename.jpg"
+                    if (count($words) > 20) {
 
-                            $src = asset('storage/' . ltrim($img, '/'));
+                        $html .= '...</div>
 
-                        }
+                            <button type="button"
+                                class="btn btn-primary btn-sm view-message-btn mt-2"
+                                data-message="' . e($message) . '">
+                                View More
+                            </button>';
+                    } else {
 
-                        return '<img src="' . e($src) . '" alt="contact-image" style="max-width:60px;max-height:60px;object-fit:cover;border-radius:4px;" />';
+                        $html .= '</div>';
+                    }
 
-                    })
+                    return $html;
+                })
 
-                    ->addColumn('subject', function ($row) {
+               ->addColumn('image', function ($row) {
 
-                        if (!$row->subject) return '-';
+                    if (empty($row->image)) {
+                        return '-';
+                    }
 
-                        
+                    $img = $row->image;
 
-                        $subject = $row->subject;
+                    if (strpos($img, 'http://') === 0 || strpos($img, 'https://') === 0) {
 
-                        if (strlen($subject) > 30) {
+                        $src = $img;
 
-                            $shortText = Str::limit($subject, 30, '');
+                    } elseif (strpos($img, '/storage/') === 0) {
 
-                            return '<span class="short-text">' . $shortText . '...</span>
+                        $src = $img;
 
-                                    <span class="full-text" style="display:none;">' . $subject . '</span>
+                    } else {
 
-                                    <br><button class="btn btn-link btn-sm p-0 toggle-text" data-type="subject">Read More</button>';
+                        $src = asset('storage/' . ltrim($img, '/'));
+                    }
 
-                        }
+                    return '
+                        <a href="' . e($src) . '" data-lightbox="support-ticket">
+                            <img src="' . e($src) . '"
+                                style="
+                                    width:70px;
+                                    height:70px;
+                                    object-fit:cover;
+                                    border-radius:6px;
+                                    border:1px solid #ddd;
+                                    cursor:pointer;
+                                ">
+                        </a>
+                    ';
+                })
 
-                        return $subject;
+                ->addColumn('date_time', function ($row) {
 
-                    })
+                    return $row->created_at
+                        ? $row->created_at->format('d M Y h:i A')
+                        : '-';
+                })
 
-                    ->addColumn('message', function ($row) {
 
-                        if (!$row->message) {
-                            return '-';
-                        }
+                ->addColumn('created_at', function ($row) {
 
-                        $message = $row->message;
-                        $words = preg_split('/\s+/', strip_tags($message));
-                        $shortMessage = implode(' ', array_slice($words, 0, 20));
+                    return $row->created_at
+                        ? $row->created_at->format('Y-m-d')
+                        : '-';
+                })
 
-                        $html = '<div class="message-content">' . e($shortMessage);
+                ->addColumn('status', function ($row) {
 
-                        if (count($words) > 20) {
-                            $html .= '...</div>
-                                <button type="button"
-                                    class="btn btn-primary btn-sm view-message-btn mt-2"
-                                    data-message="' . e($message) . '">
-                                    View More
-                                </button>';
-                        } else {
-                            $html .= '</div>';
-                        }
+                    switch ($row->status) {
 
-                        return $html;
-                    })
+                        case 'Pending':
+                            $badge = 'warning';
+                            break;
 
-                    ->addColumn('created_at', function ($row) {
+                        case 'Open':
+                            $badge = 'primary';
+                            break;
 
-                        return $row->created_at ? date('Y-m-d H:i', strtotime($row->created_at)) : '-';
+                        case 'In Progress':
+                            $badge = 'info';
+                            break;
 
-                    })
+                        case 'Resolved':
+                            $badge = 'success';
+                            break;
 
-                   
+                        default:
+                            $badge = 'secondary';
+                    }
 
-                    ->rawColumns(['subject', 'message', 'image' ,'name'])
+                    return '
+                        <span class="badge badge-' . $badge . '">
+                            '.$row->status.'
+                        </span>
+                    ';
+                })
 
-                    ->make(true);
+                ->addColumn('action', function ($row) {
+                    
+                    if (empty($row->user_id)) {
+                        return '';
+                    }
+
+                    $statuses = [
+                        'Pending',
+                        'Open',
+                        'In Progress',
+                        'Resolved'
+                    ];
+
+                    $html = '
+                        <div class="d-flex flex-column gap-2">
+
+                            <!-- Status Change -->
+                            <select class="form-control change-status mb-2"
+                                data-id="'.$row->id.'"
+                                style="min-width:150px;">';
+
+                    foreach ($statuses as $status) {
+
+                        $selected = $row->status == $status ? 'selected' : '';
+
+                        $html .= '
+                            <option value="'.$status.'" '.$selected.'>
+                                '.$status.'
+                            </option>';
+                    }
+                    
+                    $html .= '
+                        </select>
+
+                        <!-- Buttons -->
+                        <div class="gap-2">
+                            <!-- View -->
+                            <a href="'.route('admin.user.show', $row->user_id).'"
+                                class="mt-2 btn btn-info text-nowrap">
+                                View
+                            </a>
+                        </div>
+                    ';
+
+                    return $html;
+                })
+
+               ->rawColumns([
+                    'name',
+                    'message',
+                    'image',
+                    'status',
+                    'action'
+                ])
+
+                ->make(true);
 
             });
 
@@ -180,6 +274,28 @@ class ContactUsService extends BaseService implements AdminContactUsServiceInter
 
         }
 
+    }
+
+    public function changeStatus(array $data)
+    {
+        try {
+            
+            $this->contactUsRepository->updateStatus(
+                ['id' => $data['id']],
+                ['status' => $data['status']]
+            );
+            
+            return [
+                'success' => true,
+                'message' => 'Status updated successfully'
+            ];
+
+        } catch (\Exception $e) {
+
+            $this->logError(__FUNCTION__, $e);
+
+            throw $e;
+        }
     }
 
 

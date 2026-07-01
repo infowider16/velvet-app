@@ -54,8 +54,8 @@ Route::prefix('admin')->name('admin.')->namespace('App\Http\Controllers\Admin')-
         Route::delete('users/{id}', 'UserController@destroy')->name('user.destroy');
 
         Route::get('users/{id}', 'UserController@show')->name('user.show');
-
         
+        Route::post('/user/delete-image','UserController@deleteImage')->name('user.delete-image');
 
         // Contact management routes
 
@@ -63,7 +63,10 @@ Route::prefix('admin')->name('admin.')->namespace('App\Http\Controllers\Admin')-
 
         Route::get('contacts/list', 'ContactUsController@getContactList')->name('contact-list');
 
-        
+        Route::post(
+            'contacts/change-status',
+            'ContactUsController@changeStatus'
+        )->name('contact.change-status');
 
         // FAQ management routes
 
@@ -151,8 +154,33 @@ Route::prefix('admin')->name('admin.')->namespace('App\Http\Controllers\Admin')-
         Route::get('transaction/pin', 'TransactionController@pinTransactions')->name('transaction.pin');
         Route::get('transaction/pin/list', 'TransactionController@pinTransactionList')->name('transaction-pin-list');
 
-        Route::get('pin-reports', 'ReportController@index')->name('report.index');
-        Route::get('pin-reports/list', 'ReportController@reportList')->name('report-list');
+        //REPORTS 
+
+        Route::get('user-reports', 'ReportController@userReports')
+        ->name('user-reports.index');
+        Route::get('user-reports/list', 'ReportController@userReportsList')
+        ->name('user-reports.list');
+
+        Route::get('group-reports', 'ReportController@groupReports')
+        ->name('group-reports.index');
+        Route::get('group-reports/list', 'ReportController@groupReportsList')
+        ->name('group-reports.list');
+
+        Route::get('pin-reports', 'ReportController@pinReports')
+        ->name('pin-reports.index');
+        Route::get('pin-reports/list', 'ReportController@pinReportsList')
+        ->name('pin-reports.list');
+
+        Route::post(
+            'reports/change-status',
+            'ReportController@changeStatus'
+        )->name('report.change-status');
+
+        Route::post(
+            'reports/delete',
+            'ReportController@deleteReport'
+        )->name('report.delete');
+        
 
     });
 

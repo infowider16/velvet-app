@@ -1,54 +1,75 @@
 @extends('layouts.admin')
 
-
-
 @section('title', 'Contact List')
 
-
+@section('styles')
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+@endsection
 
 @section('content')
 
 <style>
-    #contact-data-table {
-        width: 100% !important;
+    .content-wrapper {
+        padding: 20px;
     }
 
-    #contact-data-table th,
-    #contact-data-table td {
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .card-body {
+        padding: 20px;
+        overflow-x: auto;
+    }
+
+    .card-title {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #contact-data-table {
+        width: 100% !important;
+        border-collapse: collapse;
+    }
+
+    #contact-data-table thead th {
+        background-color: #f8f9fa;
+        color: #333;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 12px 14px;
+        border-bottom: 1px solid #dee2e6;
+        white-space: nowrap;
+    }
+
+    #contact-data-table tbody td {
+        padding: 12px 14px;
         vertical-align: top;
+        font-size: 14px;
+        color: #444;
+        border-bottom: 1px solid #f1f1f1;
         white-space: normal !important;
+        word-break: break-word;
+    }
+
+    #contact-data-table tbody tr:hover {
+        background-color: #fafafa;
     }
 
     .message-content {
-        white-space: normal !important;
+        max-width: 250px;
+        line-height: 1.5;
         word-break: break-word;
-        overflow-wrap: anywhere;
-        line-height: 1.4;
-    }
-
-    #messageModal .modal-dialog {
-        max-width: 760px;
-        margin: 1.75rem auto;
-    }
-
-    #messageModal .modal-content {
-        border-radius: 8px;
-        border: none;
-    }
-
-    #messageModal .modal-header {
-        background: #f8f9fa;
-        border-bottom: 1px solid #ddd;
-        padding: 15px 20px;
-    }
-
-    #messageModal .modal-title {
-        font-size: 18px;
-        font-weight: 600;
-    }
-
-    #messageModal .modal-body {
-        padding: 20px;
     }
 
     .full-message-box {
@@ -63,23 +84,54 @@
         line-height: 1.6;
         font-size: 14px;
     }
-    .card-body {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
 
-#contact-data-table {
-    width: 100% !important;
-    min-width: 1000px;
-}
+    #messageModal .modal-dialog {
+        max-width: 760px;
+    }
 
-#contact-data-table th,
-#contact-data-table td {
-    white-space: nowrap !important;
-}
+    #messageModal .modal-content {
+        border: none;
+        border-radius: 10px;
+    }
+
+    #messageModal .modal-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid #eee;
+        background: #f8f9fa;
+    }
+
+    #messageModal .modal-title {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    #messageModal .modal-body {
+        padding: 20px;
+    }
+
+    .btn-sm {
+        padding: 5px 10px;
+        font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+        .card-title {
+            font-size: 18px;
+        }
+
+        #contact-data-table thead th,
+        #contact-data-table tbody td {
+            font-size: 13px;
+            padding: 10px;
+        }
+
+        .message-content {
+            max-width: 180px;
+        }
+    }
 </style>
 
-<div class="content-wrapper px-0">
+<div class="content-wrapper">
 
     <div class="row">
 
@@ -91,39 +143,33 @@
 
                     <h4 class="card-title">Contact Us List</h4>
 
-                    <table class="table" id="contact-data-table">
+                    <div class="table-responsive">
 
-                        <thead>
+                        <table class="table-responsive table" id="contact-data-table">
 
-                            <tr>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>User ID</th>
+                                    <th>User Name</th>
+                                    <th>Login Account</th>
+                                    <th>Contact Email</th>
+                                    <th>Support Category</th>
+                                    <th>Support Message</th>
+                                    <th>Image</th>
+                                    <th>Date & Time</th>
+                                    <th>Status</th>
+                                    <th>Created At</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
 
-                                <th>#</th>
+                            <tbody>
+                            </tbody>
 
-                                <th>Name</th>
+                        </table>
 
-                                <th>Email</th>
-
-                                <th>Image</th>
-
-                                <th>Subject</th>
-
-                                <th>Message</th>
-
-                                <th>Created At</th>
-
-                             
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            {{-- DataTables will populate --}}
-
-                        </tbody>
-
-                    </table>
+                    </div>
 
                 </div>
 
@@ -136,133 +182,166 @@
 </div>
 
 <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content message-modal-content">
+
+        <div class="modal-content">
+
             <div class="modal-header">
+
                 <h5 class="modal-title" id="messageModalLabel">Message Details</h5>
+
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
+
             </div>
 
             <div class="modal-body">
+
                 <div id="fullMessageText" class="full-message-box"></div>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
 
 @endsection
 
-
-
 @section('scripts')
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
 <script>
 
     let table = $('#contact-data-table').DataTable({
 
+        responsive: true,
         processing: true,
-
         serverSide: true,
 
         ajax: {
-
-            url: "{{ route('admin.contact-list') }}",
-
-            data: function(d) {
-
-                // No filters for now
-
-            }
-
+            url: "{{ route('admin.contact-list') }}"
         },
 
-        columns: [{
+        columns: [
 
+            {
                 data: 'DT_RowIndex',
-
                 name: 'DT_RowIndex',
-
                 orderable: false,
-
                 searchable: false
-
             },
 
             {
+                data: 'user_id',
+                name: 'user_id'
+            },
 
+            {
                 data: 'name',
-
                 name: 'name'
-
             },
 
             {
+                data: 'login_account',
+                name: 'login_account'
+            },
 
+            {
                 data: 'email',
-
                 name: 'email'
-
             },
 
             {
-
-                data: 'image',
-
-                name: 'image',
-
-                orderable: false,
-
-                searchable: false
-
-            },
-
-            {
-
                 data: 'subject',
-
                 name: 'subject'
-
             },
 
             {
-
                 data: 'message',
-
-                name: 'message'
-
+                name: 'message',
+                orderable: false
             },
 
-          
+            {
+                data: 'image',
+                name: 'image',
+                orderable: false,
+                searchable: false
+            },
 
             {
+                data: 'date_time',
+                name: 'date_time'
+            },
 
+            {
+                data: 'status',
+                name: 'status'
+            },
+
+            {
                 data: 'created_at',
-
                 name: 'created_at'
+            },
 
+            {
+                data: 'action',
+                name: 'action',
+                orderable: false,
+                searchable: false
             }
-
         ]
-
     });
 
-
-
-    // Handle read more/read less toggle
+    // View full message
     $(document).on('click', '.view-message-btn', function () {
+
         let message = $(this).attr('data-message');
 
         $('#fullMessageText').text(message);
+
         $('#messageModal').modal('show');
     });
 
-  
+    // Change status
+    $(document).on('change', '.change-status', function () {
+
+        let id = $(this).data('id');
+        let status = $(this).val();
+
+        $.ajax({
+
+            url: "{{ route('admin.contact.change-status') }}",
+
+            type: "POST",
+
+            data: {
+                _token: "{{ csrf_token() }}",
+                id: id,
+                status: status
+            },
+
+            success: function(response) {
+
+                toastr.success(response.message);
+                table.ajax.reload(null, false);
+            },
+
+            error: function(xhr) {
+
+                toastr.error('Something went wrong');
+            }
+        });
+    });
 
 </script>
 
 @endsection
-
-
 

@@ -218,4 +218,19 @@ class UserController extends BaseController
 
     }
 
+    public function deleteImage(Request $request)
+
+    {
+
+        try {
+           return $this->userService->deleteUserImage($request);
+        }catch (\Exception $e) {
+
+            Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
+
+            return $this->adminErrorResponse(__('message.some_thing_went_wrong'), [], [], 0, 500);
+
+        }
+    }
+
 }
