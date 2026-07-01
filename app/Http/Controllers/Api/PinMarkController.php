@@ -35,7 +35,6 @@ class PinMarkController extends BaseController
     public function pinMarkFetch(Request $request)
     {
         try {
-            dd("hello");
             $filters = $request->all();
             $marks = $this->pinMarkService->fetchPinMarks($filters);
             return $this->sendResponse($marks, __('message.pin_marks_fetched_successfully'));
