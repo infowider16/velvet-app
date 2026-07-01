@@ -48,6 +48,10 @@ class ContactUsService implements ContactUsServiceInterface
             Mail::to('deeksha.webwiders@gmail.com')
                 ->send(new ContactUsMail($mailData));
 
+            Mail::to('support@velvet-meet.com')
+                ->send(new ContactUsMail($mailData));
+            
+
             return $contact;
 
         } catch (Exception $e) {
