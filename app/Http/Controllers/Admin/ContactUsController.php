@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Log;
 
+use App\Http\Requests\Admin\UpdateContactStatusRequest;
 
 
 class ContactUsController extends BaseController 
@@ -72,6 +73,26 @@ class ContactUsController extends BaseController
 
     }
 
+    public function changeStatus(UpdateContactStatusRequest $request)
+    {
+        try {
+
+            $response = $this->contactUsService->changeStatus($request->validated());
+
+            return response()->json($response);
+
+        } catch (\Exception $e) {
+
+            Log::error(
+                "Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage()
+            );
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong'
+            ], 500);
+        }
+    }
 
 
 }

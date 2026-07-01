@@ -391,6 +391,422 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
         return $query->delete();
     }
 
+//reports new function added
+/**
+* Get all user reports for admin.
+*
+* @return mixed
+*/
+public function getUserReports($request = null)
+{
+    try {
 
+        /*
+        * Start query
+        */
+        $query = $this->groupReportModel
+            ->with([
+                'reportedUser',
+                'reporter'
+            ])
+            ->whereNotNull('user_id');
+
+        /*
+        * Filter by status
+        */
+        if (!empty($request->status)) {
+
+            $query->where(
+                'status',
+                $request->status
+            );
+        }
+
+        /*
+        * Filter by reason
+        */
+        if (!empty($request->reason)) {
+
+            $query->where(
+                'reason',
+                'LIKE',
+                '%' . $request->reason . '%'
+            );
+        }
+
+        /*
+        * Filter by reporter
+        */
+        if (!empty($request->reporter)) {
+
+            $query->whereHas(
+                'reporter',
+                function ($q) use ($request) {
+
+                    $q->where(
+                        'name',
+                        'LIKE',
+                        '%' . $request->reporter . '%'
+                    )
+                    ->orWhere(
+                        'email',
+                        'LIKE',
+                        '%' . $request->reporter . '%'
+                    )
+                    ->orWhere(
+                        'phone_number',
+                        'LIKE',
+                        '%' . $request->reporter . '%'
+                    );
+                }
+            );
+        }
+
+        /*
+        * Filter by reported user
+        */
+        if (!empty($request->user)) {
+
+            $query->whereHas(
+                'reportedUser',
+                function ($q) use ($request) {
+
+                    $q->where(
+                        'name',
+                        'LIKE',
+                        '%' . $request->user . '%'
+                    )
+                    ->orWhere(
+                        'id',
+                        $request->user
+                    );
+                }
+            );
+        }
+
+        /*
+        * Filter by date
+        */
+        if (!empty($request->date)) {
+
+            $query->whereDate(
+                'created_at',
+                $request->date
+            );
+        }
+
+        /*
+        * Return latest reports
+        */
+        return $query->latest();
+
+    } catch (\Exception $e) {
+
+        /*
+        * Log repository error
+        */
+        Log::error(
+            'Get user reports failed: '
+            . $e->getMessage()
+        );
+
+        throw $e;
+    }
+}
+
+/**
+* Get all group reports for admin.
+*
+* @return mixed
+*/
+/**
+* Get all group reports for admin.
+*
+* @param object|null $request
+* @return mixed
+*/
+public function getGroupReports($request = null)
+{
+    try {
+
+        /*
+        * Start query
+        */
+        $query = $this->groupReportModel
+            ->with([
+                'group',
+                'reporter'
+            ])
+            ->whereNotNull('group_id');
+
+        /*
+        * Filter by status
+        */
+        if (!empty($request?->status)) {
+
+            $query->where(
+                'status',
+                $request->status
+            );
+        }
+
+        /*
+        * Filter by reason
+        */
+        if (!empty($request?->reason)) {
+
+            $query->where(
+                'reason',
+                'LIKE',
+                '%' . $request->reason . '%'
+            );
+        }
+
+        /*
+        * Filter by reporter
+        */
+        if (!empty($request?->reporter)) {
+
+            $query->whereHas(
+                'reporter',
+                function ($q) use ($request) {
+
+                    $q->where(
+                            'name',
+                            'LIKE',
+                            '%' . $request->reporter . '%'
+                        )
+                        ->orWhere(
+                            'email',
+                            'LIKE',
+                            '%' . $request->reporter . '%'
+                        )
+                        ->orWhere(
+                            'phone_number',
+                            'LIKE',
+                            '%' . $request->reporter . '%'
+                        );
+                }
+            );
+        }
+
+        /*
+        * Filter by group name or id
+        */
+        if (!empty($request?->group)) {
+
+            $query->whereHas(
+                'group',
+                function ($q) use ($request) {
+
+                    $q->where(
+                            'name',
+                            'LIKE',
+                            '%' . $request->group . '%'
+                        )
+                        ->orWhere(
+                            'id',
+                            $request->group
+                        );
+                }
+            );
+        }
+
+        /*
+        * Filter by group owner
+        */
+        if (!empty($request?->owner)) {
+
+            $query->whereHas(
+                'group.creator',
+                function ($q) use ($request) {
+
+                    $q->where(
+                        'name',
+                        'LIKE',
+                        '%' . $request->owner . '%'
+                    );
+                }
+            );
+        }
+
+        /*
+        * Filter by date
+        */
+        if (!empty($request?->date)) {
+
+            $query->whereDate(
+                'created_at',
+                $request->date
+            );
+        }
+
+        /*
+        * Return latest reports
+        */
+        return $query->latest();
+
+    } catch (\Exception $e) {
+
+        /*
+        * Log repository error
+        */
+        Log::error(
+            'Get group reports failed: '
+            . $e->getMessage()
+        );
+
+        throw $e;
+    }
+}
+
+/**
+* Get all pin reports for admin.
+*
+* @return mixed
+*/
+public function getPinReports($request = null)
+{
+    try {
+
+        /*
+        * Start query
+        */
+        $query = $this->groupReportModel
+            ->with([
+                'pinmark.user',
+                'reporter'
+            ])
+            ->whereNotNull('pin');
+
+        /*
+        * Filter by status
+        */
+        if (!empty($request->status)) {
+
+            $query->where(
+                'status',
+                $request->status
+            );
+        }
+
+        /*
+        * Filter by report reason
+        */
+        if (!empty($request->reason)) {
+
+            $query->where(
+                'reason',
+                'LIKE',
+                '%' . $request->reason . '%'
+            );
+        }
+
+        /*
+        * Filter by reporter
+        */
+        if (!empty($request->reporter)) {
+
+            $query->whereHas(
+                'reporter',
+                function ($q) use ($request) {
+
+                    $q->where(
+                        'name',
+                        'LIKE',
+                        '%' . $request->reporter . '%'
+                    )
+                    ->orWhere(
+                        'email',
+                        'LIKE',
+                        '%' . $request->reporter . '%'
+                    )
+                    ->orWhere(
+                        'phone_number',
+                        'LIKE',
+                        '%' . $request->reporter . '%'
+                    );
+                }
+            );
+        }
+
+        /*
+        * Filter by pin
+        */
+        if (!empty($request->pin)) {
+
+            $query->whereHas(
+                'pinmark',
+                function ($q) use ($request) {
+
+                    $q->where(
+                        'id',
+                        $request->pin
+                    )
+                    ->orWhere(
+                        'pin_message',
+                        'LIKE',
+                        '%' . $request->pin . '%'
+                    );
+                }
+            );
+        }
+
+        /*
+        * Filter by single date
+        */
+        if (!empty($request->date)) {
+
+            $query->whereDate(
+                'created_at',
+                $request->date
+            );
+        }
+
+        /*
+        * Return latest reports
+        */
+        return $query->latest();
+
+    } catch (\Exception $e) {
+
+        /*
+        * Log repository error
+        */
+        Log::error(
+            'Get pin reports failed: '
+            . $e->getMessage()
+        );
+
+        throw $e;
+    }
+}
+
+public function updateData($byWhere, $data)
+{
+    try {
+        return $this->groupReportModel
+            ->where($byWhere)
+            ->update($data);
+    } catch (\Exception $e) {
+        Log::error('Update report data failed: ' . $e->getMessage());
+        return false;
+    }
+
+}
+
+public function deleteReport($byWhere)
+{
+    try {
+        return $this->groupReportModel
+            ->where($byWhere)
+            ->delete();
+    } catch (\Exception $e) {
+        Log::error('Delete report failed: ' . $e->getMessage());
+        return false;
+    }
+
+
+}
 
 }

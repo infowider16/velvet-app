@@ -25,4 +25,10 @@ class GroupReport extends Model
     {
         return $this->belongsTo(PinMark::class, 'pin');
     }
+
+    public function reportedUser()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
 }
