@@ -255,6 +255,8 @@ class ReportService
                 })
 
                 ->rawColumns([
+                    'reported_user_name',
+                    'reported_user_id',
                     'screenshot',
                     'status',
                     'action'
