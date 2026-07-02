@@ -49,19 +49,25 @@ class ReportService
                 ->addColumn('reported_user_name', function ($row) {
 
                     /*
-                    * Return reported user name
+                    * Return reported user name with link to profile
                     */
+                    if ($row->reportedUser?->id) {
+                        return '<a href="' . route('admin.user.show', $row->reportedUser->id) . '" class="text-primary">' . e($row->reportedUser->name) . '</a>';
+                    }
+
                     return $row->reportedUser?->name ?? 'N/A';
                 })
 
                 ->addColumn('reported_user_id', function ($row) {
 
                     /*
-                    * Return reported user id
+                    * Return reported user id with link to profile
                     */
-                    return $row->reportedUser?->id
-                        ? "#" . $row->reportedUser?->id
-                        : 'N/A';
+                    if ($row->reportedUser?->id) {
+                        return '<a href="' . route('admin.user.show', $row->reportedUser->id) . '" class="text-primary">#' . $row->reportedUser->id . '</a>';
+                    }
+
+                    return 'N/A';
                 })
 
                 ->addColumn('reported_user_login', function ($row) {
