@@ -564,7 +564,9 @@ class ReportService
                     /*
                     * Return pin id
                     */
-                    return "#" . $row->pinmark->id ?? 'N/A';
+                    return $row->pinmark?->id
+                    ? "#" . $row->pinmark->id
+                    : 'N/A';
                 })
                 
                 ->addColumn('reason', function ($row) {
@@ -594,7 +596,7 @@ class ReportService
                     /*
                     * Return pin author
                     */
-                    return $row->pinmark->user->name ?? 'N/A';
+                   return $row->pinmark?->user?->name ?? 'N/A';
                 })
 
                 ->addColumn('pin_author_id', function ($row) {
@@ -602,7 +604,9 @@ class ReportService
                     /*
                     * Return pin author id
                     */
-                    return "#" . $row->pinmark->user->id ?? 'N/A';
+                    return $row->pinmark?->user?->id
+                    ? "#" . $row->pinmark->user->id
+                    : 'N/A';
                 })
 
                 ->addColumn('reporter_name', function ($row) {
@@ -743,11 +747,18 @@ class ReportService
                             <button 
                                 class="btn btn-info btn-sm view-report-btn"
 
-                                data-pin-id="#' . ($row->pinmark->id ?? 'N/A') . '"
+                                data-pin-id="' . (
+                                    $row->pinmark?->id
+                                        ? '#' . $row->pinmark->id
+                                        : 'N/A'
+                                ) . '"
                                 data-pin-preview="' . e($row->pinmark->pin_message ?? 'N/A') . '"
-                                data-pin-author="' . e($row->pinmark->user->name ?? 'N/A') . '"
-                                data-pin-author-id="#' . ($row->pinmark->user->id ?? 'N/A') . '"
-
+                                data-pin-author="' . e($row->pinmark?->user?->name ?? 'N/A') . '"
+                                data-pin-author-id="' . (
+                                    $row->pinmark?->user?->id
+                                        ? '#' . $row->pinmark->user->id
+                                        : 'N/A'
+                                ) . '"
                                 data-reporter-name="' . e($row->reporter->name ?? 'N/A') . '"
                                 data-reporter-id="#' . ($row->reporter->id ?? 'N/A') . '"
                                 data-reporter-login="' . e(
@@ -771,7 +782,7 @@ class ReportService
                             <button 
                                 class="btn btn-danger mt-1 btn-sm delete-report-btn"
                                 data-id="' . $row->id . '"
-                                data-pin-id="' . ($row->pinmark->id ?? 'N/A') . '">
+                                data-pin-id="' . ($row->pinmark?->id ?? 'N/A') . '">
 
                                 Delete Pin 
                             </button>
