@@ -2,17 +2,21 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Models\{PinMark,Block};
+use App\Models\{PinMark,Block,PinMarkComment,PinMarkLike};
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PinMarkRepository
 {
     protected $model;
+    protected $pinMarkComment;
+    protected $pinMarkLike;
 
-    public function __construct(PinMark $model)
+    public function __construct(PinMark $model , PinMarkComment $pinMarkComment, PinMarkLike $pinMarkLike)
     {
         $this->model = $model;
+        $this->pinMarkComment = $pinMarkComment;
+        $this->pinMarkLike = $pinMarkLike;
     }
 
     /**
@@ -117,6 +121,61 @@ class PinMarkRepository
         } catch (\Exception $e) {
             $this->logError(__FUNCTION__, $e);
             return null;
+        }
+    }
+
+    public function delete(int $id): bool
+    {
+        try {
+
+            $pinMark = $this->model->find($id);
+
+            if (!$pinMark) {
+                throw new ModelNotFoundException('Pin mark not found.');
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Delete related comments
+            |--------------------------------------------------------------------------
+            */
+            $this->pinMarkComment
+                ->where('pin_mark_id', $id)
+                ->delete();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Delete related likes
+            |--------------------------------------------------------------------------
+            */
+            $this->pinMarkLike
+                ->where('pin_mark_id', $id)
+                ->delete();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Delete main pin mark
+            |--------------------------------------------------------------------------
+            */
+            return $pinMark->delete();
+
+        } catch (ModelNotFoundException $e) {
+
+            Log::warning('PinMark not found', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+
+        } catch (\Exception $e) {
+
+            Log::error('PinMark delete failed', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
         }
     }
 

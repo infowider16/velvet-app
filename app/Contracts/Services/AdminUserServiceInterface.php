@@ -10,4 +10,6 @@ interface AdminUserServiceInterface
     public function toggleUserStatus(Request $request);
     public function getUserDetail($id);
     public function deleteUserImage(Request $request);
+    public function uploadUserImage(Request $request);
+    public function deleteUser($id);
 }

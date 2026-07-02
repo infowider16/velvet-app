@@ -72,9 +72,9 @@ class ContactUsService extends BaseService implements AdminContactUsServiceInter
                 })
 
                 ->addColumn('login_account', function ($row) {
-
-                    if ($row->user?->email_id) {
-                        return $row->user->email_id;
+                    
+                    if ($row->user?->gmail_id) {
+                        return $row->user->gmail_id;
                     }
 
                     if ($row->user?->phone_number) {

@@ -24,14 +24,13 @@ class ContactUsRepository extends BaseRepository implements ContactUsRepositoryI
         try {
 
             return $this->model
-                ->with([
-                    'user'
-                ])
+                ->with(['user'])
+                ->latest()
                 ->get();
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
-            Log::error('ContactUsRepository@getAllData Error : '.$e->getMessage());
+            \Log::error('ContactUsRepository@getAllData Error : ' . $e->getMessage());
 
             return collect();
         }

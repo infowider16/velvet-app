@@ -3,6 +3,108 @@
 @section('title', 'Pin Reports')
 
 @section('content')
+<style>
+
+    .report-modal {
+        border: none;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+    }
+
+    .report-modal-header {
+        background: linear-gradient(135deg, #17a2b8, #138496);
+        color: #fff;
+        border: none;
+        padding: 14px 18px;
+    }
+
+    .report-close-btn {
+        width: 34px;
+        height: 34px;
+        border: none;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.2s;
+        font-size: 14px;
+    }
+
+    .report-close-btn:hover {
+        background: #fff;
+        color: #17a2b8;
+        transform: rotate(90deg);
+    }
+
+    .report-card {
+        background: #fff;
+        border-radius: 10px;
+        border: 1px solid #f1f1f1;
+        padding: 14px;
+        margin-bottom: 14px;
+    }
+
+    .report-card-title {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: #2d3748;
+    }
+
+    .report-card label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8a8f98;
+        margin-bottom: 2px;
+        text-transform: uppercase;
+    }
+
+    .report-card p {
+        font-size: 14px;
+        color: #2d3748;
+        margin-bottom: 0;
+        word-break: break-word;
+    }
+
+    .message-box {
+        background: #f8fafc;
+        border-left: 3px solid #17a2b8;
+        border-radius: 8px;
+        padding: 10px 12px;
+    }
+
+    .reason-box {
+        border-left-color: #dc3545;
+    }
+
+    #modal-image img {
+        max-width: 100%;
+        max-height: 220px;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 1px solid #eee;
+    }
+
+    @media(max-width: 576px){
+
+        .modal-dialog {
+            margin: 10px;
+        }
+
+        .report-card {
+            padding: 12px;
+        }
+
+        .report-card p {
+            font-size: 13px;
+        }
+    }
+
+</style>
 
 <div class="content-wrapper px-0">
 
@@ -153,130 +255,162 @@
 
 <!-- Report Detail Modal -->
 
-<div class="modal fade" id="reportDetailModal" tabindex="-1">
+<!-- Compact Report Detail Modal -->
+<div class="modal fade" id="reportDetailModal" tabindex="-1" aria-hidden="true">
 
-<div class="modal-dialog modal-lg" style="max-width: 700px;">
+    <div class="modal-dialog modal-dialog-centered modal-md">
 
-    <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+        <div class="modal-content report-modal">
 
-        <div class="modal-header bg-gradient-info text-white" style="border-bottom: none; border-radius: 12px 12px 0 0;">
+            <!-- Header -->
+            <div class="modal-header report-modal-header">
 
-            <h5 class="modal-title font-weight-bold">
-                <i class="fas fa-flag mr-2"></i>Pin Report Details
-            </h5>
+                <div>
+                    <h5 class="modal-title mb-0">
+                        <i class="fas fa-flag mr-2"></i>
+                        Report Details
+                    </h5>
 
-            <button type="button"
-                    class="close text-white"
-                    data-dismiss="modal"
-                    style="opacity: 1;">
-
-                <span>&times;</span>
-
-            </button>
-
-        </div>
-
-        <div class="modal-body" style="padding: 2rem;">
-
-            <!-- Pin Information Section -->
-            <div class="mb-4">
-                <h6 class="text-uppercase font-weight-bold text-info mb-3" style="font-size: 0.9rem; letter-spacing: 0.5px;">
-                    <i class="fas fa-image mr-2"></i>Pin Information
-                </h6>
-                <div class="row">
-                    <div class="col-sm-6 mb-3">
-                        <label class="font-weight-bold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Pin ID</label>
-                        <p id="modal-pin-id" class="text-dark mb-0" style="font-size: 1.1rem;"></p>
-                    </div>
-                    <div class="col-sm-6 mb-3">
-                        <label class="font-weight-bold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Pin Author</label>
-                        <p id="modal-pin-author" class="text-dark mb-0" style="font-size: 1.1rem;"></p>
-                    </div>
+                    <small class="text-light opacity-75">
+                        Pin Report Information
+                    </small>
                 </div>
-                <div class="row">
-                    <div class="col-sm-6 mb-3">
-                        <label class="font-weight-bold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Pin Author ID</label>
-                        <p id="modal-pin-author-id" class="text-dark mb-0" style="font-size: 1rem;"></p>
-                    </div>
-                </div>
+
+                <!-- Better Cross Button -->
+                <button type="button"
+                        class="report-close-btn"
+                        data-dismiss="modal"
+                        aria-label="Close">
+
+                    x
+
+                </button>
+
             </div>
 
-            <hr style="background-color: #e9ecef; margin: 1.5rem 0;">
+            <!-- Body -->
+            <div class="modal-body p-3">
 
-            <!-- Report Information Section -->
-            <div class="mb-4">
-                <h6 class="text-uppercase font-weight-bold text-info mb-3" style="font-size: 0.9rem; letter-spacing: 0.5px;">
-                    <i class="fas fa-report mr-2"></i>Report Information
-                </h6>
-                <div class="row">
-                    <div class="col-sm-6 mb-3">
-                        <label class="font-weight-bold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Report Type</label>
-                        <p id="modal-report-type" class="text-dark mb-0" style="font-size: 1.1rem;"></p>
+                <!-- Pin Info -->
+                <div class="report-card">
+
+                    <div class="report-card-title">
+                        <i class="fas fa-map-pin text-info mr-2"></i>
+                        Pin Information
                     </div>
-                    <div class="col-sm-6 mb-3">
-                        <label class="font-weight-bold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Reported At</label>
-                        <p id="modal-created" class="text-dark mb-0" style="font-size: 1rem;"></p>
+
+                    <div class="row">
+                        <div class="col-6 mb-2">
+                            <label>Author ID</label>
+                            <p id="modal-pin-author-id">-</p>
+                        </div>
+
+                        <div class="col-12">
+                            <label>Author Name</label>
+                            <p id="modal-pin-author">-</p>
+                        </div>
+
                     </div>
+
                 </div>
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <label class="font-weight-bold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Reason</label>
-                        <p id="modal-reason" class="text-dark mb-0 p-2" style="background-color: #f8f9fa; border-radius: 5px; font-size: 1rem; border-left: 3px solid #17a2b8;"></p>
+
+                <!-- Pin Message -->
+                <div class="report-card">
+
+                    <div class="report-card-title">
+                        <i class="fas fa-comment-dots text-primary mr-2"></i>
+                        Pin Message
                     </div>
-                </div>
-            </div>
 
-            <hr style="background-color: #e9ecef; margin: 1.5rem 0;">
-
-            <!-- Reporter Information Section -->
-            <div class="mb-4">
-                <h6 class="text-uppercase font-weight-bold text-info mb-3" style="font-size: 0.9rem; letter-spacing: 0.5px;">
-                    <i class="fas fa-user mr-2"></i>Reporter Information
-                </h6>
-                <div class="row">
-                    <div class="col-sm-6 mb-3">
-                        <label class="font-weight-bold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Reporter Name</label>
-                        <p id="modal-reporter-name" class="text-dark mb-0" style="font-size: 1.1rem;"></p>
+                    <div class="message-box">
+                        <p id="modal-pin-preview" class="mb-0">-</p>
                     </div>
-                    <div class="col-sm-6 mb-3">
-                        <label class="font-weight-bold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Reporter ID</label>
-                        <p id="modal-reporter-id" class="text-dark mb-0" style="font-size: 1.1rem;"></p>
+
+                </div>
+
+                <!-- Report Info -->
+                <div class="report-card">
+
+                    <div class="report-card-title">
+                        <i class="fas fa-exclamation-circle text-danger mr-2"></i>
+                        Report Information
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6 mb-3">
-                        <label class="font-weight-bold text-muted" style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Reporter Login</label>
-                        <p id="modal-reporter-login" class="text-dark mb-0" style="font-size: 1.1rem;"></p>
+
+                    <div class="row">
+
+                        <div class="col-6 mb-2">
+                            <label>Report ID</label>
+                            <p id="modal-report-id">-</p>
+                        </div>
+
+                        <div class="col-6 mb-2">
+                            <label>Type</label>
+                            <p id="modal-report-type">-</p>
+                        </div>
+
+                        <div class="col-12">
+                            <label>Reported At</label>
+                            <p id="modal-created">-</p>
+                        </div>
+
+                        <div class="col-12 mt-2">
+                            <label>Reason</label>
+
+                            <div class="message-box reason-box">
+                                <p id="modal-reason" class="mb-0">-</p>
+                            </div>
+                        </div>
+
                     </div>
+
                 </div>
-            </div>
 
-            <hr style="background-color: #e9ecef; margin: 1.5rem 0;">
+                <!-- Reporter -->
+                <div class="report-card">
 
-            <!-- Pin Preview Section -->
-            <div class="mb-4">
-                <h6 class="text-uppercase font-weight-bold text-info mb-3" style="font-size: 0.9rem; letter-spacing: 0.5px;">
-                    <i class="fas fa-eye mr-2"></i>Pin Content Preview
-                </h6>
-                <div class="p-2" style="background-color: #f8f9fa; border-radius: 5px; border-left: 3px solid #17a2b8;">
-                    <p id="modal-pin-preview" class="text-dark mb-0" style="font-size: 0.95rem; line-height: 1.5;"></p>
+                    <div class="report-card-title">
+                        <i class="fas fa-user text-success mr-2"></i>
+                        Reporter Information
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-6 mb-2">
+                            <label>Reporter ID</label>
+                            <p id="modal-reporter-id">-</p>
+                        </div>
+
+                        <div class="col-6 mb-2">
+                            <label>Name</label>
+                            <p id="modal-reporter-name">-</p>
+                        </div>
+
+                        <div class="col-12">
+                            <label>Login</label>
+                            <p id="modal-reporter-login">-</p>
+                        </div>
+
+                    </div>
+
                 </div>
-            </div>
 
-            <!-- Screenshot Section -->
-            <div class="mb-4">
-                <h6 class="text-uppercase font-weight-bold text-info mb-3" style="font-size: 0.9rem; letter-spacing: 0.5px;">
-                    <i class="fas fa-image mr-2"></i>Screenshot Evidence
-                </h6>
-                <div id="modal-image" class="text-center"></div>
+                <!-- Screenshot -->
+                <div class="report-card mb-0">
+
+                    <div class="report-card-title">
+                        <i class="fas fa-image text-warning mr-2"></i>
+                        Screenshot
+                    </div>
+
+                    <div id="modal-image" class="text-center"></div>
+
+                </div>
+
             </div>
 
         </div>
 
     </div>
-
-</div>
-
 
 </div>
 
@@ -299,12 +433,6 @@
 
         processing: true,
         serverSide: true,
-        responsive: true,
-        autoWidth: false,
-        scrollX: true,
-        scrollCollapse: true,
-        paging: true,
-        info: true,
 
         ajax: {
 
@@ -410,7 +538,6 @@
      */
     $(document).on('click', '.view-report-btn', function () {
 
-        $('#modal-pin-id').text($(this).data('pin-id'));
         $('#modal-pin-preview').text($(this).data('pin-preview'));
         $('#modal-pin-author').text($(this).data('pin-author'));
         $('#modal-pin-author-id').text($(this).data('pin-author-id'));
@@ -422,19 +549,27 @@
         $('#modal-report-type').text($(this).data('report-type'));
         $('#modal-reason').text($(this).data('reason'));
         $('#modal-created').text($(this).data('created'));
+        $('#modal-report-id').text($(this).data('report-id'));
 
         /*
          * Show image preview
          */
         let image = $(this).data('image');
 
-        $('#modal-image').html(`
-            <a href="${image}" data-lightbox="report-image">
-                <img src="${image}"
-                     width="120"
-                     style="border-radius:10px;object-fit:cover;">
-            </a>
-        `);
+        if (image && image !== 'N/A') {
+
+            $('#modal-image').html(`
+                <a href="${image}" data-lightbox="group-report-image">
+                    <img src="${image}"
+                        width="120"
+                        style="border-radius:10px;object-fit:cover;">
+                </a>
+            `);
+
+        } else {
+
+            $('#modal-image').html('N/A');
+        }
 
         /*
          * Open modal
@@ -510,6 +645,7 @@
 
         let button = $(this);
         let id = button.data('id');
+        let pinId = button.data('pin-id');
 
         /*
         * SweetAlert confirmation
@@ -517,7 +653,7 @@
         Swal.fire({
 
             title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            text: "This pin will also be permanently deleted from the app and you won't be able to revert this!",
             icon: 'warning',
 
             showCancelButton: true,
@@ -548,7 +684,9 @@
 
                 data: {
                     _token: "{{ csrf_token() }}",
-                    id: id
+                    id: id,
+                    type: 'pin',
+                    pinId: pinId
                 },
 
                 success: function(response) {
