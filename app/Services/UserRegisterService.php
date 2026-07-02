@@ -691,7 +691,7 @@ class UserRegisterService implements UserRegisterServiceInterface
                 'pending_friend_request' => count($user->pendingReceivedRequests),
                 'push_notification_status' => $user->push_notification_status,
                 'is_approve' => $user->is_approve,
-                'is_deleted' => $user->is_deleted,
+                'is_deleted' => $user->is_deleted ?? 0,
                 'last_seen_at' => $user->last_seen_at,
             ];
         } catch (Exception $e) {
