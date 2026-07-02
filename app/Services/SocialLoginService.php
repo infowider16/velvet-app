@@ -74,7 +74,7 @@ class SocialLoginService implements SocialLoginServiceInterface
 
                 ]);
 
-                dd($user);
+              
 
             }
 
