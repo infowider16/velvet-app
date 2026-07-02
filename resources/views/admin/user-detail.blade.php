@@ -13,16 +13,53 @@
     margin-bottom: 20px;
 }
 .user-gallery-image {
-    width: 80px;
-    height: 80px;
+    width: 100%;
+    height: 180px;
     object-fit: cover;
-    border-radius: 8px;
-    margin: 4px;
-    border: 2px solid #eee;
-    transition: border-color 0.2s;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .user-gallery-image:hover {
-    border-color: #007bff;
+    transform: scale(1.02);
+}
+.user-media-upload {
+    border: 1px solid #e9ecef;
+    background: #f8fbff;
+    border-radius: .85rem;
+    box-shadow: 0 0.35rem 0.85rem rgba(106, 115, 125, 0.08);
+}
+.user-media-upload .upload-controls {
+    width: 100%;
+}
+.user-media-upload label.btn {
+    min-width: 140px;
+}
+.user-media-upload #selectedUserImageName {
+    min-width: 180px;
+}
+.user-media-error {
+    display: block;
+    color: #dc3545;
+    margin-top: 0.5rem;
+}
+.user-media-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: .85rem;
+}
+.user-media-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.12);
+}
+.user-media-delete-btn {
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 10;
+    width: 2.2rem;
+    height: 2.2rem;
+    padding: 0;
+    border-radius: 50%;
+}
+.user-media-empty {
+    border: 2px dashed #dee2e6;
 }
 #user-map {
     width: 100%;
@@ -31,7 +68,6 @@
     margin-top: 10px;
     border: 2px solid #eee;
 }
-
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
 <!-- Bootstrap Tabs CSS (if not already included) -->
@@ -46,25 +82,25 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4 class="card-title mb-0">User Details</h4>
                         <div class="action-buttons-box" style="margin: 0;">
-                            @php
-                                $isBlocked = $user->is_approve == 1;
-                                $toggleStatus = $isBlocked ? 0 : 1;
-                                $btnClass = $isBlocked ? 'btn-success' : 'btn-danger';
-                                $btnText = $isBlocked ? 'Unblock' : 'Block';
-                            @endphp
-                            
-                            <button type="button"
-                                class="btn {{ $btnClass }} btn-sm text-nowrap"
-                                onclick="commonStatusChange({
-                                    id: {{ $user->id }},
-                                    status: {{ $toggleStatus }},
-                                    url: '{{ route('admin.user.toggleStatus') }}',
-                                    button: this
-                                })">
-                                <i class="fa fa-ban"></i> {{ $btnText }}
-                            </button>
-                            
                             @if($user->is_delete != 1)
+                                @php
+                                    $isBlocked = $user->is_approve == 1;
+                                    $toggleStatus = $isBlocked ? 0 : 1;
+                                    $btnClass = $isBlocked ? 'btn-success' : 'btn-danger';
+                                    $btnText = $isBlocked ? 'Unblock' : 'Block';
+                                @endphp
+                            
+                                <button type="button"
+                                    class="btn {{ $btnClass }} btn-sm text-nowrap"
+                                    onclick="commonStatusChange({
+                                        id: {{ $user->id }},
+                                        status: {{ $toggleStatus }},
+                                        url: '{{ route('admin.user.toggleStatus') }}',
+                                        button: this
+                                    })">
+                                    <i class="fa fa-ban"></i> {{ $btnText }}
+                                </button>
+                            
                                 <button type="button"
                                     class="btn btn-danger btn-sm text-nowrap"
                                     onclick="commonDelete({
@@ -227,11 +263,58 @@
                         </div>
 
                         <div class="tab-pane fade" id="media" role="tabpanel" aria-labelledby="media-tab">
-                            <div class="row">
 
-                                <div class="col-12 text-center">
+                            <div class="card border-0 shadow-sm">
 
-                                    <h6>User Images</h6>
+                                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+
+                                    <div>
+                                        <h6 class="mb-0">
+                                            <i class="fas fa-images text-primary mr-2"></i>
+                                            User Media Gallery
+                                        </h6>
+                                        <small class="text-muted">Upload and manage the user&rsquo;s gallery images.</small>
+                                    </div>
+
+                                </div>
+
+                                <div class="card-body">
+
+                                    <div class="user-media-upload mb-4 p-3">
+                                        <form id="addUserImageForm" enctype="multipart/form-data" class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 flex-wrap upload-controls">
+
+                                            @csrf
+                                            <input type="hidden" name="user_id" value="{{ $user->id }}">
+
+                                            <div class="d-flex flex-column flex-sm-row align-items-center gap-2 flex-fill">
+                                                <label class="btn btn-outline-primary btn-sm mb-0" for="userImageInput">
+                                                    <i class="fas fa-upload mr-1"></i> Choose Image
+                                                </label>
+
+                                                <input type="file"
+                                                    id="userImageInput"
+                                                    name="image"
+                                                    accept="image/*"
+                                                    class="d-none">
+
+                                                <div id="selectedUserImageName" class="text-truncate text-muted flex-fill">No file selected</div>
+                                            </div>
+
+                                            <div class="d-flex flex-column align-items-start align-items-md-end">
+                                                <button type="submit" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-plus"></i> Add
+                                                </button>
+                                                <small class="text-muted mt-2">Supported formats: JPG, PNG, GIF</small>
+                                            </div>
+
+                                            <div class="w-100 mt-2">
+                                                <div id="selectedUserImageError" class="user-media-error" style="display:none;">
+                                                    Please select an image first.
+                                                </div>
+                                            </div>
+
+                                        </form>
+                                    </div>
 
                                     @php
                                         $images = [];
@@ -245,39 +328,31 @@
 
                                     @if(!empty($images) && count($images))
 
-                                        <div class="d-flex flex-wrap justify-content-center">
+                                        <div class="row gx-2 gy-3">
 
-                                            @foreach($images as $key => $img)
+                                            @foreach($images as $img)
 
-                                                @php
-                                                    $imgUrl = Str::startsWith($img, ['http://', 'https://', '/'])
-                                                        ? asset($img)
-                                                        : asset('storage/' . $img);
-                                                @endphp
+                                                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
 
-                                                <div class="position-relative m-2">
+                                                    <div class="card user-media-card border-0 shadow-sm overflow-hidden position-relative">
 
-                                                    {{-- Image --}}
-                                                    <a href="{{ $imgUrl }}"
-                                                        data-lightbox="user-gallery"
-                                                        data-title="{{ $user->name }}">
+                                                        <button type="button"
+                                                                class="btn btn-danger btn-sm position-absolute user-media-delete-btn"
+                                                                onclick='deleteUserImage({
+                                                                    userId: {{ $user->id }},
+                                                                    image: "{{ $img }}"
+                                                                })'
+                                                                aria-label="Delete image">
+                                                            x
+                                                        </button>
 
-                                                        <img src="{{ $imgUrl }}"
-                                                            class="user-gallery-image"
-                                                            alt="User Image">
-                                                    </a>
+                                                        <a href="{{ asset('storage/' . $img) }}" data-lightbox="user-gallery" data-title="{{ $user->name }}">
+                                                            <img src="{{ asset('storage/' . $img) }}"
+                                                                class="user-gallery-image"
+                                                                alt="User image">
+                                                        </a>
 
-                                                    {{-- Delete Button --}}
-                                                    <button type="button"
-                                                        class="btn btn-danger btn-sm position-absolute"
-                                                        style="top: 0; right: 0; border-radius: 50%; padding: 2px 7px;"
-                                                        onclick='deleteUserImage({
-                                                            userId: {{ $user->id }},
-                                                            image: "{{ $img }}"
-                                                        })'>
-
-                                                        x
-                                                    </button>
+                                                    </div>
 
                                                 </div>
 
@@ -287,8 +362,12 @@
 
                                     @else
 
-                                        <div class="text-muted">
-                                            No images uploaded
+                                        <div class="text-center text-muted py-5 border rounded user-media-empty">
+
+                                            <i class="fas fa-image fa-3x mb-3"></i>
+                                            <p class="mb-1 font-weight-bold">No images uploaded yet</p>
+                                            <p class="mb-0 small">Use the upload box above to add new media to this user.</p>
+
                                         </div>
 
                                     @endif
@@ -296,10 +375,10 @@
                                 </div>
 
                             </div>
-                        </div>
 
+                        </div>
                     </div>
-                    <a href="{{ route('admin.users.index') }}" class="btn btn-secondary mt-3">Back to List</a>
+                    
                 </div>
             </div>
         </div>
@@ -389,6 +468,56 @@ function deleteUserImage(data)
         }
     });
 }
+
+$(function () {
+    $('#userImageInput').on('change', function () {
+        var fileName = this.files.length ? this.files[0].name : 'No file selected';
+        $('#selectedUserImageName').text(fileName);
+        $('#selectedUserImageError').hide();
+    });
+
+    $('#addUserImageForm').on('submit', function (e) {
+        e.preventDefault();
+
+        var fileInput = $('#userImageInput')[0];
+        var formData = new FormData(this);
+        var submitButton = $(this).find('button[type="submit"]');
+
+        if (!fileInput.files || !fileInput.files.length) {
+            $('#selectedUserImageError').text('Please select an image first.').show();
+            return;
+        }
+
+        submitButton.prop('disabled', true).addClass('loading');
+
+        $.ajax({
+            url: '{{ route('admin.user.upload-image') }}',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                if (response.status) {
+                    toastr.success(response.message || 'Image uploaded successfully');
+                    setTimeout(function () {
+                        location.reload();
+                    }, 900);
+                } else {
+                    toastr.error(response.message || 'Unable to upload image');
+                }
+            },
+            error: function (xhr) {
+                toastr.error(xhr.responseJSON?.message || 'Unable to upload image');
+            },
+            complete: function () {
+                submitButton.prop('disabled', false).removeClass('loading');
+            }
+        });
+    });
+});
 </script>
 @include('admin.include.common-scripts')
 @endsection

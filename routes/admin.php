@@ -56,6 +56,7 @@ Route::prefix('admin')->name('admin.')->namespace('App\Http\Controllers\Admin')-
         Route::get('users/{id}', 'UserController@show')->name('user.show');
         
         Route::post('/user/delete-image','UserController@deleteImage')->name('user.delete-image');
+        Route::post('users/upload-image', 'UserController@uploadImage')->name('user.upload-image');
 
         // Contact management routes
 

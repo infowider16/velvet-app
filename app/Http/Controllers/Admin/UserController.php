@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Log;
 
 use App\Contracts\Services\AdminUserServiceInterface;
 
+use App\Http\Requests\Admin\UserImageUploadRequest;
+
 class UserController extends BaseController
 
 {
@@ -230,6 +232,23 @@ class UserController extends BaseController
 
             return $this->adminErrorResponse(__('message.some_thing_went_wrong'), [], [], 0, 500);
 
+        }
+    }
+
+    public function uploadImage(UserImageUploadRequest $request)
+    {
+        try {
+           
+            $result = $this->userService->uploadUserImage($request);
+
+            if (isset($result['status']) && $result['status']) {
+                return $this->adminSuccessResponse([], $result['message'], 1, 200);
+            }
+
+            return $this->adminErrorResponse($result['message'] ?? __('message.some_thing_went_wrong'), [], [], 0, 400);
+        } catch (\Exception $e) {
+            Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
+            return $this->adminErrorResponse(__('message.some_thing_went_wrong'), [], [], 0, 500);
         }
     }
 

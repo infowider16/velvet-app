@@ -7,11 +7,9 @@ namespace App\Services\Admin;
 
 
 use App\Contracts\Repositories\UserRepositoryInterface;
-
 use App\Contracts\Services\AdminUserServiceInterface;
-
 use App\Services\BaseService;
-
+use App\Traits\UploadImageTrait;
 use Illuminate\Http\Request;
 
 use Yajra\DataTables\Facades\DataTables;
@@ -23,8 +21,8 @@ use Illuminate\Support\Facades\DB;
 
 
 class UserServices extends BaseService implements AdminUserServiceInterface
-
 {
+    use UploadImageTrait;
 
     protected UserRepositoryInterface $userRepository;
 
@@ -217,6 +215,38 @@ class UserServices extends BaseService implements AdminUserServiceInterface
 
 
 
+    public function uploadUserImage($request)
+    {
+        return $this->handleServiceCall(function () use ($request) {
+            $user = $this->userRepository->find($request->user_id);
+
+            if (!$user) {
+                return ['status' => false, 'message' => __('message.user_not_found')];
+            }
+
+            if (!$request->hasFile('image')) {
+                return ['status' => false, 'message' => 'No image was uploaded'];
+            }
+
+            $imagePath = $this->uploadImage($request->file('image'), 'user_images');
+
+            $images = [];
+            if (!empty($user->images)) {
+                $images = is_array($user->images) ? $user->images : json_decode($user->images, true);
+            }
+
+            if (!is_array($images)) {
+                $images = [];
+            }
+
+            $images[] = $imagePath;
+            $user->images = json_encode(array_values($images));
+            $user->save();
+
+            return ['status' => true, 'message' => 'Image uploaded successfully'];
+        });
+    }
+
     public function deleteUser($id)
 
     {
@@ -306,68 +336,76 @@ class UserServices extends BaseService implements AdminUserServiceInterface
 
     }
 
-    public function deleteUserImage($data)
-    {
-        try {
+   public function deleteUserImage($data)
+{
+    try {
 
-            $id = $data['user_id'] ?? null;
-            $image = $data['image'] ?? null;
+        $user = $this->userRepository->find($data['user_id']);
 
-            // Find User
-            $user = $this->userRepository->find($id);
-
-            if (!$user) {
-
-                return [
-                    'status' => false,
-                    'message' => __('message.user_not_found')
-                ];
-            }
-
-            // Get Images Array
-            $images = is_array($user->images)
-                ? $user->images
-                : json_decode($user->images, true);
-
-            if (!is_array($images)) {
-                $images = [];
-            }
-
-            // Remove selected image from array
-            $updatedImages = array_values(
-                array_filter($images, function ($img) use ($image) {
-                    return $img != $image;
-                })
-            );
-
-            // Delete image from storage (use public disk and normalize path)
-            if ($image) {
-                $imagePath = ltrim($image, '/\\');
-                if (Storage::disk('public')->exists($imagePath)) {
-                    Storage::disk('public')->delete($imagePath);
-                }
-            }
-
-            // Update images column
-            $this->userRepository->update(
-                ['id' => $id],
-                ['images' => json_encode($updatedImages)]
-            );
-
-            return [
-                'status' => true,
-                'message' => 'User image deleted successfully'
-            ];
-
-        } catch (\Exception $e) {
-
-            $this->logError(__FUNCTION__, $e);
-
+        if (!$user) {
             return [
                 'status' => false,
-                'message' => 'Something went wrong while deleting user image'
+                'message' => 'User not found'
             ];
         }
+
+
+        $images = json_decode($user->images, true);
+
+        if (!is_array($images)) {
+            $images = [];
+        }
+
+        // ❗ prevent deleting last image
+        if (count($images) <= 1) {
+            return [
+                'status' => false,
+                'message' => 'At least one image is required so firstly add one image and then delete the existing one'
+            ];
+        }
+
+        // ✅ normalize request image
+        $deleteImage = str_replace('\\', '/', $data['image']);
+
+        $updatedImages = [];
+
+        foreach ($images as $img) {
+
+            $dbImage = str_replace('\\', '/', $img);
+
+            // ✅ STRICT MATCH ONLY (no partial match)
+            if ($dbImage !== $deleteImage) {
+                $updatedImages[] = $img;
+            }
+        }
+
+        // if nothing changed → stop (prevents full wipe bug)
+        if (count($updatedImages) === 0) {
+            return [
+                'status' => false,
+                'message' => 'Image delete aborted to prevent data loss'
+            ];
+        }
+
+        // delete from storage
+        Storage::disk('public')->delete($deleteImage);
+
+        // save back safely (keep JSON format)
+        $user->images = json_encode(array_values($updatedImages));
+        $user->save();
+
+        return [
+            'status' => true,
+            'message' => 'Image deleted successfully'
+        ];
+
+    } catch (\Exception $e) {
+
+        return [
+            'status' => false,
+            'message' => $e->getMessage()
+        ];
     }
+}
 
 }

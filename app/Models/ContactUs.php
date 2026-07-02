@@ -22,7 +22,7 @@ class ContactUs extends Model
     /**
      * User Relation
      */
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }

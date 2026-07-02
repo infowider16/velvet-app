@@ -809,4 +809,17 @@ public function deleteReport($byWhere)
 
 }
 
+public function deleteGroup($byWhere)
+{
+    try {
+        return $this->model
+            ->where($byWhere)
+            ->delete();
+    } catch (\Exception $e) {
+        Log::error('Delete group failed: ' . $e->getMessage());
+        return false;
+    }
+
+}
+
 }

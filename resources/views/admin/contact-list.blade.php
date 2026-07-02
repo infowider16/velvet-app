@@ -215,15 +215,15 @@
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
 <script>
 
     let table = $('#contact-data-table').DataTable({
 
-        responsive: true,
         processing: true,
         serverSide: true,
+
+        order: [], // ✅ disables initial sorting
 
         ajax: {
             url: "{{ route('admin.contact-list') }}"
@@ -233,67 +233,33 @@
 
             {
                 data: 'DT_RowIndex',
-                name: 'DT_RowIndex',
                 orderable: false,
                 searchable: false
             },
 
-            {
-                data: 'user_id',
-                name: 'user_id'
-            },
-
-            {
-                data: 'name',
-                name: 'name'
-            },
-
-            {
-                data: 'login_account',
-                name: 'login_account'
-            },
-
-            {
-                data: 'email',
-                name: 'email'
-            },
-
-            {
-                data: 'subject',
-                name: 'subject'
-            },
+            { data: 'user_id' },
+            { data: 'name' },
+            { data: 'login_account' },
+            { data: 'email' },
+            { data: 'subject' },
 
             {
                 data: 'message',
-                name: 'message',
                 orderable: false
             },
 
             {
                 data: 'image',
-                name: 'image',
                 orderable: false,
                 searchable: false
             },
 
-            {
-                data: 'date_time',
-                name: 'date_time'
-            },
-
-            {
-                data: 'status',
-                name: 'status'
-            },
-
-            {
-                data: 'created_at',
-                name: 'created_at'
-            },
+            { data: 'date_time' },
+            { data: 'status' },
+            { data: 'created_at' },
 
             {
                 data: 'action',
-                name: 'action',
                 orderable: false,
                 searchable: false
             }

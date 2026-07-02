@@ -6,17 +6,22 @@ use App\Repositories\Eloquent\GroupRepository;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
+use App\Repositories\Eloquent\PinMarkRepository;
 
 class ReportService
 {
     protected GroupRepository $groupRepository;
+    protected PinMarkRepository $pinMarkRepository;
 
-    public function __construct(GroupRepository $groupRepository)
+
+    public function __construct(GroupRepository $groupRepository, PinMarkRepository $pinMarkRepository)
     {
         /*
          * Assign repository dependency
-         */
+        */
+        
         $this->groupRepository = $groupRepository;
+        $this->pinMarkRepository = $pinMarkRepository;
     }
 
     public function getUserReportDataTable($request)
@@ -64,8 +69,8 @@ class ReportService
                     /*
                     * Return reported user login
                     */
-                    if ($row->reportedUser?->email_id) {
-                        return $row->reportedUser->email_id;
+                    if ($row->reportedUser?->gmail_id) {
+                        return $row->reportedUser->gmail_id;
                     }
 
                     if ($row->reportedUser?->phone_number) {
@@ -99,8 +104,8 @@ class ReportService
                     /*
                     * Return reporter login
                     */
-                    if ($row->reporter?->email_id) {
-                        return $row->reporter->email_id;
+                    if ($row->reporter?->gmail_id) {
+                        return $row->reporter->gmail_id;
                     }
 
                     if ($row->reporter?->phone_number) {
@@ -121,10 +126,11 @@ class ReportService
 
                 ->addColumn('reason', function ($row) {
 
-                    /*
-                    * Return report reason
-                    */
-                    return $row->reason ?? 'N/A';
+                    return Str::limit(
+                        $row->reason ?? 'N/A',
+                     35,
+                        '...'
+                    );
                 })
 
                 ->addColumn('screenshot', function ($row) {
@@ -223,7 +229,7 @@ class ReportService
 
                             <a href="' . route('admin.user.show', $row->user_id) . '"
                             class="btn btn-info btn-sm text-nowrap">
-                                View
+                                View Reported User
                             </a>
 
                         </div>
@@ -288,7 +294,14 @@ class ReportService
                     */
                     return $row->id ? "#" . $row->id : '';
                 })
+                ->addColumn('reason', function ($row) {
 
+                    return Str::limit(
+                        $row->reason ?? 'N/A',
+                     35,
+                        '...'
+                    );
+                })
                 ->addColumn('group_name', function ($row) {
 
                     /*
@@ -342,8 +355,8 @@ class ReportService
                     /*
                     * Return reporter login
                     */
-                    if ($row->reporter?->email_id) {
-                        return $row->reporter->email_id;
+                    if ($row->reporter?->gmail_id) {
+                        return $row->reporter->gmail_id;
                     }
 
                     if ($row->reporter?->phone_number) {
@@ -445,52 +458,48 @@ class ReportService
                         ';
                     }
 
+                    $group = $row->group;
+                    $reporter = $row->reporter;
+
+                    $detailPayload = [
+                        'report_id' => '#' . ($row->id ?? 'N/A'),
+                        'group_name' => $group->name ?? 'N/A',
+                        'group_description' => $group->description ?? 'N/A',
+                        'group_image' => $group->image ? asset('storage/' . $group->image) : '',
+                        'group_type' => $group->type == 0 ? 'Public' : 'Private',
+                        'group_id' => '#' . ($group->id ?? 'N/A'),
+                        'group_owner' => $group->creator->name ?? 'N/A',
+                        'members_count' => $group->members->count() ?? 0,
+                        'reporter_name' => $reporter->name ?? 'N/A',
+                        'reporter_id' => '#' . ($reporter->id ?? 'N/A'),
+                        'reporter_login' => $reporter->email
+                            ?? (($reporter->phone_code ?? '') . ($reporter->phone_number ?? ''))
+                            ?? 'N/A',
+                        'report_type' => $row->report_type ?? 'N/A',
+                        'reason' => $row->reason ?? 'N/A',
+                        'created' => $row->created_at ? $row->created_at->format('Y-m-d H:i:s') : 'N/A',
+                        'image' => $row->image ? asset('storage/' . $row->image) : ''
+                    ];
+
+                    $detailJson = htmlspecialchars(json_encode($detailPayload, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
+
                     $html .= '
                             </select>
 
                             <button 
+                                type="button"
                                 class="btn btn-info btn-sm mb-2 view-group-report-btn"
+                                data-detail="' . $detailJson . '">
 
-                                data-report-id="#' . $row->id . '"
-                                data-group-name="' . e($row->group->name ?? 'N/A') . '"
-                                data-group-id="#' . ($row->group->id ?? 'N/A') . '"
-                                data-group-owner="' . e($row->group->creator->name ?? 'N/A') . '"
-                                data-members-count="' . ($row->group->members->count() ?? 0) . '"
-
-                                data-reporter-name="' . e($row->reporter->name ?? 'N/A') . '"
-                                data-reporter-id="#' . ($row->reporter->id ?? 'N/A') . '"
-                                data-reporter-login="' . e(
-                                    $row->reporter->email
-                                    ?? (
-                                        ($row->reporter->phone_code ?? '') .
-                                        ($row->reporter->phone_number ?? '')
-                                    )
-                                    ?? 'N/A'
-                                ) . '"
-
-                                data-report-type="' . e($row->report_type ?? 'N/A') . '"
-                                data-reason="' . e($row->reason ?? 'N/A') . '"
-
-                                data-created="' . (
-                                    $row->created_at
-                                    ? $row->created_at->format('Y-m-d H:i:s')
-                                    : 'N/A'
-                                ) . '"
-
-                                data-image="' . (
-                                    $row->image
-                                    ? asset('storage/' . $row->image)
-                                    : ''
-                                ) . '">
-
-                                View
+                                View Report Details
                             </button>
 
                             <button 
                                 class="btn btn-danger btn-sm delete-report-btn"
-                                data-id="' . $row->id . '">
+                                data-id="' . $row->id . '" 
+                                data-group-id="' . $row->group_id . '">
 
-                                Delete
+                                Delete Group 
                             </button>
 
                         </div>
@@ -557,6 +566,15 @@ class ReportService
                     */
                     return "#" . $row->pinmark->id ?? 'N/A';
                 })
+                
+                ->addColumn('reason', function ($row) {
+
+                    return Str::limit(
+                        $row->reason ?? 'N/A',
+                     35,
+                        '...'
+                    );
+                })
 
                 ->addColumn('pin_preview', function ($row) {
 
@@ -608,8 +626,8 @@ class ReportService
                     /*
                     * Return reporter login
                     */
-                    if ($row->reporter?->email_id) {
-                        return $row->reporter->email_id;
+                    if ($row->reporter?->gmail_id) {
+                        return $row->reporter->gmail_id;
                     }
 
                     if ($row->reporter?->phone_number) {
@@ -619,7 +637,6 @@ class ReportService
 
                     return '-';
                 })
-
                 ->addColumn('screenshot', function ($row) {
 
                     /*
@@ -629,12 +646,27 @@ class ReportService
                         return 'N/A';
                     }
 
+                    $imageUrl = asset('storage/' . $row->image);
+
                     return '
-                        <a href="' . asset('storage/' . $row->image) . '" target="_blank">
-                            <img src="' . asset('storage/' . $row->image) . '" width="60">
+                        <a href="' . $imageUrl . '" 
+                        data-lightbox="report-image-' . $row->id . '">
+
+                            <img 
+                                src="' . $imageUrl . '" 
+                                width="60"
+                                height="60"
+                                style="
+                                    object-fit:cover;
+                                    border-radius:8px;
+                                    border:1px solid #ddd;
+                                "
+                            >
+
                         </a>
                     ';
                 })
+
                 ->addColumn('status', function ($row) {
 
                     switch ($row->status) {
@@ -711,7 +743,7 @@ class ReportService
                             <button 
                                 class="btn btn-info btn-sm view-report-btn"
 
-                                data-pin-id="' . ($row->pinmark->id ?? 'N/A') . '"
+                                data-pin-id="#' . ($row->pinmark->id ?? 'N/A') . '"
                                 data-pin-preview="' . e($row->pinmark->pin_message ?? 'N/A') . '"
                                 data-pin-author="' . e($row->pinmark->user->name ?? 'N/A') . '"
                                 data-pin-author-id="#' . ($row->pinmark->user->id ?? 'N/A') . '"
@@ -720,26 +752,28 @@ class ReportService
                                 data-reporter-id="#' . ($row->reporter->id ?? 'N/A') . '"
                                 data-reporter-login="' . e(
                                     $row->reporter->gmail_id
-                                    ?? $row->reporter->phone
+                                    ?? $row->reporter->phone_code . $row->reporter->phone_number
                                     ?? 'N/A'
                                 ) . '"
 
                                 data-report-type="' . e($row->report_type ?? 'N/A') . '"
+                                data-report-id="#' . ($row->id ?? 'N/A') . '"
                                 data-reason="' . e($row->reason ?? 'N/A') . '"
                                 data-created="' . ($row->created_at
                                     ? $row->created_at->format('Y-m-d H:i:s')
                                     : 'N/A') . '"
 
-                                data-image="' . asset('storage/' . $row->image) . '">
+                                data-image ="' . ($row->image ? asset('storage/' . $row->image) : 'N/A') . '">
 
-                                View
+                                View Report Details
                             </button>
                             
                             <button 
                                 class="btn btn-danger mt-1 btn-sm delete-report-btn"
-                                data-id="' . $row->id . '">
+                                data-id="' . $row->id . '"
+                                data-pin-id="' . ($row->pinmark->id ?? 'N/A') . '">
 
-                                Delete
+                                Delete Pin 
                             </button>
 
                         </div>
@@ -814,24 +848,79 @@ class ReportService
     {
         try {
 
-            /*
-            * Delete report
-            */
-            $deleted = $this->groupRepository->deleteReport(['id' => $request->id]);
+            $deleted = false;
 
             /*
-            * Check delete result
+            |--------------------------------------------------------------------------
+            | Delete Group Report
+            |--------------------------------------------------------------------------
+            */
+            if ($request->type === 'group') {
+
+                // Delete group members/messages/etc
+                $this->groupRepository->delete([
+                    'group_id' => $request->groupId
+                ]);
+
+                // Delete main group
+                $deleted = $this->groupRepository->deleteGroup([
+                    'id' => $request->groupId
+                ]);
+
+                // Delete reports
+                $this->groupRepository->deleteReport([
+                    'group_id' => $request->groupId
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Delete Pin Report
+            |--------------------------------------------------------------------------
+            */
+            elseif ($request->type === 'pin') {
+
+                // Delete pin + comments + likes
+                $deleted = $this->pinMarkRepository->delete(
+                    $request->pinId
+                );
+
+                // Delete related reports
+                $this->groupRepository->deleteReport([
+                    'pin' => $request->pinId
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Invalid Type
+            |--------------------------------------------------------------------------
+            */
+            else {
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Invalid report type'
+                ], 400);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Check Delete Result
+            |--------------------------------------------------------------------------
             */
             if (!$deleted) {
 
                 return response()->json([
                     'status' => false,
-                    'message' => 'Report not found'
+                    'message' => 'Data not found'
                 ], 404);
             }
 
             /*
-            * Success response
+            |--------------------------------------------------------------------------
+            | Success Response
+            |--------------------------------------------------------------------------
             */
             return response()->json([
                 'status' => true,
@@ -840,10 +929,9 @@ class ReportService
 
         } catch (\Exception $e) {
 
-            /*
-            * Log service error
-            */
-            Log::error('Report deletion service failed: ' . $e->getMessage());
+            Log::error(
+                'Report deletion service failed: ' . $e->getMessage()
+            );
 
             return response()->json([
                 'status' => false,
