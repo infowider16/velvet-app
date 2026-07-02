@@ -182,9 +182,11 @@ class UserRegisterService implements UserRegisterServiceInterface
     
             $existingUser = $this->userRepo->getOneData([
                 'phone_code' => $data['phone_code'],
-                'phone_number' => $data['phone_number']
+                'phone_number' => $data['phone_number'],
+                'is_delete' => 0
             ]);
-    
+
+           
             $userData = [
                 'phone_code' => $data['phone_code'],
                 'phone_number' => $data['phone_number'],
@@ -201,7 +203,8 @@ class UserRegisterService implements UserRegisterServiceInterface
             $user = $this->userRepo->updateOrCreate(
                 [
                     'phone_code' => $data['phone_code'],
-                    'phone_number' => $data['phone_number']
+                    'phone_number' => $data['phone_number'],
+                    'is_delete' => 0
                 ],
                 $userData
             );

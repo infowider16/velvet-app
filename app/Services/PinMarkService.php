@@ -257,7 +257,7 @@ class PinMarkService
 
 
     public function deletePinMark(int $id): bool
-        {
+    {
         try {
             return $this->pinMarkRepo->softDeleteById($id);
     

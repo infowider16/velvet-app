@@ -49,24 +49,24 @@ class PinMarkController extends BaseController
     }
     
     public function deletePinMark(int $id)
-        {
-    try {
-        $result = $this->pinMarkService->deletePinMark($id);
+    {
+        try {
+            $result = $this->pinMarkService->deletePinMark($id);
 
-        if (!$result) {
-            return $this->sendError(__('message.pin_mark_not_found'), [], 404);
+            if (!$result) {
+                return $this->sendError(__('message.pin_mark_not_found'), [], 404);
+            }
+
+            return $this->sendResponse([], __('message.pin_mark_deleted_successfully'));
+        } catch (\Exception $e) {
+            Log::error(
+                "Error in " . __CLASS__ . "::" . __FUNCTION__,
+                ['error' => $e->getMessage(), 'id' => $id]
+            );
+
+            return $this->sendError($e->getMessage(), [], 500);
         }
-
-        return $this->sendResponse([], __('message.pin_mark_deleted_successfully'));
-    } catch (\Exception $e) {
-        Log::error(
-            "Error in " . __CLASS__ . "::" . __FUNCTION__,
-            ['error' => $e->getMessage(), 'id' => $id]
-        );
-
-        return $this->sendError($e->getMessage(), [], 500);
     }
-}
 
 
 }

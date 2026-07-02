@@ -40,10 +40,10 @@ class SocialLoginService implements SocialLoginServiceInterface
 
             $user = $this->userRepo->getByWhere([
 
-                'gmail_id' => $data['gmail_id']
+                'gmail_id' => $data['gmail_id'],
+                'is_delete' => 0
 
             ], [], ['*'], [], [], 'first');
-
 
 
             if (!$user) {
@@ -52,13 +52,12 @@ class SocialLoginService implements SocialLoginServiceInterface
 
                 $user = $this->userRepo->getByWhere([
 
-                    'google_id' => $data['google_id']
+                    'google_id' => $data['google_id'],
+                    'is_delete' => 0
 
                 ], [], ['*'], [], [], 'first');
 
             }
-
-
 
             if (!$user) {
 
@@ -74,6 +73,8 @@ class SocialLoginService implements SocialLoginServiceInterface
                     'registration_type' => 'social',
 
                 ]);
+
+                dd($user);
 
             }
 
