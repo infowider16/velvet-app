@@ -51,7 +51,7 @@ class ReportService
                     /*
                     * Return reported user name
                     */
-                    return $row->reportedUser->name ?? 'N/A';
+                    return $row->reportedUser?->name ?? 'N/A';
                 })
 
                 ->addColumn('reported_user_id', function ($row) {
@@ -59,8 +59,8 @@ class ReportService
                     /*
                     * Return reported user id
                     */
-                    return $row->reportedUser->id
-                        ? "#" . $row->reportedUser->id
+                    return $row->reportedUser?->id
+                        ? "#" . $row->reportedUser?->id
                         : 'N/A';
                 })
 
@@ -70,12 +70,12 @@ class ReportService
                     * Return reported user login
                     */
                     if ($row->reportedUser?->gmail_id) {
-                        return $row->reportedUser->gmail_id;
+                        return $row->reportedUser?->gmail_id;
                     }
 
                     if ($row->reportedUser?->phone_number) {
-                        return ($row->reportedUser->phone_code ?? '')
-                            . $row->reportedUser->phone_number;
+                        return ($row->reportedUser?->phone_code ?? '')
+                            . $row->reportedUser?->phone_number;
                     }
 
                     return '-';
@@ -86,7 +86,7 @@ class ReportService
                     /*
                     * Return reporter name
                     */
-                    return $row->reporter->name ?? 'N/A';
+                    return $row->reporter?->name ?? 'N/A';
                 })
 
                 ->addColumn('reporter_id', function ($row) {
@@ -94,8 +94,8 @@ class ReportService
                     /*
                     * Return reporter id
                     */
-                    return $row->reporter->id
-                        ? "#" . $row->reporter->id
+                    return $row->reporter?->id
+                        ? "#" . $row->reporter?->id
                         : 'N/A';
                 })
 
@@ -105,12 +105,12 @@ class ReportService
                     * Return reporter login
                     */
                     if ($row->reporter?->gmail_id) {
-                        return $row->reporter->gmail_id;
+                        return $row->reporter?->gmail_id;
                     }
 
                     if ($row->reporter?->phone_number) {
-                        return ($row->reporter->phone_code ?? '')
-                            . $row->reporter->phone_number;
+                        return ($row->reporter?->phone_code ?? '')
+                            . $row->reporter?->phone_number;
                     }
 
                     return '-';
@@ -307,7 +307,7 @@ class ReportService
                     /*
                     * Return group name
                     */
-                    return $row->group->name ?? 'N/A';
+                    return $row->group?->name ?? 'N/A';
                 })
 
                 ->addColumn('group_id', function ($row) {
@@ -315,7 +315,7 @@ class ReportService
                     /*
                     * Return group id
                     */
-                    return "#" . $row->group->id ?? 'N/A';
+                    return "#" . $row->group?->id ?? 'N/A';
                 })
 
                 ->addColumn('group_owner', function ($row) {
@@ -323,7 +323,7 @@ class ReportService
                     /*
                     * Return group owner
                     */
-                    return $row->group->creator->name ?? 'N/A';
+                    return $row->group?->creator?->name ?? 'N/A';
                 })
 
                 ->addColumn('members_count', function ($row) {
@@ -331,7 +331,7 @@ class ReportService
                     /*
                     * Return group members count
                     */
-                    return $row->group->members->count() ?? 0;
+                    return $row->group?->members?->count() ?? 0;
                 })
 
                 ->addColumn('reporter_name', function ($row) {
@@ -339,7 +339,7 @@ class ReportService
                     /*
                     * Return reporter name
                     */
-                    return $row->reporter->name ?? 'N/A';
+                    return $row->reporter?->name ?? 'N/A';
                 })
 
                 ->addColumn('reporter_id', function ($row) {
@@ -347,7 +347,7 @@ class ReportService
                     /*
                     * Return reporter id
                     */
-                    return "#" . $row->reporter->id ?? 'N/A';
+                    return "#" . $row->reporter?->id ?? 'N/A';
                 })
 
                 ->addColumn('reporter_login', function ($row) {
@@ -356,12 +356,12 @@ class ReportService
                     * Return reporter login
                     */
                     if ($row->reporter?->gmail_id) {
-                        return $row->reporter->gmail_id;
+                        return $row->reporter?->gmail_id;
                     }
 
                     if ($row->reporter?->phone_number) {
-                        return ($row->reporter->phone_code ?? '')
-                            . $row->reporter->phone_number;
+                        return ($row->reporter?->phone_code ?? '')
+                            . $row->reporter?->phone_number;
                     }
 
                     return '-';
@@ -463,17 +463,17 @@ class ReportService
 
                     $detailPayload = [
                         'report_id' => '#' . ($row->id ?? 'N/A'),
-                        'group_name' => $group->name ?? 'N/A',
-                        'group_description' => $group->description ?? 'N/A',
-                        'group_image' => $group->image ? asset('storage/' . $group->image) : '',
-                        'group_type' => $group->type == 0 ? 'Public' : 'Private',
-                        'group_id' => '#' . ($group->id ?? 'N/A'),
-                        'group_owner' => $group->creator->name ?? 'N/A',
-                        'members_count' => $group->members->count() ?? 0,
-                        'reporter_name' => $reporter->name ?? 'N/A',
-                        'reporter_id' => '#' . ($reporter->id ?? 'N/A'),
-                        'reporter_login' => $reporter->email
-                            ?? (($reporter->phone_code ?? '') . ($reporter->phone_number ?? ''))
+                        'group_name' => $group?->name ?? 'N/A',
+                        'group_description' => $group?->description ?? 'N/A',
+                        'group_image' => $group?->image ? asset('storage/' . $group?->image) : '',
+                        'group_type' => $group?->type == 0 ? 'Public' : 'Private',
+                        'group_id' => '#' . ($group?->id ?? 'N/A'),
+                        'group_owner' => $group?->creator?->name ?? 'N/A',
+                        'members_count' => $group?->members?->count() ?? 0,
+                        'reporter_name' => $reporter?->name ?? 'N/A',
+                        'reporter_id' => '#' . ($reporter?->id ?? 'N/A'),
+                        'reporter_login' => $reporter?->email
+                            ?? (($reporter?->phone_code ?? '') . ($reporter?->phone_number ?? ''))
                             ?? 'N/A',
                         'report_type' => $row->report_type ?? 'N/A',
                         'reason' => $row->reason ?? 'N/A',
