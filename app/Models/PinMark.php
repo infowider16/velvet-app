@@ -47,6 +47,22 @@ class PinMark extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Relationship: Pin has many comments
+     */
+    public function comments()
+    {
+        return $this->hasMany(PinMarkComment::class, 'pin_mark_id');
+    }
+
+    /**
+     * Relationship: Pin has many likes
+     */
+    public function likes()
+    {
+        return $this->hasMany(PinMarkLike::class, 'pin_mark_id');
+    }
     
     /**
      * Filter records within last N hours based on Swiss time
@@ -70,5 +86,10 @@ class PinMark extends Model
         $to   = $now->copy();
     
         return $query->whereBetween($column, [$from, $to]);
+    }
+
+    public function pinReports()
+    {
+        return $this->hasMany(GroupReport::class, 'pin');
     }
 }

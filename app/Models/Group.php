@@ -21,5 +21,21 @@ class Group extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
     
+    public function reports()
+    {
+        return $this->hasMany(GroupReport::class, 'group_id');
+    }
+
+    public function media()
+    {
+        return $this->hasMany(Message::class, 'group_id', 'id')
+            ->with('sender')
+            ->where(function ($query) {
+                $query->whereNotNull('media_url')
+                    ->orWhereNotNull('document_url')
+                    ->orWhereNotNull('link_url');
+            })
+            ->latest();
+    }
 
 }
