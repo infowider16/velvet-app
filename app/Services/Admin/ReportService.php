@@ -92,6 +92,9 @@ class ReportService
                     /*
                     * Return reporter name
                     */
+                    if ($row->reporter?->id) {
+                        return '<a href="' . route('admin.user.show', $row->reporter->id) . '" class="text-primary">' . e($row->reporter->name) . '</a>';
+                    }
                     return $row->reporter?->name ?? 'N/A';
                 })
 
@@ -100,6 +103,9 @@ class ReportService
                     /*
                     * Return reporter id
                     */
+                    if ($row->reporter?->id) {
+                        return '<a href="' . route('admin.user.show', $row->reporter->id) . '" class="text-primary">#' . $row->reporter->id . '</a>';
+                    }
                     return $row->reporter?->id
                         ? "#" . $row->reporter?->id
                         : 'N/A';
@@ -257,6 +263,8 @@ class ReportService
                 ->rawColumns([
                     'reported_user_name',
                     'reported_user_id',
+                    'reporter_name',
+                    'reporter_id',
                     'screenshot',
                     'status',
                     'action'
@@ -310,20 +318,26 @@ class ReportService
                         '...'
                     );
                 })
-                ->addColumn('group_name', function ($row) {
-
-                    /*
-                    * Return group name
-                    */
-                    return $row->group?->name ?? 'N/A';
-                })
-
                 ->addColumn('group_id', function ($row) {
 
-                    /*
-                    * Return group id
-                    */
-                    return "#" . $row->group?->id ?? 'N/A';
+                    if ($row->group) {
+                        return '<a href="' . route('admin.group.detail', $row->group->id) . '" class="text-primary fw-bold">
+                                    #' . $row->group->id . '
+                                </a>';
+                    }
+
+                    return 'N/A';
+                })
+
+                ->addColumn('group_name', function ($row) {
+
+                    if ($row->group) {
+                        return '<a href="' . route('admin.group.detail', $row->group->id) . '" class="text-primary">
+                                    ' . e($row->group->name) . '
+                                </a>';
+                    }
+
+                    return 'N/A';
                 })
 
                 ->addColumn('group_owner', function ($row) {
@@ -331,6 +345,9 @@ class ReportService
                     /*
                     * Return group owner
                     */
+                    if ($row->group?->creator?->id) {
+                        return '<a href="' . route('admin.user.show', $row->group->creator->id) . '" class="text-primary">' . e($row->group->creator->name) . '</a>';
+                    }
                     return $row->group?->creator?->name ?? 'N/A';
                 })
 
@@ -347,6 +364,9 @@ class ReportService
                     /*
                     * Return reporter name
                     */
+                    if ($row->reporter?->id) {
+                        return '<a href="' . route('admin.user.show', $row->reporter?->id) . '" class="text-primary">' . e($row->reporter?->name) . '</a>';
+                    }
                     return $row->reporter?->name ?? 'N/A';
                 })
 
@@ -355,6 +375,9 @@ class ReportService
                     /*
                     * Return reporter id
                     */
+                    if( $row->reporter?->id) {
+                        return '<a href="' . route('admin.user.show', $row->reporter?->id) . '" class="text-primary">#' . $row->reporter?->id . '</a>';
+                    }
                     return "#" . $row->reporter?->id ?? 'N/A';
                 })
 
@@ -527,8 +550,13 @@ class ReportService
 
                 ->rawColumns([
                     'screenshot',
+                    'reporter_name',
+                    'reporter_id',
                     'status',
-                    'action'
+                    'action',
+                    'group_owner',
+                    'group_name',
+                    'group_id'
                 ])
                 ->make(true);
 
@@ -569,12 +597,13 @@ class ReportService
 
                 ->addColumn('pin_id', function ($row) {
 
-                    /*
-                    * Return pin id
-                    */
-                    return $row->pinmark?->id
-                    ? "#" . $row->pinmark->id
-                    : 'N/A';
+                    if ($row->pinmark) {
+                        return '<a href="' . route('admin.pin.detail', $row->pinmark->id) . '" class="text-primary fw-bold">
+                                    #' . $row->pinmark->id . '
+                                </a>';
+                    }
+
+                    return 'N/A';
                 })
                 
                 ->addColumn('reason', function ($row) {
@@ -588,22 +617,22 @@ class ReportService
 
                 ->addColumn('pin_preview', function ($row) {
 
-                    /*
-                    * Return short pin preview
-                    */
-                    $message = $row->pinmark?->pin_message;
-
-                    if (!$message) {
+                    if (!$row->pinmark || empty($row->pinmark->pin_message)) {
                         return 'N/A';
                     }
 
-                    return e(Str::words($message, 10, '...'));
+                    return '<a href="' . route('admin.pin.detail', $row->pinmark->id) . '" class="text-primary">
+                                ' . e(Str::words($row->pinmark->pin_message, 10, '...')) . '
+                            </a>';
                 })
                 ->addColumn('pin_author', function ($row) {
 
                     /*
                     * Return pin author
                     */
+                    if ($row->pinmark?->user?->id) {
+                        return '<a href="' . route('admin.user.show', $row->pinmark->user->id) . '" class="text-primary">' . e($row->pinmark->user->name) . '</a>';
+                    }
                    return $row->pinmark?->user?->name ?? 'N/A';
                 })
 
@@ -612,6 +641,9 @@ class ReportService
                     /*
                     * Return pin author id
                     */
+                    if( $row->pinmark?->user?->id) {
+                        return '<a href="' . route('admin.user.show', $row->pinmark->user->id) . '" class="text-primary">#' . $row->pinmark->user->id . '</a>';
+                    }
                     return $row->pinmark?->user?->id
                     ? "#" . $row->pinmark->user->id
                     : 'N/A';
@@ -622,6 +654,9 @@ class ReportService
                     /*
                     * Return reporter name
                     */
+                    if ($row->reporter?->id) {
+                        return '<a href="' . route('admin.user.show', $row->reporter->id) . '" class="text-primary">' . e($row->reporter->name) . '</a>';
+                    }
                     return $row->reporter->name ?? 'N/A';
                 })
 
@@ -630,6 +665,9 @@ class ReportService
                     /*
                     * Return reporter id
                     */
+                    if ($row->reporter?->id) {
+                        return '<a href="' . route('admin.user.show', $row->reporter->id) . '" class="text-primary">#' . $row->reporter->id . '</a>';
+                    }
                     return "#" . $row->reporter->id ?? 'N/A';
                 })
 
@@ -801,7 +839,7 @@ class ReportService
 
                     return $html;
                 })
-                ->rawColumns(['screenshot', 'status', 'action'])
+                ->rawColumns(['pin_id','pin_preview','screenshot', 'status', 'action','reporter_name','reporter_id','pin_author','pin_author_id'])
                 ->make(true);
 
         } catch (\Exception $e) {

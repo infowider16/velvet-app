@@ -52,9 +52,24 @@ Route::prefix('admin')->name('admin.')->namespace('App\Http\Controllers\Admin')-
         Route::put('users/{id}/phone', 'UserController@updatePhone')->name('user.updatePhone');
 
         Route::delete('users/{id}', 'UserController@destroy')->name('user.destroy');
-
-        Route::get('users/{id}', 'UserController@show')->name('user.show');
         
+        Route::get('users/{id}/group-members', 'UserController@groupMembers')->name('user.group-members');
+        Route::get('users/{id}/group-reports', 'UserController@groupReports')->name('user.group-reports');
+        Route::get('users/{id}/messages', 'UserController@messages')->name('user.messages');
+        Route::get('users/{id}/pins', 'UserController@userPins')->name('user.pins');
+        Route::get('pin/{id}/comments', 'UserController@pinComments')->name('pin.comments');
+        Route::get('pin/{id}/likes', 'UserController@pinLikes')->name('pin.likes');
+        Route::get('pin/{id}/reports', 'UserController@pinReports')->name('pin.reports');
+        Route::get('users/{id}', 'UserController@show')->name('user.show');
+        Route::get('users/{id}/group-detail', 'UserController@groupDetail')
+            ->name('user.group-detail');
+
+        Route::get('group/{id}/detail', 'UserController@groupDetailPage')->name('group.detail');
+        Route::get('pin/{id}/detail', 'UserController@pinDetailPage')->name('pin.detail');
+
+        Route::get('users/{id}/members-detail', 'UserController@membersDetail')
+            ->name('user.members-detail');
+
         Route::post('/user/delete-image','UserController@deleteImage')->name('user.delete-image');
         Route::post('users/upload-image', 'UserController@uploadImage')->name('user.upload-image');
 
@@ -181,6 +196,8 @@ Route::prefix('admin')->name('admin.')->namespace('App\Http\Controllers\Admin')-
             'reports/delete',
             'ReportController@deleteReport'
         )->name('report.delete');
+
+       
         
 
     });

@@ -70,7 +70,7 @@ class User extends Authenticatable
 
 
 
-     // ============ RELATIONSHIPS ============
+    // ============ RELATIONSHIPS ============
 
     // Friend requests sent by this user
     public function sentFriendRequests(): HasMany
@@ -91,10 +91,10 @@ class User extends Authenticatable
     {
         return Friendship::where(function ($q) use ($userId) {
             $q->where('user_id', $this->id)
-              ->where('friend_id', $userId);
+                ->where('friend_id', $userId);
         })->orWhere(function ($q) use ($userId) {
             $q->where('friend_id', $this->id)
-              ->where('user_id', $userId);
+                ->where('user_id', $userId);
         })->where('status', 'accepted')->exists();
     }
 
@@ -121,15 +121,15 @@ class User extends Authenticatable
     {
         return User::whereIn('id', function ($query) {
             $query->select('friend_id')
-                  ->from('friendships')
-                  ->where('user_id', $this->id)
-                  ->where('status', 'accepted')
-                  ->union(
-                      \DB::table('friendships')
+                ->from('friendships')
+                ->where('user_id', $this->id)
+                ->where('status', 'accepted')
+                ->union(
+                    \DB::table('friendships')
                         ->select('user_id')
                         ->where('friend_id', $this->id)
                         ->where('status', 'accepted')
-                  );
+                );
         });
     }
 
@@ -137,25 +137,25 @@ class User extends Authenticatable
     public function pendingSentRequests(): HasMany
     {
         return $this->hasMany(Friendship::class, 'user_id')
-                    ->where('status', 'pending');
+            ->where('status', 'pending');
     }
 
     // Get pending friend requests received
     public function pendingReceivedRequests(): HasMany
     {
         return $this->hasMany(Friendship::class, 'friend_id')
-                    ->where('status', 'pending');
+            ->where('status', 'pending');
     }
 
     // Get accepted friendships
     public function acceptedFriendships(): HasMany
     {
         return $this->hasMany(Friendship::class, 'user_id')
-                    ->where('status', 'accepted');
+            ->where('status', 'accepted');
     }
-    
 
-     public function blocks(): HasMany
+
+    public function blocks(): HasMany
     {
         return $this->hasMany(Block::class, 'blocker_id');
     }
@@ -171,16 +171,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(Transaction::class, 'user_id', 'id');
     }
-    
+
     public function boosttransactions()
     {
         return $this->belongsTo(Transaction::class, 'boost', 'id');
     }
-    
+
     public function lastShipping()
     {
         return $this->hasOne(BoostHistory::class, 'user_id', 'id')
-                    ->latestOfMany(); // latest by id
+            ->latestOfMany(); // latest by id
     }
 
 
@@ -214,7 +214,7 @@ class User extends Authenticatable
         }
         return null;
     }
-    
+
     public function scopeNonFriends(Builder $query, int $userId, bool $excludeBlocked = true): Builder
     {
         // Subquery: accepted friendship user_ids related to $userId (both directions)
@@ -228,20 +228,60 @@ class User extends Authenticatable
             ->where('status', 'accepted')
             ->where(function ($q) use ($userId) {
                 $q->where('user_id', $userId)
-                  ->orWhere('friend_id', $userId);
+                    ->orWhere('friend_id', $userId);
             });
-    
+
         // Exclude: self + accepted friends
         $query->where('id', '!=', $userId)
-              ->whereNotIn('id', $acceptedFriendIds);
-    
-        
-    
+            ->whereNotIn('id', $acceptedFriendIds);
+
+
+
         return $query;
     }
-    
+
     public function boostHistory(): HasOne
     {
         return $this->hasOne(BoostHistory::class, 'boost', 'id');
+    }
+
+    // ================= GROUPS =================
+
+    // Groups created by user
+    public function groups()
+    {
+        return $this->hasMany(Group::class, 'created_by');
+    }
+
+    // Group memberships
+    public function groupMembers()
+    {
+        return $this->hasMany(GroupMember::class, 'user_id');
+    }
+
+    // Group reports against user
+    public function groupReports()
+    {
+        return $this->hasMany(GroupReport::class, 'user_id');
+    }
+
+    // Reports created by user
+    public function reportedGroups()
+    {
+        return $this->hasMany(GroupReport::class, 'reported_by');
+    }
+
+    // ================= MESSAGES =================
+
+    // Messages sent by user
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    // Messages received by user
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
     }
 }

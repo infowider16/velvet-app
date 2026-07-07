@@ -50,7 +50,7 @@ class ContactUsService extends BaseService implements AdminContactUsServiceInter
 
             $contacts = $this->contactUsRepository->getAllData();
           
-
+           
             return DataTables::of($contacts)
 
                 ->addIndexColumn()
@@ -61,7 +61,7 @@ class ContactUsService extends BaseService implements AdminContactUsServiceInter
 
                 ->addColumn('name', function ($row) {
 
-                    if (!empty($row->user_id)) {
+                    if (!empty($row->user)) {
 
                         return '<a href="' . route('admin.user.show', $row->user_id) . '" class="text-primary">
                                     ' . e($row->name ?: '-') . '

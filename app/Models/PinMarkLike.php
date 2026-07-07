@@ -12,4 +12,14 @@ class PinMarkLike extends Model
         'pin_mark_id',
         'user_id',
     ];
+
+    public function pinMark()
+    {
+        return $this->belongsTo(PinMark::class, 'pin_mark_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

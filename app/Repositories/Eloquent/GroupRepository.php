@@ -822,4 +822,44 @@ public function deleteGroup($byWhere)
 
 }
 
+public function getGroupDetail($groupId)
+{
+    try {
+
+        return $this->model
+            ->with([
+                'creator',
+                'members.user',
+                'reports.reporter',
+                'media'
+            ])
+            ->where('id', $groupId)
+            ->first();
+
+    } catch (\Exception $e) {
+
+        Log::error('Error in getGroupDetail: '.$e->getMessage());
+
+        return null;
+    }
+}
+
+public function getGroupMembersDetail($groupId)
+{
+    try {
+
+        return $this->groupMemberModel
+            ->with('user')
+            ->where('group_id', $groupId)
+            ->orderBy('role', 'asc')
+            ->get();
+
+    } catch (\Exception $e) {
+
+        Log::error('Error in getGroupMembersDetail: '.$e->getMessage());
+
+        return collect();
+    }
+}
+
 }
