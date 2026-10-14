@@ -314,7 +314,7 @@ return [
     'monthly_luckydraw_title' => 'Gewinner der monatlichen Verlosung',
     'new_comment_title' => 'Neuer Kommentar',
     'new_friend_request' => 'Neue Anfrage',
-    'new_like_title' => 'Neues Like',
+    'new_like_title' => 'Neuer Like',
     'new_pin_title' => 'Neuer Pin',
     'new_message_body' => 'Du hast eine neue Nachricht.',
     'new_message_body_by_user' => ':name hat dir eine Nachricht gesendet.',
