@@ -102,8 +102,8 @@ class FriendshipService
             $bodyGe = $sender
                 ? ($sender->name . ' ' . __('message.sent_you_a_friend_request', [], 'ge'))
                 : __('message.you_have_a_new_friend_request', [], 'ge');
-            
-            if($receiver && $receiver->lang_key == 'ge') {
+
+            if ($receiver && $receiver->lang_key == 'ge') {
                 $title = $titleGe;
                 $body = $bodyGe;
             } else {
@@ -163,7 +163,7 @@ class FriendshipService
             throw new Exception(__('message.failed_to_send_friend_request'));
         }
     }
-    
+
     public function acceptFriendRequest($userId, $friendId)
     {
         try {
@@ -172,66 +172,66 @@ class FriendshipService
                 ['friend_id', '=', $userId],
                 ['status', '=', 'pending']
             ]);
-    
+
             if (!$friendship) {
                 throw new Exception(__('message.friend_request_not_found_or_already_processed'));
             }
-    
+
             $updated = $this->friendshipRepo->update(
                 ['id' => $friendship->id],
                 ['status' => 'accepted']
             );
-    
+
             if (!$updated) {
                 throw new Exception(__('message.failed_to_accept_friend_request'));
             }
-    
+
             $receiver = $this->userRepo->find($userId);
             $sender = $this->userRepo->find($friendId);
-    
+
             $titleEn = __('message.friend_request_accepted', [], 'en');
             $titleDe = __('message.friend_request_accepted', [], 'ge');
-    
+
             $acceptedTextEn = __('message.accepted_your_friend_request', [], 'en');
             $acceptedTextDe = __('message.accepted_your_friend_request', [], 'ge');
-    
+
             $fallbackBodyEn = __('message.your_friend_request_was_accepted', [], 'en');
             $fallbackBodyDe = __('message.your_friend_request_was_accepted', [], 'ge');
-    
+
             $bodyEn = $receiver
                 ? ($receiver->name . ' ' . $acceptedTextEn)
                 : $fallbackBodyEn;
-    
+
             $bodyDe = $receiver
                 ? ($receiver->name . ' ' . $acceptedTextDe)
                 : $fallbackBodyDe;
-                
-            if($sender && $sender->lang_key == 'ge') {
+
+            if ($sender && $sender->lang_key == 'ge') {
                 $title = $titleDe;
                 $body = $bodyDe;
             } else {
                 $title = $titleEn;
                 $body = $bodyEn;
             }
-    
+
             $titleTranslation = [
                 'en' => $titleEn,
                 'ge' => $titleDe,
             ];
-    
+
             $bodyTranslation = [
                 'en' => $bodyEn,
                 'ge' => $bodyDe,
             ];
-    
+
             $other = [
                 'type' => 'friend_request_accepted',
                 'user_id' => $userId,
                 'screen_name' => 'user_profile',
             ];
-    
+
             $this->messageRepository->getNotificationStatus($userId, $friendId);
-    
+
             try {
                 $this->userRepo->createMobileNotification(
                     $userId,
@@ -245,7 +245,7 @@ class FriendshipService
             } catch (\Throwable $e) {
                 Log::error('Error in createMobileNotification (acceptFriendRequest): ' . $e->getMessage());
             }
-    
+
             try {
                 if (function_exists('sendPushNotification') && $sender && !empty($sender->device_token)) {
                     sendPushNotification([$sender->device_token], $title, $body, $other, [$receiver?->id], 'friend_requests');
@@ -253,7 +253,7 @@ class FriendshipService
             } catch (\Throwable $e) {
                 Log::error('Error in sendPushNotification (acceptFriendRequest): ' . $e->getMessage());
             }
-    
+
             //also add user to message table for both users so that chat will be available immediately after accepting friend request
             $this->addUserToMessageTable($userId, $friendId);
             return [
@@ -268,7 +268,7 @@ class FriendshipService
                 'user_id' => $userId,
                 'friend_id' => $friendId,
             ]);
-    
+
             throw new Exception(__('message.failed_to_accept_friend_request'));
         }
     }
@@ -291,8 +291,8 @@ class FriendshipService
 
             if (!$existingChat) {
                 $this->messageRepository->create([
-                    'sender_id' => $userId,       
-                    'receiver_id' => $friendId,   
+                    'sender_id' => $userId,
+                    'receiver_id' => $friendId,
                     'group_id' => null,
                     'message_text' => null,
                     'media_type' => null,
@@ -659,7 +659,7 @@ class FriendshipService
                 foreach ($adminGroups as $group) {
                     $groupId = $group->group_id;
 
-                
+
                     $isMember = $this->groupRepo->isMember($groupId, $blockedUserId);
 
                     if ($isMember) {
@@ -784,13 +784,13 @@ class FriendshipService
             $page = $request->get('page', 1);
 
             $blockedUsers = $this->friendshipRepo->getBlockedUsersList($userId, $perPage, $page);
-         
+
             $processedUsers = $blockedUsers->getCollection()->map(function ($user) use ($userId) {
                 return $this->processBlockedUserData($user->blocked, $userId);
             });
 
             $blockedUsers->setCollection($processedUsers);
-           
+
 
             return [
                 'data' => [
@@ -998,7 +998,8 @@ class FriendshipService
     public function getNotifications($userId, $request)
     {
         try {
-
+            $loginUser = getUser();
+            // dd($loginUser);
             $readNotifications = $this->userRepo->markNotificationsAsRead($userId);
 
             $perPage = $request->get('per_page', 20);
@@ -1009,9 +1010,17 @@ class FriendshipService
                 $perPage,
                 $page
             );
-
+            $lang = $loginUser->lang_key ?? 'en';
             // Optionally process notification data here if needed
-            $processed = $notifications->getCollection()->map(function ($notif) {
+            $processed = $notifications->getCollection()->map(function ($notif) use ($lang) {
+                    
+                if (!empty($notif->title_translation) && !empty($notif->body_translation)) {
+                    $titleTranslation = $notif->title_translation;
+                    $bodyTranslation = $notif->body_translation;
+                    $notif->title = $titleTranslation[$lang] ?? '';
+                    $notif->body = $bodyTranslation[$lang] ?? '';
+                }
+
                 return [
                     'id' => $notif->id,
                     'title' => $notif->title,
@@ -1044,12 +1053,12 @@ class FriendshipService
     public function checkUserBlocked($userId)
     {
         try {
-            $loginUser=getUser();
-            $userId= intval($userId);
+            $loginUser = getUser();
+            $userId = intval($userId);
 
             $blocked = $this->friendshipRepo->checkBlockedEachOther($loginUser->id, $userId);
 
-            return isset($blocked->id)?true:false;
+            return isset($blocked->id) ? true : false;
         } catch (Exception $e) {
             throw new Exception(__('message.failed_to_fetch_blocked_status') . ': ' . $e->getMessage());
         }
