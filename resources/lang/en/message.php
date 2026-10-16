@@ -30,6 +30,8 @@ return [
     'sent_you_a_group_request' => 'sent you a group request',
     'you_have_a_new_group_request' => 'requested to join your group :group.',
     'user_joined_group' => ':name joined your group :group.',
+    'new_group' => 'New Group',
+    'added_you_to_group' => ':name added you to the group \':group\'.',
     'validation_error' => 'validation error',
 
     'Resend' => 'Resend',

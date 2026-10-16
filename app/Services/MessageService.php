@@ -1677,6 +1677,66 @@ class MessageService
                 );
             }
 
+            // Notify each newly added member
+            if (!empty($added)) {
+                $adminName = $this->userRepo->find($adminId)->name ?? '';
+                $titleEn = __('message.new_group', [], 'en');
+                $titleGe = __('message.new_group', [], 'ge');
+                $bodyEn = __('message.added_you_to_group', ['name' => $adminName, 'group' => $group->name], 'en');
+                $bodyGe = __('message.added_you_to_group', ['name' => $adminName, 'group' => $group->name], 'ge');
+
+                $titleTranslation = [
+                    'en' => $titleEn,
+                    'ge' => $titleGe,
+                ];
+
+                $bodyTranslation = [
+                    'en' => $bodyEn,
+                    'ge' => $bodyGe,
+                ];
+
+                $other = [
+                    'type' => 'group_invitation',
+                    'group_id' => $group->id,
+                    'user_id' => $adminId,
+                    'screen_name' => 'group_detail',
+                    'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
+                ];
+
+                foreach ($added as $memberId) {
+                    try {
+                        $receiver = $this->userRepo->find($memberId);
+                        if (!$receiver) {
+                            continue;
+                        }
+
+                        if ($receiver->lang_key == 'ge') {
+                            $title = $titleGe;
+                            $body = $bodyGe;
+                        } else {
+                            $title = $titleEn;
+                            $body = $bodyEn;
+                        }
+
+                        $this->userRepo->createMobileNotification(
+                            $adminId,
+                            $receiver->id,
+                            $title,
+                            $body,
+                            $other,
+                            $titleTranslation,
+                            $bodyTranslation
+                        );
+
+                        if (function_exists('sendPushNotification') && !empty($receiver->device_token)) {
+                            sendPushNotification([$receiver->device_token], $title, $body, $other, [$receiver->id]);
+                        }
+                    } catch (\Throwable $e) {
+                        Log::error('Error in sendPushNotification (addMemberToGroup): ' . $e->getMessage());
+                    }
+                }
+            }
+
             $this->chatSocketService->groupUpdatesocket($data['group_id']);
             return [
                 'error' => false,
