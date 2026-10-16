@@ -31,7 +31,7 @@ return [
     'you_have_a_new_group_request' => 'möchte deiner Gruppe „:group“ beitreten.',
     'user_joined_group' => ':name ist deiner Gruppe „:group“ beigetreten.',
     'new_group' => 'Neue Gruppe',
-    'added_you_to_group' => ':name hat dich zur Gruppe ‚:group‘ hinzugefügt.',
+    'added_you_to_group' => ':name hat dich zur Gruppe :group hinzugefügt.',
     'validation_error' => 'Validierungsfehler',
 
    'Resend' => 'erneut senden',
