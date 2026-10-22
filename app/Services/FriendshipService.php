@@ -483,68 +483,35 @@ class FriendshipService
             $perPage = $request->get('per_page', 20);
             $page = $request->get('page', 1);
 
-            // Step 1: Only "accepted" records fetch using repo
-            $friends = $this->friendshipRepo->getDataWithPagination(
-                [
-                    ['status', '=', 'accepted']
-                ],
-                ['user', 'friend', 'user.blocks', 'user.blockedBy', 'friend.blocks', 'friend.blockedBy'],
-                ['*'],
-                [],
-                ['id' => 'desc'],
-                $perPage,
-                $page
-            );
+            // Accepted friendships where current user is either side (user_id OR friend_id), blocked pairs excluded in SQL
+            $friends = $this->friendshipRepo->getAcceptedFriendshipsPaginated($userId, $perPage, $page);
 
-            // Step 2: Filter OR condition manually (user_id = X OR friend_id = X)
-            $filtered = $friends->getCollection()->filter(function ($item) use ($userId) {
-                // Exclude if user has blocked friend or friend has blocked user
-                $friendUser = ($item->user_id == $userId) ? $item->friend : $item->user;
-                if (!$friendUser || $friendUser->id == $userId) {
-                    return false;
-                }
-                // Check if current user has blocked this friend
-                if (
-                    ($friendUser->blockedBy && $friendUser->blockedBy->contains('blocker_id', $userId)) ||
-                    ($friendUser->blocks && $friendUser->blocks->contains('blocked_id', $userId))
-                ) {
-                    return false;
-                }
-                // Also check if current user has blocked this friend (redundant, but safe)
-                $hasBlocked = $this->friendshipRepo->isBlocked($userId, $friendUser->id);
-                $blockedBy = $this->friendshipRepo->isBlocked($friendUser->id, $userId);
-                if ($hasBlocked || $blockedBy) {
-                    return false;
-                }
-                return $item->user_id == $userId || $item->friend_id == $userId;
-            });
+            if (!$friends) {
+                throw new Exception(__('message.failed_to_fetch_friends_list'));
+            }
 
-            // Step 3: Map friend user
-            $processedUsers = $filtered->map(function ($friendship) use ($userId) {
+            // Map each friendship to the other user
+            $processedUsers = $friends->getCollection()->map(function ($friendship) use ($userId) {
                 $friendUser = ($friendship->user_id == $userId)
                     ? $friendship->friend
                     : $friendship->user;
 
-                if ($friendUser->id == $userId) {
+                if (!$friendUser || $friendUser->id == $userId) {
                     return null;
                 }
 
                 return $this->processFriendUserData($friendUser, $userId);
-            })->filter()->values();
-
-            // Pagination adjust
-            $total = $processedUsers->count();
-            $lastPage = ceil($total / $perPage);
+            })->filter()->unique('id')->values();
 
             return [
                 'data' => [
                     'users' => $processedUsers,
                     'pagination' => [
                         'current_page' => $friends->currentPage(),
-                        'per_page' => $perPage,
-                        'total' => $total,
-                        'last_page' => $lastPage,
-                        'has_more' => $friends->currentPage() < $lastPage,
+                        'per_page' => $friends->perPage(),
+                        'total' => $friends->total(),
+                        'last_page' => $friends->lastPage(),
+                        'has_more' => $friends->hasMorePages(),
                     ],
                 ],
                 'message' => __('message.friends_list_fetched_successfully'),

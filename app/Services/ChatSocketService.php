@@ -74,14 +74,17 @@ class ChatSocketService
                     AND is_delete = 0
                     AND status = 0
                     THEN 1 
-                END) as subscriber_count,
-
-                COUNT(CASE WHEN group_status = 'pending' AND is_delete = 0 THEN 1 END) as request_count
+                END) as subscriber_count
             ")
             ->first();
 
             $subscriberCount = (int) $counts->subscriber_count;
-            $requestCount    = (int) $counts->request_count;
+            // Same rule as group details / group list: pending requests from non-deleted users
+            $requestCount = $groupMemberModel
+                ->where('group_id', $groupId)
+                ->where('group_status', 'pending')
+                ->whereHas('user', fn($q) => $q->where('is_delete', 0))
+                ->count();
 
             $userMembers = $groupMemberModel
                 ->with('user')

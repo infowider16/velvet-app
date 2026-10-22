@@ -2,6 +2,7 @@
 namespace App\Services;
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\MessageRepository;
+use App\Repositories\Eloquent\GroupRepository;
 use Exception;
 use RuntimeException;
 use Throwable;
@@ -28,17 +29,19 @@ class UserRegisterService implements UserRegisterServiceInterface
     protected $userRepo;
     protected $messageRepo;
     protected $chatSocketService;
+    protected $groupRepo;
     public const TYPES = [
         'new_messages',
         'comments_on_pins',
         'likes_on_pins',
         'friend_requests',
     ];
-    public function __construct(UserRepository $userRepo, MessageRepository $messageRepo , ChatSocketService $chatSocketService)
+    public function __construct(UserRepository $userRepo, MessageRepository $messageRepo , ChatSocketService $chatSocketService, GroupRepository $groupRepo)
     {
         $this->userRepo = $userRepo;
         $this->messageRepo = $messageRepo;
         $this->chatSocketService = $chatSocketService;
+        $this->groupRepo = $groupRepo;
     }
     private function generateOtp($length = 6)
     {
@@ -689,6 +692,7 @@ class UserRegisterService implements UserRegisterServiceInterface
                 'unread_message'         => $unreadMessageCount,
                 'unread_group_message'   => $unreadGroupMessageCount,
                 'pending_friend_request' => count($user->pendingReceivedRequests),
+                'pending_group_request'  => array_sum($this->groupRepo->getPendingRequestCountsForAdmin($userId)),
                 'push_notification_status' => $user->push_notification_status,
                 'is_approve' => $user->is_approve,
                 'is_deleted' => $user->is_deleted ?? 0,

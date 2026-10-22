@@ -475,6 +475,7 @@ class MessageService
                     'last_message' => $message->message_text,
                     'last_message_type' => $message->media_type,
                     'last_message_status' => $message->status,
+                    'sender_id' => $message->sender_id,
                 ],
             ];
         } catch (\Throwable $e) {
@@ -995,6 +996,7 @@ class MessageService
                     'last_message' => $last_message,
                     'last_message_type' => $last_message_type,
                     'last_message_status' => $last_message_status,
+                    'sender_id' => $lastMessage ? $lastMessage->sender_id : null,
                     'is_blocked' => $isBlocked,
                 ];
             }
@@ -1468,6 +1470,12 @@ class MessageService
                 ->orderByDesc('id')
                 ->paginate($perPage, ['*'], 'page', $page);
 
+            // Pending join requests per group (only for groups where this user is admin)
+            $requestCounts = $this->groupRepo->getPendingRequestCountsForAdmin(
+                $userId,
+                $groups->getCollection()->pluck('id')->toArray()
+            );
+
             foreach ($groups->getCollection() as $group) {
                 $group->image = getImageUrl($group->image);
 
@@ -1489,6 +1497,8 @@ class MessageService
                 
                 // Unread message count for this user in this group
                 $group->unread_count = GroupMember::where('user_id', $userId)->where('group_id', $group->id)->value('unread_count') ?? 0;
+
+                $group->user_request_count = (int) ($requestCounts[$group->id] ?? 0);
             }
 
             return [

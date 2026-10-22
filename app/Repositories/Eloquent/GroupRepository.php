@@ -77,6 +77,34 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
             ->get();
     }
 
+    // Pending join request counts [group_id => count] for groups where the user is admin
+    public function getPendingRequestCountsForAdmin($adminUserId, ?array $groupIds = null)
+    {
+        try {
+            $adminGroupIds = $this->groupMemberModel
+                ->where('user_id', $adminUserId)
+                ->where('role', 'admin')
+                ->when($groupIds !== null, fn($q) => $q->whereIn('group_id', $groupIds))
+                ->pluck('group_id');
+
+            if ($adminGroupIds->isEmpty()) {
+                return [];
+            }
+
+            return $this->groupMemberModel
+                ->whereIn('group_id', $adminGroupIds)
+                ->where('group_status', 'pending')
+                ->whereHas('user', fn($q) => $q->where('is_delete', 0))
+                ->selectRaw('group_id, COUNT(*) as cnt')
+                ->groupBy('group_id')
+                ->pluck('cnt', 'group_id')
+                ->toArray();
+        } catch (\Exception $e) {
+            Log::error('Error in getPendingRequestCountsForAdmin: ' . $e->getMessage());
+            return [];
+        }
+    }
+
     public function createJoinRequest($groupId, $userId)
     {
         // You may want to use a separate table for join requests in production.

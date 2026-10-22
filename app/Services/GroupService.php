@@ -89,6 +89,7 @@ class GroupService
             $requestCount = $this->groupRepo->groupMemberModel
                 ->where('group_id', $groupId)
                 ->where('group_status', 'pending')
+                ->whereHas('user', fn($q) => $q->where('is_delete', 0))
                 ->count();
 
             $userMember = $this->groupRepo->groupMemberModel

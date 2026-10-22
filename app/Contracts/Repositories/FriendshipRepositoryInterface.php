@@ -6,4 +6,5 @@ interface FriendshipRepositoryInterface
 {
   public function isBlocked($blockerId, $blockedId);
     public function getBlockedUsersList($userId, $perPage, $page);
+    public function getAcceptedFriendshipsPaginated($userId, $perPage, $page);
 }

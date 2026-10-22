@@ -5,6 +5,7 @@ namespace App\Repositories\Eloquent;
 use App\Models\Friendship;
 use App\Contracts\Repositories\FriendshipRepositoryInterface;
 use App\Models\Block;
+use Illuminate\Support\Facades\DB;
 
 class FriendshipRepository extends BaseRepository implements FriendshipRepositoryInterface
 {
@@ -144,6 +145,38 @@ class FriendshipRepository extends BaseRepository implements FriendshipRepositor
         } catch (\Exception $e) {
             $this->logError(__FUNCTION__, $e);
             return [];
+        }
+    }
+
+    // Accepted friendships of a user in both directions, excluding pairs blocked either way
+    public function getAcceptedFriendshipsPaginated($userId, $perPage, $page)
+    {
+        try {
+            return $this->model
+                ->where('status', 'accepted')
+                ->where(function ($query) use ($userId) {
+                    $query->where('user_id', $userId)
+                        ->orWhere('friend_id', $userId);
+                })
+                ->whereColumn('user_id', '!=', 'friend_id')
+                ->whereNotExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('blocks')
+                        ->where(function ($q) {
+                            $q->whereColumn('blocks.blocker_id', 'friendships.user_id')
+                                ->whereColumn('blocks.blocked_id', 'friendships.friend_id');
+                        })
+                        ->orWhere(function ($q) {
+                            $q->whereColumn('blocks.blocker_id', 'friendships.friend_id')
+                                ->whereColumn('blocks.blocked_id', 'friendships.user_id');
+                        });
+                })
+                ->with(['user.blockedBy', 'friend.blockedBy'])
+                ->orderBy('id', 'desc')
+                ->paginate($perPage, ['*'], 'page', $page);
+        } catch (\Exception $e) {
+            $this->logError(__FUNCTION__, $e);
+            return null;
         }
     }
 }
