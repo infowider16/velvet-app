@@ -111,7 +111,7 @@ class PinMarkLikeService
 
                 $receiver = $this->userRepo->find($pinMark->user_id);    // post owner
 
-                if($receiver && $receiver->lang_key == 'ge') {
+                if ($receiver && in_array($receiver->lang_key, ['ge', 'de'])) {
                     $title = __('message.new_like_title', [], 'ge');
                     $body = $sender ? __('message.liked_post_by_user', ['name' => $sender->name], 'ge') : __('message.liked_post', [], 'ge');
                 } else {

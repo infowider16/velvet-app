@@ -330,7 +330,7 @@ class MessageService
                             $payload
                         );
 
-                        if($receiver && $receiver->lang_key == 'ge') {
+                        if ($receiver && in_array($receiver->lang_key, ['ge', 'de'])) {
 
                             $title = __('message.new_message_title', [], 'ge');
                             $body = $sender
@@ -1198,7 +1198,7 @@ class MessageService
                         ? (__('message.user_joined_group', ['name' => $senderName,'group' => $group->name], 'ge'))
                         : __('message.user_joined_group', [], 'ge');
                     
-                    if($receiver && $receiver->lang_key == 'ge'){
+                    if ($receiver && in_array($receiver->lang_key, ['ge', 'de'])) {
                         $title = $titleGe;
                         $body = $bodyGe;
                     } else {
@@ -1209,11 +1209,13 @@ class MessageService
                     $titleTranslation = [
                         'en' => $titleEn,
                         'ge' => $titleGe,
+                        'de' => $titleGe,
                     ];
 
                     $bodyTranslation = [
                         'en' => $bodyEn,
                         'ge' => $bodyGe,
+                        'de' => $bodyGe,
                     ];
                     $other = [
                         'type' => 'group_request',
@@ -1263,7 +1265,7 @@ class MessageService
                         ? ($senderName . ' ' . __('message.you_have_a_new_group_request', ['name' => $senderName,'group' => $group->name], 'ge'))
                         : __('message.you_have_a_new_group_request', [], 'ge');
                         
-                    if($receiver && $receiver->lang_key == 'ge'){
+                    if ($receiver && in_array($receiver->lang_key, ['ge', 'de'])) {
                         $title = $titleGe;
                         $body = $bodyGe;
                     } else {
@@ -1274,11 +1276,13 @@ class MessageService
                     $titleTranslation = [
                         'en' => $titleEn,
                         'ge' => $titleGe,
+                        'de' => $titleGe,
                     ];
 
                     $bodyTranslation = [
                         'en' => $bodyEn,
                         'ge' => $bodyGe,
+                        'de' => $bodyGe,
                     ];
                     $other = [
                         'type' => 'group_request',
@@ -1698,11 +1702,13 @@ class MessageService
                 $titleTranslation = [
                     'en' => $titleEn,
                     'ge' => $titleGe,
+                    'de' => $titleGe,
                 ];
 
                 $bodyTranslation = [
                     'en' => $bodyEn,
                     'ge' => $bodyGe,
+                    'de' => $bodyGe,
                 ];
 
                 $other = [
@@ -1720,7 +1726,7 @@ class MessageService
                             continue;
                         }
 
-                        if ($receiver->lang_key == 'ge') {
+                        if (in_array($receiver->lang_key, ['ge', 'de'])) {
                             $title = $titleGe;
                             $body = $bodyGe;
                         } else {

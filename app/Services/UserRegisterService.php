@@ -593,6 +593,12 @@ class UserRegisterService implements UserRegisterServiceInterface
             ];
             // Filter out only the fields that are actually sent in the request
             $updateData = Arr::only($data, $allowedFields);
+
+            // Handle language alias ('de' / 'ge' / 'en') sent from mobile app
+            $rawLang = $data['lang_key'] ?? $data['language'] ?? $data['locale'] ?? null;
+            if ($rawLang !== null) {
+                $updateData['lang_key'] = in_array(strtolower($rawLang), ['de', 'ge']) ? 'ge' : 'en';
+            }
            
             $user = $this->updateUser($userId, $updateData);
             $userInfo = $user->toArray();

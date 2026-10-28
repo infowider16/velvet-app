@@ -103,7 +103,7 @@ class FriendshipService
                 ? ($sender->name . ' ' . __('message.sent_you_a_friend_request', [], 'ge'))
                 : __('message.you_have_a_new_friend_request', [], 'ge');
 
-            if ($receiver && $receiver->lang_key == 'ge') {
+            if ($receiver && in_array($receiver->lang_key, ['ge', 'de'])) {
                 $title = $titleGe;
                 $body = $bodyGe;
             } else {
@@ -114,11 +114,13 @@ class FriendshipService
             $titleTranslation = [
                 'en' => $titleEn,
                 'ge' => $titleGe,
+                'de' => $titleGe,
             ];
 
             $bodyTranslation = [
                 'en' => $bodyEn,
                 'ge' => $bodyGe,
+                'de' => $bodyGe,
             ];
 
             $other = [
@@ -206,7 +208,7 @@ class FriendshipService
                 ? ($receiver->name . ' ' . $acceptedTextDe)
                 : $fallbackBodyDe;
 
-            if ($sender && $sender->lang_key == 'ge') {
+            if ($sender && in_array($sender->lang_key, ['ge', 'de'])) {
                 $title = $titleDe;
                 $body = $bodyDe;
             } else {
@@ -217,11 +219,13 @@ class FriendshipService
             $titleTranslation = [
                 'en' => $titleEn,
                 'ge' => $titleDe,
+                'de' => $titleDe,
             ];
 
             $bodyTranslation = [
                 'en' => $bodyEn,
                 'ge' => $bodyDe,
+                'de' => $bodyDe,
             ];
 
             $other = [
@@ -977,15 +981,33 @@ class FriendshipService
                 $perPage,
                 $page
             );
-            $lang = $loginUser->lang_key ?? 'en';
+            $rawLang = $loginUser->lang_key ?? 'en';
+            $lang = in_array(strtolower($rawLang), ['ge', 'de']) ? 'ge' : 'en';
             // Optionally process notification data here if needed
-            $processed = $notifications->getCollection()->map(function ($notif) use ($lang) {
+            $processed = $notifications->getCollection()->map(function ($notif) use ($lang, $rawLang) {
                     
                 if (!empty($notif->title_translation) && !empty($notif->body_translation)) {
-                    $titleTranslation = $notif->title_translation;
-                    $bodyTranslation = $notif->body_translation;
-                    $notif->title = $titleTranslation[$lang] ?? '';
-                    $notif->body = $bodyTranslation[$lang] ?? '';
+                    $titleTranslation = is_array($notif->title_translation)
+                        ? $notif->title_translation
+                        : json_decode($notif->title_translation, true);
+                    $bodyTranslation = is_array($notif->body_translation)
+                        ? $notif->body_translation
+                        : json_decode($notif->body_translation, true);
+
+                    if (!empty($titleTranslation)) {
+                        $notif->title = $titleTranslation[$rawLang]
+                            ?? $titleTranslation[$lang]
+                            ?? $titleTranslation[($lang === 'ge' ? 'de' : 'ge')]
+                            ?? $titleTranslation['en']
+                            ?? $notif->title;
+                    }
+                    if (!empty($bodyTranslation)) {
+                        $notif->body = $bodyTranslation[$rawLang]
+                            ?? $bodyTranslation[$lang]
+                            ?? $bodyTranslation[($lang === 'ge' ? 'de' : 'ge')]
+                            ?? $bodyTranslation['en']
+                            ?? $notif->body;
+                    }
                 }
 
                 return [

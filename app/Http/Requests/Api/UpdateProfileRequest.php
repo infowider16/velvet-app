@@ -29,6 +29,9 @@ class UpdateProfileRequest extends BaseApiRequest
             'location' => 'nullable|string|max:255',
             'lat' => 'nullable|numeric',
             'lng' => 'nullable|numeric',
+            'lang_key' => 'nullable|string|in:en,de,ge',
+            'language' => 'nullable|string|in:en,de,ge',
+            'locale' => 'nullable|string|in:en,de,ge',
         ];
     }
 

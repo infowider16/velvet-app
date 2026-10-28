@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\Eloquent\UserRepository;
 use Exception;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class HomeService
 {
@@ -224,6 +225,7 @@ class HomeService
             'lat' => (float) $user->lat,
             'lng' => (float) $user->lng,
             'last_seen_at' => $user->last_seen_at,
+            'is_online' => Cache::has('user_online_' . $user->id),
             'gender' => $user->gender,
             'friend_status' => $friendStatus,
             'block_status' => $blockStatus,
@@ -307,7 +309,7 @@ class HomeService
               
             }
             // Select columns
-            $columns = ['id', 'name', 'date_of_birth', 'country_code', 'gender', 'images', 'lat', 'lng', 'created_at','booster_ranking','gost_expire','boost','is_delete'];
+            $columns = ['id', 'name', 'date_of_birth', 'country_code', 'gender', 'images', 'lat', 'lng', 'last_seen_at', 'created_at','booster_ranking','gost_expire','boost','is_delete'];
             // Use getDataWithPagination to get larger dataset for distance filtering
             $perPage = 100; // Get more records to filter by distance
 
@@ -462,6 +464,8 @@ class HomeService
             'lng' => (float) $user->lng,
             'gender' => $user->gender,
             'distance' => round($distance, 2),
+            'last_seen_at' => $user->last_seen_at,
+            'is_online' => Cache::has('user_online_' . $user->id),
             'created_at' => $user->created_at,
             'friend_status' => $friendStatus,
             'block_status' => $blockStatus,

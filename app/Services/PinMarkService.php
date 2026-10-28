@@ -78,7 +78,7 @@ class PinMarkService
                 foreach ($friends as $friend) {
 
 
-                    $lang = $friend->lang_key ?? 'en';
+                    $lang = in_array(strtolower($friend->lang_key ?? 'en'), ['ge', 'de']) ? 'ge' : 'en';
 
                     $title = trans('message.new_pin_title', [], $lang);
 
